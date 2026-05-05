@@ -17,12 +17,6 @@ const slides = [
     showContent: false,
   },
   {
-    src: "/images/banner-1.png",
-    alt: "Kelikuli Resin Toys and Crafts Manufacturer — factory direct OEM ODM since 2005",
-    btnPos: "right",
-    showContent: false,
-  },
-  {
     src: "/images/banner-2.png",
     alt: "Custom Blind Box Toys — OEM ODM services for collectible figurines and blind box series",
     btnPos: "right",
@@ -144,6 +138,7 @@ export default function HeroCarousel() {
                 sizes="100vw"
                 className="object-cover object-center"
                 priority={i === 0}
+                loading="eager"
                 draggable={false}
               />
 
