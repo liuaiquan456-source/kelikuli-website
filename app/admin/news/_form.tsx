@@ -1,0 +1,249 @@
+"use client";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Save, Globe, FileText } from "lucide-react";
+import { Button, Input, Textarea } from "@/app/admin/_components/ui";
+import { cn } from "@/app/admin/_lib/utils";
+
+const CATEGORIES = ["Industry Insights", "New Product", "Exhibition Review", "Company News"];
+
+interface PostForm {
+  title: string; slug: string; category: string;
+  excerpt: string; content: string; image: string; status: string;
+}
+
+interface Props {
+  postId?: number;
+  initial?: Partial<PostForm>;
+}
+
+function slugify(str: string) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function renderPreview(content: string) {
+  const lines = content.trim().split("\n");
+  const elements: React.ReactNode[] = [];
+  let key = 0;
+  for (const line of lines) {
+    const t = line.trim();
+    if (!t) { elements.push(<div key={key++} className="mb-2" />); continue; }
+    if (t.startsWith("## ")) {
+      elements.push(<h2 key={key++} className="text-lg font-bold text-stone-800 mt-6 mb-2">{t.slice(3)}</h2>);
+    } else if (t.startsWith("**") && t.endsWith("**")) {
+      elements.push(<p key={key++} className="font-bold text-stone-800 mb-1">{t.slice(2, -2)}</p>);
+    } else if (t.startsWith("- ")) {
+      elements.push(<li key={key++} className="text-stone-600 ml-4 list-disc text-sm">{t.slice(2)}</li>);
+    } else if (/^\d+\./.test(t)) {
+      elements.push(<li key={key++} className="text-stone-600 ml-4 list-decimal text-sm">{t.replace(/^\d+\.\s*/, "")}</li>);
+    } else if (t === "---") {
+      elements.push(<hr key={key++} className="border-stone-200 my-4" />);
+    } else {
+      const withLinks = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) =>
+        `<a href="${href}" class="text-[#C9A55A] underline">${txt}</a>`
+      );
+      elements.push(<p key={key++} className="text-stone-600 text-sm leading-relaxed mb-1" dangerouslySetInnerHTML={{ __html: withLinks }} />);
+    }
+  }
+  return elements;
+}
+
+export default function NewsForm({ postId, initial }: Props) {
+  const router = useRouter();
+  const isEdit = !!postId;
+
+  const [form, setForm] = useState<PostForm>({
+    title:    initial?.title    ?? "",
+    slug:     initial?.slug     ?? "",
+    category: initial?.category ?? "Industry Insights",
+    excerpt:  initial?.excerpt  ?? "",
+    content:  initial?.content  ?? "",
+    image:    initial?.image    ?? "",
+    status:   initial?.status   ?? "draft",
+  });
+
+  const [slugManual, setSlugManual] = useState(isEdit);
+  const [preview, setPreview]       = useState(false);
+  const [saving, setSaving]         = useState(false);
+  const [error, setError]           = useState("");
+
+  useEffect(() => {
+    if (!slugManual && form.title) {
+      setForm((f) => ({ ...f, slug: slugify(f.title) }));
+    }
+  }, [form.title, slugManual]);
+
+  const set = useCallback(<K extends keyof PostForm>(k: K, v: PostForm[K]) => {
+    setForm((f) => ({ ...f, [k]: v }));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!form.title.trim()) { setError("Title is required."); return; }
+    if (!form.slug.trim())  { setError("Slug is required."); return; }
+
+    setSaving(true);
+    try {
+      const url    = isEdit ? `/api/posts/${postId}` : "/api/posts";
+      const method = isEdit ? "PATCH" : "POST";
+      const res    = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Save failed."); return; }
+      router.push("/admin/news");
+      router.refresh();
+    } catch {
+      setError("Network error.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Top bar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+            <button type="button" onClick={() => setPreview(false)}
+              className={cn("px-3 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1",
+                !preview ? "bg-white text-slate-800 shadow-sm" : "text-slate-500")}>
+              <FileText className="w-3 h-3" /> Edit
+            </button>
+            <button type="button" onClick={() => setPreview(true)}
+              className={cn("px-3 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1",
+                preview ? "bg-white text-slate-800 shadow-sm" : "text-slate-500")}>
+              <Eye className="w-3 h-3" /> Preview
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+            {(["draft", "published"] as const).map((s) => (
+              <button key={s} type="button" onClick={() => set("status", s)}
+                className={cn("px-3 py-1 text-xs font-medium rounded-md transition-colors capitalize",
+                  form.status === s ? "bg-white text-slate-800 shadow-sm" : "text-slate-500")}>
+                {s === "published" ? <Globe className="w-3 h-3 inline mr-1" /> : <EyeOff className="w-3 h-3 inline mr-1" />}
+                {s}
+              </button>
+            ))}
+          </div>
+          <Button type="submit" variant="primary" size="sm" disabled={saving}>
+            <Save className="w-3.5 h-3.5" />
+            {saving ? "Saving..." : isEdit ? "Save Changes" : "Publish"}
+          </Button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{error}</div>
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        {/* Main content */}
+        <div className="xl:col-span-2 space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+            <Input
+              label="Title *"
+              value={form.title}
+              onChange={(e) => set("title", e.target.value)}
+              placeholder="Article title"
+            />
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-slate-600">Slug *</label>
+              <div className="flex gap-2">
+                <input
+                  value={form.slug}
+                  onChange={(e) => { setSlugManual(true); set("slug", e.target.value); }}
+                  placeholder="url-friendly-slug"
+                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
+                />
+                <button type="button" onClick={() => { setSlugManual(false); set("slug", slugify(form.title)); }}
+                  className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors">
+                  Auto
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-400">kelikuli.com/news/{form.slug || "slug"}</p>
+            </div>
+
+            <Textarea
+              label="Excerpt"
+              rows={2}
+              value={form.excerpt}
+              onChange={(e) => set("excerpt", e.target.value)}
+              placeholder="Brief description shown in article cards..."
+            />
+          </div>
+
+          {/* Content editor / preview */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
+              <span className="text-xs font-medium text-slate-600">Content</span>
+              <span className="text-[10px] text-slate-400">Markdown: ## Heading · **bold** · - list · [link](url) · ---</span>
+            </div>
+            {preview ? (
+              <div className="p-6 min-h-[400px] prose-sm max-w-none">
+                {form.content ? renderPreview(form.content) : <p className="text-slate-400 text-sm">Nothing to preview yet.</p>}
+              </div>
+            ) : (
+              <textarea
+                rows={20}
+                value={form.content}
+                onChange={(e) => set("content", e.target.value)}
+                placeholder={"Start writing your article...\n\n## Section Heading\n\nParagraph text here.\n\n- Bullet point\n- Another point\n\n**Bold text**\n\n[Link text](/page)"}
+                className="w-full px-4 py-4 text-sm text-slate-800 font-mono resize-none focus:outline-none bg-white leading-relaxed"
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-slate-600">Category</label>
+              <select
+                value={form.category}
+                onChange={(e) => set("category", e.target.value)}
+                className="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
+              >
+                {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+
+            <Input
+              label="Cover Image URL"
+              value={form.image}
+              onChange={(e) => set("image", e.target.value)}
+              placeholder="/images/news/photo.jpg"
+            />
+
+            {form.image && (
+              <div className="rounded-lg overflow-hidden border border-slate-100 aspect-video bg-stone-100 relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={form.image} alt="cover" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = "none")} />
+              </div>
+            )}
+          </div>
+
+          {/* Status info */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <p className="text-xs font-medium text-slate-600 mb-3">Status</p>
+            <div className={cn(
+              "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium",
+              form.status === "published" ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-slate-600"
+            )}>
+              {form.status === "published" ? <Globe className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+              {form.status === "published" ? "Will be visible on the News page" : "Only visible in admin panel"}
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  );
+}

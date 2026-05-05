@@ -1,0 +1,318 @@
+﻿"use client";
+import { useState, useRef, useEffect } from "react";
+
+const countryCodes = [
+  { code: "+1",   label: "US/CA +1" },
+  { code: "+44",  label: "UK +44" },
+  { code: "+86",  label: "CN +86" },
+  { code: "+81",  label: "JP +81" },
+  { code: "+82",  label: "KR +82" },
+  { code: "+49",  label: "DE +49" },
+  { code: "+33",  label: "FR +33" },
+  { code: "+39",  label: "IT +39" },
+  { code: "+34",  label: "ES +34" },
+  { code: "+61",  label: "AU +61" },
+  { code: "+65",  label: "SG +65" },
+  { code: "+852", label: "HK +852" },
+  { code: "+886", label: "TW +886" },
+  { code: "+91",  label: "IN +91" },
+  { code: "+7",   label: "RU +7" },
+  { code: "+55",  label: "BR +55" },
+  { code: "+52",  label: "MX +52" },
+  { code: "+971", label: "UAE +971" },
+];
+
+const productOptions = [
+  "Brand Products",
+  "Snow Globe",
+  "Bobble Head",
+  "Statue & Figurine & Sculpture",
+  "Photo Frame",
+  "Fridge Magnet",
+  "Piggy Bank",
+  "Other Resin Crafts",
+];
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function InquiryModal({ isOpen, onClose }: Props) {
+  const [form, setForm] = useState({
+    email: "",
+    countryCode: "+1",
+    phone: "",
+    name: "",
+    company: "",
+    products: [] as string[],
+    message: "",
+  });
+  const [files, setFiles] = useState<File[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // Close on Escape key
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    if (isOpen) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
+  // Lock body scroll when open
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const toggleProduct = (p: string) => {
+    setForm((f) => ({
+      ...f,
+      products: f.products.includes(p)
+        ? f.products.filter((x) => x !== p)
+        : [...f.products, p],
+    }));
+  };
+
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files ?? []).slice(0, 5);
+    setFiles(selected);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name:    form.name,
+          company: form.company,
+          email:   form.email,
+          phone:   form.countryCode + " " + form.phone,
+          product: form.products.join(", "),
+          message: form.message,
+        }),
+      });
+      if (!res.ok) throw new Error("Submission failed");
+      setSubmitted(true);
+    } catch {
+      setError("Failed to submit. Please try again or contact us directly.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setSubmitted(false);
+    setError("");
+    setForm({ email: "", countryCode: "+1", phone: "", name: "", company: "", products: [], message: "" });
+    setFiles([]);
+    onClose();
+  };
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={(e) => { if (e.target === overlayRef.current) handleClose(); }}
+    >
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 transition-colors z-10"
+          aria-label="Close"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="px-7 py-8">
+          {submitted ? (
+            <div className="text-center py-10">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-stone-900 mb-2">Inquiry Submitted!</h3>
+              <p className="text-stone-500 text-sm mb-6">Our representative will contact you soon.</p>
+              <button onClick={handleClose} className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm">
+                Close
+              </button>
+            </div>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-stone-900 text-center mb-1">Get a Free Quote</h2>
+              <p className="text-stone-500 text-sm text-center mb-7">Our representative will contact you soon.</p>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <span className="text-red-500 mr-0.5">*</span>Email
+                  </label>
+                  <div className="relative">
+                    <input
+                      required type="email" maxLength={100}
+                      placeholder="Please enter your email address"
+                      className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 text-xs">{form.email.length}/100</span>
+                  </div>
+                </div>
+
+                {/* Mobile/WhatsApp */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <span className="text-red-500 mr-0.5">*</span>Mobile / WhatsApp
+                  </label>
+                  <div className="flex gap-2">
+                    <select
+                      className="border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-orange-400 bg-white shrink-0"
+                      value={form.countryCode}
+                      onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
+                    >
+                      {countryCodes.map((c) => (
+                        <option key={c.code} value={c.code}>{c.label}</option>
+                      ))}
+                    </select>
+                    <div className="relative flex-1">
+                      <input
+                        required type="tel" maxLength={100}
+                        placeholder="Please enter your mobile phone"
+                        className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 text-xs">{form.phone.length}/100</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <span className="text-red-500 mr-0.5">*</span>Name
+                  </label>
+                  <div className="relative">
+                    <input
+                      required type="text" maxLength={100}
+                      placeholder="Please enter your name"
+                      className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 text-xs">{form.name.length}/100</span>
+                  </div>
+                </div>
+
+                {/* Company */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Company Name</label>
+                  <div className="relative">
+                    <input
+                      type="text" maxLength={200}
+                      placeholder="Please enter your company name"
+                      className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
+                      value={form.company}
+                      onChange={(e) => setForm({ ...form, company: e.target.value })}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 text-xs">{form.company.length}/200</span>
+                  </div>
+                </div>
+
+                {/* Products */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-2.5">
+                    <span className="text-red-500 mr-0.5">*</span>What products can I offer you
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {productOptions.map((p) => (
+                      <label key={p} className="flex items-center gap-2 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={form.products.includes(p)}
+                          onChange={() => toggleProduct(p)}
+                          className="w-4 h-4 rounded border-stone-300 accent-orange-500 cursor-pointer"
+                        />
+                        <span className="text-sm text-stone-600 group-hover:text-stone-900">{p}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* File upload */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    Upload product images / files
+                  </label>
+                  <div
+                    className="border-2 border-dashed border-stone-200 rounded-xl p-5 text-center cursor-pointer hover:border-orange-300 transition-colors"
+                    onClick={() => fileRef.current?.click()}
+                  >
+                    <svg className="w-7 h-7 text-stone-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    {files.length > 0 ? (
+                      <p className="text-sm text-[#C9A55A] font-medium">{files.length} file(s) selected</p>
+                    ) : (
+                      <p className="text-stone-400 text-xs leading-relaxed">
+                        Up to 5 files, max 30MB each<br />
+                        jpg, jpeg, png, pdf, doc, docx, xls, xlsx, csv, txt
+                      </p>
+                    )}
+                    <input
+                      ref={fileRef} type="file" multiple className="hidden"
+                      accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
+                      onChange={handleFiles}
+                    />
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <span className="text-red-500 mr-0.5">*</span>Message
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      required rows={4} maxLength={1000}
+                      placeholder="Which products are you interested in? and what is the quantity?"
+                      className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:border-orange-400 transition-colors"
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    />
+                    <span className="absolute right-3 bottom-3 text-stone-300 text-xs">{form.message.length}/1000</span>
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="text-red-500 text-xs text-center">{error}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-colors text-sm tracking-wide"
+                >
+                  {loading ? "Submitting..." : "Submit"}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

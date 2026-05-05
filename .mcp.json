@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gsc": {
+      "command": "npx",
+      "args": ["-y", "suganthan-gsc-mcp"],
+      "env": {
+        "GSC_AUTH_MODE": "oauth",
+        "GSC_OAUTH_SECRETS_FILE": "C:\\Users\\Administrator\\gsc-oauth-secrets.json",
+        "GSC_SITE_URL": "sc-domain:yourdomain.com"
+      }
+    }
+  }
+}

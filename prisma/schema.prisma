@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  price       Float
+  stock       Int      @default(0)
+  moq         Int      @default(50)
+  leadTime    String   @default("30-45 days")
+  status      String   @default("active")
+  image       String   @default("")
+  tags        String   @default("[]")
+  description String   @default("")
+  specs       String   @default("")
+  seoTitle    String   @default("")
+  seoDesc     String   @default("")
+  seoKeywords String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id        String      @id
+  customer  String
+  email     String
+  company   String
+  country   String
+  total     Float
+  currency  String      @default("USD")
+  status    String      @default("pending")
+  notes     String      @default("")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id          Int    @id @default(autoincrement())
+  orderId     String
+  productName String
+  category    String
+  qty         Int
+  unitPrice   Float
+  total       Float
+  status      String @default("pending")
+  notes       String @default("")
+  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  role      String   @default("Editor")
+  status    String   @default("active")
+  password  String   @default("")
+  lastLogin DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  title       String
+  category    String
+  excerpt     String    @default("")
+  content     String    @default("")
+  image       String    @default("")
+  status      String    @default("draft")
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Inquiry {
+  id        Int      @id @default(autoincrement())
+  name      String
+  company   String   @default("")
+  email     String
+  phone     String   @default("")
+  product   String   @default("")
+  message   String
+  status    String   @default("unread")
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

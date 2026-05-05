@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); Set-Location \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\kelikuli-website\"; npm run build 2>&1)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); Set-Location \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\kelikuli-website\"; npm run build 2>&1 | Select-String -Pattern \"error|Error|warning|Warning|✓|Route\" | Select-Object -First 30)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); Set-Location \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\kelikuli-website\"; npm run dev 2>&1)",
+      "Read(//c/Users/ADMINI~1/AppData/Local/Temp/claude/c--Users-Administrator-Desktop-kelikuli-website/cbf3460e-8091-4ce0-9376-f57be090070e/tasks/**)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); netstat -ano | findstr \":3000\")",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); Set-Location \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\kelikuli-website\"; npm run dev)",
+      "Read(//c/Users/Administrator/**)",
+      "Read(//c/Users/Administrator/Desktop/kelikuli-website/public/images/**)",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/inquiries)",
+      "Bash(curl -s -X POST http://localhost:3000/api/inquiries -H 'Content-Type: application/json' -d '{\"name\":\"Zhang Wei\",\"company\":\"Toy World Ltd\",\"email\":\"zhangwei@example.com\",\"phone\":\"+1 555-0100\",\"product\":\"Custom Resin Toys \\(OEM/ODM\\)\",\"message\":\"Hi, we are interested in ordering 5000 units of custom blind box figures. Please send us a quote and sample options.\"}' -w '\\\\nHTTP %{http_code}')",
+      "Bash(curl -s http://localhost:3000/api/inquiries)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'total={d[\\\\\"total\\\\\"]} unread={d[\\\\\"unread\\\\\"]}'\\)\")",
+      "Bash(curl -s -X POST http://localhost:3000/api/inquiries -H 'Content-Type: application/json' -d '{\"name\":\"Maria Santos\",\"company\":\"Giftcraft Mexico\",\"email\":\"maria@giftcraft.mx\",\"phone\":\"+52 55 1234 5678\",\"product\":\"Zakka Ornaments\",\"message\":\"We need seasonal zakka ornaments for Q4. MOQ and pricing please.\"}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/inquiries -H 'Content-Type: application/json' -d '{\"name\":\"David Kim\",\"company\":\"\",\"email\":\"david.kim@gmail.com\",\"phone\":\"\",\"product\":\"Blind Box Collectibles\",\"message\":\"Do you do small batch orders for blind box series? Interested in 500 units minimum.\"}')",
+      "Bash(curl -s -o /dev/null -w \"dashboard: %{http_code}\\\\n\" http://localhost:3000/admin/dashboard)",
+      "Bash(curl -s -o /dev/null -w \"analytics: %{http_code}\\\\n\" http://localhost:3000/admin/analytics)",
+      "Bash(curl -s -o /dev/null -w \"sources: %{http_code}\\\\n\" http://localhost:3000/admin/analytics/sources)",
+      "Bash(curl -s -X POST http://localhost:3000/api/admin/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@kelikuli.com\",\"password\":\"admin123\"}' -c /tmp/cookies.txt -w '%{http_code}' -o /dev/null)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"dashboard: %{http_code}\\\\n\" http://localhost:3000/admin/dashboard)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"analytics: %{http_code}\\\\n\" http://localhost:3000/admin/analytics)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"sources: %{http_code}\\\\n\" http://localhost:3000/admin/analytics/sources)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"keywords: %{http_code}\\\\n\" http://localhost:3000/admin/analytics/keywords)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"analytics/overview:  %{http_code}\\\\n\" http://localhost:3000/admin/analytics)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"analytics/sources:   %{http_code}\\\\n\" http://localhost:3000/admin/analytics/sources)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"analytics/keywords:  %{http_code}\\\\n\" http://localhost:3000/admin/analytics/keywords)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"analytics/pages:     %{http_code}\\\\n\" http://localhost:3000/admin/analytics/pages)",
+      "Bash(curl -s -b /tmp/cookies.txt -o /dev/null -w \"analytics/ip-logs:   %{http_code}\\\\n\" http://localhost:3000/admin/analytics/ip-logs)",
+      "Bash(node prisma/seed-posts.mjs)",
+      "Bash(sqlite3 /c/Users/Administrator/Desktop/kelikuli-website/prisma/dev.db \".tables\")",
+      "Bash(curl -s \"http://localhost:3000/_next/static/chunks/components_05cjlyd._.js\")",
+      "Bash(node -e \"const ts = require\\('typescript'\\); const src = require\\('fs'\\).readFileSync\\('data/products-data.ts','utf8'\\); const result = ts.transpileModule\\(src,{compilerOptions:{module:ts.ModuleKind.CommonJS}}\\); const mod = {}; const fn = new Function\\('module','exports',result.outputText\\); fn\\(mod,mod.exports\\); console.log\\('count:',mod.exports.allProducts.length\\)\")",
+      "Bash(Get-Process -Name \"node\")",
+      "Bash(Select-Object Id, CPU, WorkingSet, MainWindowTitle)",
+      "Bash(Format-Table)",
+      "Bash(curl -s \"http://localhost:3000/_next/static/chunks/app_products_page_tsx_0b0ki4m._.js\")",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/_next/static/chunks/__TRACKED_VAR__)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Administrator\\Desktop\\kelikuli-website\\app\\api\\inquiries",
+      "C:\\Users\\Administrator\\Desktop\\kelikuli-website\\app\\api\\posts",
+      "C:\\Users\\Administrator\\Desktop\\kelikuli-website\\app\\admin\\news\\[id]"
+    ]
+  }
+}

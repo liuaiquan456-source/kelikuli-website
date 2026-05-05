@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(curl -s -X POST http://localhost:3000/api/inquiries -H 'Content-Type: application/json' -d '{\"name\":\"Test\",\"email\":\"test@test.com\",\"message\":\"test\"}' -w '\\\\nHTTP %{http_code}')",
+      "Bash(curl -s -o /dev/null -w \"product page: %{http_code}\\\\n\" http://localhost:3000/products/1)",
+      "Bash(curl -s -X POST http://localhost:3000/api/inquiries -H 'Content-Type: application/json' -d '{\"name\":\"Test User\",\"company\":\"Test Co\",\"email\":\"test@example.com\",\"phone\":\"+1 555-0000\",\"product\":\"Blind Box\",\"message\":\"Test message\"}' -w '\\\\nHTTP %{http_code}')",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('TS:', p.devDependencies.typescript, 'Next:', p.dependencies.next\\)\")"
+    ]
+  }
+}
