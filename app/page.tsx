@@ -11,9 +11,9 @@ import StatsSection from "@/components/StatsSection";
 import ServiceSection from "@/components/ServiceSection";
 
 export const metadata: Metadata = {
-  title: "Custom Resin Toys & Figurines Manufacturer | Kelikuli",
+  title: "Resin Figurine Manufacturer — China OEM Factory",
   description:
-    "Kelikuli manufactures custom resin toys, figurines, blind box collectibles, Zakka ornaments, and seasonal resin crafts with OEM/ODM service since 2005.",
+    "Custom resin figurine manufacturer in China. OEM/ODM blind box toys, wholesale figurines, Zakka crafts — low MOQ, hand-painted, factory-direct since 2005.",
 };
 
 export default function HomePage() {

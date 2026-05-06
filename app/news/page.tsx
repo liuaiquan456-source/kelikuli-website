@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  title: "Resin Toy Industry News & Factory Updates",
+  description:
+    "Stay updated with Kelikuli's latest resin toy industry insights, new product launches, exhibition reviews, and factory news from Zhejiang, China.",
+};
 
 const categories = ["All", "Industry Insights", "New Product", "Exhibition Review", "Company News"];
 
@@ -37,7 +44,7 @@ export default async function NewsPage() {
             className="text-5xl md:text-6xl font-black text-white tracking-widest mb-4"
             style={{ fontFamily: "var(--font-playfair), Georgia, serif", letterSpacing: "0.15em" }}
           >
-            NEWS
+            Industry News
           </h1>
           <div className="flex items-center justify-center gap-2 text-sm text-stone-400">
             <Link href="/" className="hover:text-[#C9A55A] transition-colors">Home</Link>

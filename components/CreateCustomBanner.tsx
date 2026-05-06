@@ -65,15 +65,13 @@ export default function CreateCustomBanner() {
           {/* Left: text */}
           <div className="flex-1">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
-              Create Custom Resin Toys<br />with Kelikuli
+              Custom Resin Toy OEM Factory<br />— Your Vision, Our Craft
             </h2>
             <p className="text-stone-300 text-base leading-relaxed mb-4">
-              We help brands, wholesalers and creative studios turn original ideas
-              into high-quality resin figurines, blind box toys and decorative
-              collectibles — from concept to finished product.
+              As a trusted resin figurine supplier from China, we help brands, wholesalers and creative studios turn original ideas into high-quality resin figurines, blind box collectibles and Zakka decor — from concept to finished product.
             </p>
             <p className="text-stone-300 text-sm leading-relaxed mb-8">
-              With strong design experience and product development capability, Kelikuli can help customers create unique resin toy collections for different markets. We understand how to develop products that are visually attractive, commercially practical, and suitable for production.
+              Kelikuli is a custom resin toy manufacturer with low MOQ — supporting sample orders, small batches and large-volume wholesale resin figurines. Every piece is hand-painted by skilled craftsmen, making us the go-to resin toy OEM manufacturer for brands seeking quality and flexibility.
             </p>
             <button
               onClick={() => setInquiryOpen(true)}

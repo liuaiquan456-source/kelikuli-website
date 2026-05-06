@@ -150,7 +150,7 @@ export default function HeroCarousel() {
 
                     <h1 className="font-black leading-tight mb-2">
                       <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
-                        Resin Toys &amp; Crafts
+                        Resin Figurine
                       </span>
                       <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
                         Manufacturer
@@ -158,7 +158,7 @@ export default function HeroCarousel() {
                     </h1>
 
                     <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm mb-3 font-medium drop-shadow">
-                      Custom Resin Toys &nbsp;|&nbsp; Festival Decorations &nbsp;|&nbsp; OEM &amp; ODM Solutions
+                      Custom Resin Toy Factory &nbsp;|&nbsp; Blind Box Manufacturer &nbsp;|&nbsp; Wholesale Resin Figurines
                     </p>
 
                     {/* Feature icons */}
@@ -187,7 +187,7 @@ export default function HeroCarousel() {
 
                     {/* Bullets */}
                     <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-1 mb-4">
-                      {["Full Category Production", "Fast Lead Time", "Dedicated IP Support", "Eco-friendly"].map((item) => (
+                      {["OEM/ODM Custom Orders", "Hand-Painted Quality", "Low MOQ Accepted", "Eco-friendly"].map((item) => (
                         <div key={item} className="flex items-center gap-1.5 text-white/90">
                           <svg className="w-3 h-3 text-[#C9A55A] shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />

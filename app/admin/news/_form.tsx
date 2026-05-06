@@ -1,7 +1,7 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Save, Globe, FileText } from "lucide-react";
+import { Eye, EyeOff, Save, Globe, FileText, Upload, X, Loader2 } from "lucide-react";
 import { Button, Input, Textarea } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
 
@@ -66,6 +66,10 @@ export default function NewsForm({ postId, initial }: Props) {
   const [preview, setPreview]       = useState(false);
   const [saving, setSaving]         = useState(false);
   const [error, setError]           = useState("");
+  const [uploading, setUploading]   = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [dragOver, setDragOver]     = useState(false);
+  const fileInputRef                = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!slugManual && form.title) {
@@ -76,6 +80,36 @@ export default function NewsForm({ postId, initial }: Props) {
   const set = useCallback(<K extends keyof PostForm>(k: K, v: PostForm[K]) => {
     setForm((f) => ({ ...f, [k]: v }));
   }, []);
+
+  const uploadImage = useCallback(async (file: File) => {
+    setUploadError("");
+    setUploading(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: data });
+      const json = await res.json();
+      if (!res.ok) { setUploadError(json.error ?? "Upload failed"); return; }
+      set("image", json.url);
+    } catch {
+      setUploadError("Network error during upload");
+    } finally {
+      setUploading(false);
+    }
+  }, [set]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadImage(file);
+    e.target.value = "";
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadImage(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,19 +250,68 @@ export default function NewsForm({ postId, initial }: Props) {
               </select>
             </div>
 
-            <Input
-              label="Cover Image URL"
-              value={form.image}
-              onChange={(e) => set("image", e.target.value)}
-              placeholder="/images/news/photo.jpg"
-            />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-slate-600">Cover Image</label>
 
-            {form.image && (
-              <div className="rounded-lg overflow-hidden border border-slate-100 aspect-video bg-stone-100 relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={form.image} alt="cover" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = "none")} />
-              </div>
-            )}
+              {form.image ? (
+                <div className="relative rounded-lg overflow-hidden border border-slate-200 aspect-video bg-stone-100 group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={form.image} alt="cover" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex items-center gap-1.5 bg-white text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                    >
+                      <Upload className="w-3.5 h-3.5" /> Replace
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => set("image", "")}
+                      className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" /> Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={cn(
+                    "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors",
+                    dragOver ? "border-blue-400 bg-blue-50" : "border-slate-200 hover:border-blue-300 hover:bg-slate-50"
+                  )}
+                >
+                  {uploading ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="w-7 h-7 text-blue-500 animate-spin" />
+                      <p className="text-sm text-slate-500">Uploading...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="w-7 h-7 text-slate-300 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-slate-600">Click or drag image here</p>
+                      <p className="text-xs text-slate-400 mt-1">JPG · PNG · WEBP · Max 5 MB</p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {uploadError && (
+                <p className="text-xs text-red-500">{uploadError}</p>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
           </div>
 
           {/* Status info */}

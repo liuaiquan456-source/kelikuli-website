@@ -18,6 +18,12 @@ export default function ServiceSection() {
   return (
     <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-stone-900 text-center mb-3">
+          Your Resin Figurine Supplier from China — Full-Service OEM/ODM
+        </h2>
+        <p className="text-stone-500 text-sm text-center max-w-2xl mx-auto mb-10">
+          As a collectible figurine factory in Zhejiang, China, Kelikuli supports end-to-end orders from design consultation to global shipment. We specialize in wholesale resin Zakka decor figurines, seasonal resin figurine OEM for Christmas and Halloween, and custom blind box series — accepting resin figurine sample orders and bulk wholesale.
+        </p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Pre-sale service */}
           <div className="bg-stone-50 rounded-2xl p-6 border border-stone-100">

@@ -9,7 +9,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = await prisma.post.findUnique({ where: { slug } });
   if (!post) return {};
-  return { title: `${post.title} | Kelikuli News`, description: post.excerpt };
+  return {
+    title: post.title,
+    description: post.excerpt ?? `${post.title} — Read the full article on Kelikuli's resin toy factory blog.`,
+  };
 }
 
 function renderContent(content: string) {
