@@ -91,8 +91,8 @@ export default function NewsForm({ postId, initial }: Props) {
       const json = await res.json();
       if (!res.ok) { setUploadError(json.error ?? "Upload failed"); return; }
       set("image", json.url);
-    } catch {
-      setUploadError("Network error during upload");
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Network error during upload");
     } finally {
       setUploading(false);
     }
