@@ -164,6 +164,65 @@ All pieces are available in retail-ready packaging or as wholesale bulk supply.
     img: "/images/collections/col-5.png",
   },
   {
+    slug: "prince-series-resin-figurines-story-inspired",
+    title: "Prince Series Resin Figurines | Story-Inspired Resin Ornaments Manufacturer | Kelikuli",
+    date: "2025-05-07",
+    category: "New Product",
+    excerpt: "Discover Kelikuli's Prince Series resin figurines, inspired by a poetic fairy-tale world of stars, roses, foxes, and imagination. We offer OEM/ODM services for custom resin figurines and collectible decorations.",
+    img: "/images/collections/Little%20Prince%20Resin%20Ornament.png",
+    content: `
+Discover Kelikuli's Prince Series resin figurines, inspired by a poetic fairy-tale world of stars, roses, foxes, and imagination. We offer OEM/ODM services for custom resin figurines and collectible decorations.
+
+## A Story Inspired by Innocence and Imagination
+
+Every classic story carries emotions that can travel across time.
+
+Kelikuli's Prince Series Resin Figurines are inspired by a poetic fairy-tale world — a world filled with stars, friendship, curiosity, roses, and gentle moments of reflection.
+
+This collection is not only a group of resin ornaments, but also a visual storytelling series.
+
+Each figurine captures a different scene from the prince's imaginative journey: reading quietly, meeting a fox, standing beside a rose, sitting under the stars, or wandering through a dreamlike arch of flowers. Through these details, the series expresses a sense of innocence, warmth, and emotional connection.
+
+## Bringing Storytelling into Resin Craftsmanship
+
+As a resin figurine manufacturer, Kelikuli focuses on combining handmade craftsmanship with emotional design.
+
+In the Prince Series, every figure is carefully shaped with soft proportions, hand-painted details, and a matte finish that enhances the artistic and collectible feeling of the products.
+
+The vivid green outfit, golden hair, tiny roses, and playful fox companions all help build a complete themed collection.
+
+These details make the series suitable for gift shops, home decoration collections, blind box concepts, themed retail projects, and custom seasonal product development.
+
+## A Collection Full of Meaningful Details
+
+The charm of the Prince Series lies in its storytelling scenes.
+
+Instead of creating only one single figurine, Kelikuli developed a range of poses and emotional moments, allowing the series to feel richer and more alive.
+
+From the prince reading on a chair, to sitting beside a rose under a glass dome, to walking with the fox, each piece reflects a small emotional fragment. Together, they form a miniature world that feels warm, imaginative, and memorable.
+
+## Designed for Collectors, Brands, and Custom Projects
+
+This series is suitable not only for retail display, but also for customization and OEM/ODM cooperation.
+
+For customers looking for resin crafts with a story-based concept, Kelikuli can support design adjustment, color modification, packaging development, and collection expansion based on market needs.
+
+Whether for gift collections, decorative resin figurines, themed blind box development, or artistic licensed-style concepts, this type of product offers strong emotional appeal and visual recognition.
+
+## Kelikuli: Turning Creative Ideas into Collectible Resin Art
+
+Founded in 2005, Kelikuli has been committed to resin toy and craft manufacturing with a focus on quality, creativity, and customization.
+
+We believe that a good resin figurine is more than a product — it is a story made visible.
+
+Through the Prince Series, we hope to share a world where imagination stays alive, friendship feels precious, and simple moments become collectible memories.
+
+---
+
+Looking for custom resin figurines with story-driven design? [Contact us](/contact) to start your custom project.
+    `,
+  },
+  {
     slug: "exhibition-canton-fair-2024",
     title: "Kelikuli at Canton Fair 2024 — Booth Highlights",
     date: "2024-08-05",
