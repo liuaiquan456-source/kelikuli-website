@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const categories = ["All", "Industry Insights", "New Product", "Exhibition Review", "Company News"];
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function NewsPage() {
   const posts = await prisma.post.findMany({
