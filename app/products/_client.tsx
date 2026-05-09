@@ -1,8 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { allProducts } from "@/data/products-data";
+
+interface Product {
+  id: number; name: string; category: string; image: string;
+  price: number; status: string;
+}
 
 const categories = [
   {
@@ -151,8 +155,15 @@ export default function ProductsClient() {
   const [page, setPage] = useState(1);
   const [wished, setWished] = useState<number[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const filtered = allProducts.filter((p) => {
+  useEffect(() => {
+    fetch("/api/products?status=active")
+      .then((r) => r.json())
+      .then((data) => setProducts(Array.isArray(data) ? data : []));
+  }, []);
+
+  const filtered = products.filter((p) => {
     const matchCat = activeCategory === "Brand Products" || p.category === activeCategory;
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
@@ -355,7 +366,7 @@ export default function ProductsClient() {
                     <Link href={`/products/${product.id}`} className="block">
                       <div className="relative aspect-square bg-stone-50">
                         <Image
-                          src={product.img}
+                          src={product.image}
                           alt={product.name}
                           fill
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"

@@ -2,10 +2,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { allProducts } from "@/data/products-data";
 import InquiryModal from "@/components/InquiryModal";
 
-type ProductItem = (typeof allProducts)[number];
+interface Product {
+  id: number; name: string; category: string; image: string;
+  price: number; moq: number; leadTime: string; status: string;
+  description: string; tags: string[];
+}
 
 function getAttributes(name: string, category: string) {
   const n = name.toLowerCase();
@@ -53,7 +56,13 @@ function getAttributes(name: string, category: string) {
   ];
 }
 
-export default function ProductDetailClient({ product }: { product: ProductItem | null }) {
+export default function ProductDetailClient({
+  product,
+  related,
+}: {
+  product: Product | null;
+  related: Product[];
+}) {
   const [activeImg, setActiveImg] = useState(0);
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
@@ -68,11 +77,8 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
     );
   }
 
-  const images: string[] = (product as { images?: string[] }).images ?? [product.img];
+  const images: string[] = product.image ? [product.image] : [];
   const attrs = getAttributes(product.name, product.category);
-  const related = allProducts
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
 
   return (
     <>
@@ -93,18 +99,21 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
             <div className="flex flex-col lg:flex-row">
 
-              {/* ── Left: Image Gallery ─────────────────────────────── */}
+              {/* Image Gallery */}
               <div className="lg:w-[55%] p-5 flex flex-col gap-4">
-                {/* Main image */}
                 <div className="relative aspect-square bg-stone-50 rounded-xl overflow-hidden group">
-                  <Image
-                    src={images[activeImg]}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 55vw"
-                    className="object-contain transition-transform duration-300 group-hover:scale-105"
-                    priority
-                  />
+                  {images.length > 0 ? (
+                    <Image
+                      src={images[activeImg]}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 55vw"
+                      className="object-contain transition-transform duration-300 group-hover:scale-105"
+                      priority
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
+                  )}
                   {images.length > 1 && (
                     <>
                       <button
@@ -127,7 +136,6 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
                   )}
                 </div>
 
-                {/* Thumbnails */}
                 {images.length > 1 && (
                   <div className="flex gap-2 overflow-x-auto pb-1">
                     {images.map((src, i) => (
@@ -145,19 +153,16 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
                 )}
               </div>
 
-              {/* ── Right: Product Info ──────────────────────────────── */}
+              {/* Product Info */}
               <div className="lg:w-[45%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100">
-                {/* Category badge */}
                 <span className="inline-flex items-center gap-1.5 w-fit bg-[#F5EDD8] text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
 
-                {/* Product name */}
                 <h1 className="text-lg sm:text-xl font-bold text-stone-900 leading-snug mb-4">
                   {product.name}
                 </h1>
 
-                {/* Supplier */}
                 <div className="flex items-center gap-2 mb-5 pb-5 border-b border-stone-100">
                   <div className="w-7 h-7 rounded-full bg-[#C9A55A]/15 flex items-center justify-center shrink-0">
                     <svg className="w-4 h-4 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +175,6 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
                   </div>
                 </div>
 
-                {/* Key Attributes */}
                 <div className="mb-6">
                   <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">Key Attributes</h2>
                   <div className="rounded-xl border border-stone-100 overflow-hidden">
@@ -183,7 +187,6 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
                   </div>
                 </div>
 
-                {/* Shipping note */}
                 <div className="bg-[#F5EDD8]/60 rounded-xl px-4 py-3 mb-6 text-xs text-stone-600 flex items-start gap-2">
                   <svg className="w-4 h-4 text-[#C9A55A] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
@@ -191,7 +194,6 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
                   <span>Shipping negotiated per order. <strong>OEM/ODM custom orders welcome.</strong></span>
                 </div>
 
-                {/* Action buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 mt-auto">
                   <button
                     onClick={() => setInquiryOpen(true)}
@@ -227,13 +229,17 @@ export default function ProductDetailClient({ product }: { product: ProductItem 
                     className="group bg-white rounded-2xl border border-stone-100 overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="relative aspect-square bg-stone-50">
-                      <Image
-                        src={p.img}
-                        alt={p.name}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 25vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                      {p.image ? (
+                        <Image
+                          src={p.image}
+                          alt={p.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-stone-300 text-xs">No image</div>
+                      )}
                     </div>
                     <div className="p-3">
                       <p className="text-stone-700 text-xs font-medium line-clamp-2 leading-snug">{p.name}</p>
