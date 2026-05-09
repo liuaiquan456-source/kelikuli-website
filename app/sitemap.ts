@@ -13,6 +13,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/news`, lastModified: new Date(), changeFrequency: "daily", priority: 0.7 },
   ];
 
+  let productRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const products = await prisma.product.findMany({
+      where: { status: "active" },
+      select: { id: true, updatedAt: true },
+    });
+    productRoutes = products.map((p) => ({
+      url: `${BASE_URL}/products/${p.id}`,
+      lastModified: p.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
+  } catch {
+    // DB unavailable at build time — skip dynamic routes
+  }
+
   let newsRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await prisma.post.findMany({
@@ -29,5 +45,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB unavailable at build time — skip dynamic routes
   }
 
-  return [...staticRoutes, ...newsRoutes];
+  return [...staticRoutes, ...productRoutes, ...newsRoutes];
 }
