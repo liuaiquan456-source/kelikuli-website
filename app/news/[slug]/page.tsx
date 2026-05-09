@@ -33,10 +33,20 @@ function renderContent(content: string) {
       elements.push(<li key={key++} className="text-stone-600 leading-relaxed ml-4 list-decimal">{trimmed.replace(/^\d+\.\s*/, "")}</li>);
     } else if (trimmed === "---") {
       elements.push(<hr key={key++} className="border-stone-200 my-6" />);
-    } else {
-      const withLinks = trimmed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) =>
-        `<a href="${href}" class="text-[#C9A55A] hover:underline font-medium">${text}</a>`
+    } else if (/^!\[([^\]]*)\]\(([^)]+)\)$/.test(trimmed)) {
+      const m = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (m) elements.push(
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={key++} src={m[2]} alt={m[1]} className="max-w-full rounded-xl my-4 mx-auto block" />
       );
+    } else {
+      const withLinks = trimmed
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) =>
+          `<img src="${src}" alt="${alt}" class="max-w-full rounded-xl my-4 mx-auto block" />`
+        )
+        .replace(/(?<!<img[^>]*)(?<!!)\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) =>
+          `<a href="${href}" class="text-[#C9A55A] hover:underline font-medium">${text}</a>`
+        );
       elements.push(
         <p key={key++} className="text-stone-600 leading-relaxed mb-2"
           dangerouslySetInnerHTML={{ __html: withLinks }} />
