@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Save, Globe, FileText, Upload, X, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Save, Globe, FileText, Upload, X, Loader2, ImagePlus } from "lucide-react";
 import { Button, Input, Textarea } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
 
@@ -38,6 +38,9 @@ function renderPreview(content: string) {
       elements.push(<li key={key++} className="text-stone-600 ml-4 list-decimal text-sm">{t.replace(/^\d+\.\s*/, "")}</li>);
     } else if (t === "---") {
       elements.push(<hr key={key++} className="border-stone-200 my-4" />);
+    } else if (/^!\[([^\]]*)\]\(([^)]+)\)$/.test(t)) {
+      const m = t.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (m) elements.push(<img key={key++} src={m[2]} alt={m[1]} className="max-w-full rounded-lg my-3" />);
     } else {
       const withLinks = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) =>
         `<a href="${href}" class="text-[#C9A55A] underline">${txt}</a>`
@@ -69,7 +72,10 @@ export default function NewsForm({ postId, initial }: Props) {
   const [uploading, setUploading]   = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [dragOver, setDragOver]     = useState(false);
+  const [contentUploading, setContentUploading] = useState(false);
   const fileInputRef                = useRef<HTMLInputElement>(null);
+  const contentFileRef              = useRef<HTMLInputElement>(null);
+  const contentRef                  = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!slugManual && form.title) {
@@ -101,6 +107,38 @@ export default function NewsForm({ postId, initial }: Props) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) uploadImage(file);
+    e.target.value = "";
+  };
+
+  const uploadContentImage = useCallback(async (file: File) => {
+    setContentUploading(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: data });
+      const json = await res.json();
+      if (!res.ok) return;
+      const url = json.url as string;
+      const textarea = contentRef.current;
+      const imageMarkdown = `\n![image](${url})\n`;
+      if (textarea) {
+        const start = textarea.selectionStart ?? 0;
+        const end   = textarea.selectionEnd   ?? 0;
+        setForm((f) => ({
+          ...f,
+          content: f.content.substring(0, start) + imageMarkdown + f.content.substring(end),
+        }));
+      } else {
+        setForm((f) => ({ ...f, content: f.content + imageMarkdown }));
+      }
+    } finally {
+      setContentUploading(false);
+    }
+  }, []);
+
+  const handleContentFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadContentImage(file);
     e.target.value = "";
   };
 
@@ -218,7 +256,21 @@ export default function NewsForm({ postId, initial }: Props) {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
               <span className="text-xs font-medium text-slate-600">Content</span>
-              <span className="text-[10px] text-slate-400">Markdown: ## Heading · **bold** · - list · [link](url) · ---</span>
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] text-slate-400">## Heading · **bold** · - list · [link](url)</span>
+                <button
+                  type="button"
+                  onClick={() => contentFileRef.current?.click()}
+                  disabled={contentUploading}
+                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50"
+                >
+                  {contentUploading
+                    ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    : <ImagePlus className="w-3.5 h-3.5" />}
+                  Insert Image
+                </button>
+                <input ref={contentFileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handleContentFileChange} />
+              </div>
             </div>
             {preview ? (
               <div className="p-6 min-h-[400px] prose-sm max-w-none">
@@ -226,6 +278,7 @@ export default function NewsForm({ postId, initial }: Props) {
               </div>
             ) : (
               <textarea
+                ref={contentRef}
                 rows={20}
                 value={form.content}
                 onChange={(e) => set("content", e.target.value)}
