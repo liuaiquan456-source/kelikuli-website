@@ -9,6 +9,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kelikuli.com"),
   title: {
     default: "Custom Resin Toys & Figurines Manufacturer | Kelikuli",
     template: "%s | Kelikuli",
