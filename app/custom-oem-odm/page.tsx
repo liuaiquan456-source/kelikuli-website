@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import InquiryButton from "@/components/InquiryButton";
 import Breadcrumb from "@/components/Breadcrumb";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Custom OEM/ODM Resin Figurines & Toys Manufacturer",
@@ -64,15 +65,13 @@ const steps = [
   { num: "6", label: "Packaging &\nDelivery",     img: "/images/process/process-3.png" },
 ];
 
-const highlights = [
-  { label: "Cute Animals Series",       img: "/images/collections/col-7.png" },
-  { label: "Lovely Little Pigs Series", img: "/images/collections/col-2.png" },
-  { label: "Relaxing Capybara Series",  img: "/images/collections/col-3.png" },
-  { label: "Sweet Bear Series",         img: "/images/collections/col-4.png" },
-  { label: "Mixed Cute Series",         img: "/images/collections/col-8.png" },
-];
-
-export default function CustomServicePage() {
+export default async function CustomServicePage() {
+  const highlights = await prisma.product.findMany({
+    where: { status: "active", image: { not: "" } },
+    orderBy: { id: "desc" },
+    take: 8,
+    select: { id: true, name: true, image: true },
+  }).catch(() => []);
   return (
     <div className="bg-white">
 
@@ -194,12 +193,12 @@ export default function CustomServicePage() {
           <h2 className="text-2xl font-black text-stone-900 text-center mb-8">Resin Toy Series Highlights</h2>
           <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
             {highlights.map((h) => (
-              <div key={h.label} className="flex-none w-44 snap-start">
+              <Link key={h.id} href={`/products/${h.id}`} className="flex-none w-44 snap-start group">
                 <div className="relative aspect-square rounded-xl overflow-hidden border border-stone-200 bg-stone-100">
-                  <Image src={h.img} alt={h.label} fill className="object-cover hover:scale-105 transition-transform duration-300" sizes="176px" />
+                  <Image src={h.image} alt={h.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="176px" />
                 </div>
-                <p className="text-stone-700 text-xs font-semibold text-center mt-2">{h.label}</p>
-              </div>
+                <p className="text-stone-700 text-xs font-semibold text-center mt-2 line-clamp-2 group-hover:text-[#C9A55A] transition-colors">{h.name}</p>
+              </Link>
             ))}
           </div>
         </div>
