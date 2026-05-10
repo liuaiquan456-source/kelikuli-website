@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Resin Toy Industry News & Factory Updates",
   description:
     "Stay updated with Kelikuli's latest resin toy industry insights, new product launches, exhibition reviews, and factory news from Zhejiang, China.",
+  alternates: { canonical: "https://kelikuli.com/news" },
 };
 
 const categories = ["All", "Industry Insights", "New Product", "Exhibition Review", "Company News"];

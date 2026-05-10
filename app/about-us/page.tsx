@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export const metadata: Metadata = {
   title: "About Us — Kelikuli Resin Toys Manufacturer",
@@ -23,6 +24,10 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
+
+      <div className="max-w-7xl mx-auto px-6 py-3">
+        <Breadcrumb items={[{ label: "About Us" }]} />
+      </div>
 
       {/* Story */}
       <section className="py-16 bg-white">

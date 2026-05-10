@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "Resin Figurine Manufacturer — China OEM Factory",
   description:
     "Custom resin figurine manufacturer in China. OEM/ODM blind box toys, wholesale figurines, Zakka crafts — low MOQ, hand-painted, factory-direct since 2005.",
+  alternates: { canonical: "https://kelikuli.com" },
 };
 
 export default function HomePage() {

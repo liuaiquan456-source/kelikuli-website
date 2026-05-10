@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", product: "", message: "" });
@@ -41,6 +42,10 @@ export default function ContactForm() {
           </p>
         </div>
       </section>
+
+      <div className="max-w-7xl mx-auto px-6 py-3">
+        <Breadcrumb items={[{ label: "Contact" }]} />
+      </div>
 
       <section className="py-16 bg-stone-50">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-10">

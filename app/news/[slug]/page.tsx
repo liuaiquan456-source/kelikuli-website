@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -9,9 +10,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = await prisma.post.findUnique({ where: { slug } });
   if (!post) return {};
+  const url = `https://kelikuli.com/news/${slug}`;
+  const description = post.excerpt ?? `${post.title} — Read the full article on Kelikuli's resin toy factory blog.`;
   return {
     title: post.title,
-    description: post.excerpt ?? `${post.title} — Read the full article on Kelikuli's resin toy factory blog.`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: post.title,
+      description,
+      publishedTime: post.publishedAt?.toISOString(),
+      images: post.image ? [{ url: post.image, alt: post.title }] : [],
+    },
   };
 }
 
@@ -70,8 +82,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   const dateStr = post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 10) : "";
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt ?? post.title,
+    image: post.image ?? undefined,
+    datePublished: post.publishedAt?.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    author: { "@type": "Organization", name: "Kelikuli" },
+    publisher: {
+      "@type": "Organization",
+      name: "Kelikuli",
+      logo: { "@type": "ImageObject", url: "https://kelikuli.com/images/kelikulilogo.png" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://kelikuli.com/news/${slug}` },
+  };
+
   return (
     <div className="bg-[#F8F4ED] min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       {/* Hero image */}
       <div className="relative w-full aspect-[3/1] bg-stone-200">
         {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority />}
@@ -86,12 +119,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       </div>
 
       {/* Breadcrumb */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-2 text-sm text-stone-400">
-        <Link href="/" className="hover:text-[#C9A55A]">Home</Link>
-        <span>/</span>
-        <Link href="/news" className="hover:text-[#C9A55A]">News</Link>
-        <span>/</span>
-        <span className="text-stone-600 truncate">{post.title}</span>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+        <Breadcrumb items={[{ label: "News", href: "/news" }, { label: post.title }]} />
       </div>
 
       {/* Content */}

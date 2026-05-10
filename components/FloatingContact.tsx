@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function FloatingContact() {
   const [wechatOpen, setWechatOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function FloatingContact() {
       <div className="fixed right-4 bottom-24 z-40 flex flex-col gap-3">
         {/* WhatsApp */}
         <a
-          href="https://wa.me/8613957959550"
+          href="https://wa.me/8613505893913"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
@@ -49,9 +50,15 @@ export default function FloatingContact() {
               </svg>
             </div>
             <h3 className="text-lg font-bold text-stone-900 mb-1">WeChat</h3>
-            <p className="text-stone-500 text-sm mb-4">Search or scan to add us on WeChat</p>
-            <div className="bg-stone-50 border border-stone-100 rounded-xl py-3 px-4 mb-5">
-              <p className="text-xl font-black text-stone-900 tracking-wide">kelikuli</p>
+            <p className="text-stone-500 text-sm mb-3">Scan to add us on WeChat</p>
+            <div className="flex justify-center mb-3">
+              <Image
+                src="/images/wechat-qr.png"
+                alt="Kelikuli WeChat QR Code"
+                width={180}
+                height={180}
+                className="rounded-xl border border-stone-100"
+              />
             </div>
             <button
               onClick={() => setWechatOpen(false)}

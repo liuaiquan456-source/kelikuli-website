@@ -1,13 +1,18 @@
-﻿import Link from "next/link";
+import Link from "next/link";
+import Image from "next/image";
+import { prisma } from "@/lib/prisma";
 
-const featured = [
-  { label: "Blind Box Series", href: "/products/blind-box", color: "from-violet-100 to-purple-50" },
-  { label: "Lucky Cat Series", href: "/products/lucky-cat", color: "from-amber-100 to-yellow-50" },
-  { label: "Character Series", href: "/products/resin-figurines", color: "from-pink-100 to-rose-50" },
-  { label: "Astronaut Series", href: "/products/custom-resin-toys", color: "from-sky-100 to-blue-50" },
-  { label: "Seasonal Series", href: "/products/seasonal-resin-crafts", color: "from-red-100 to-rose-50" },
-  { label: "Decorative Series", href: "/products/zakka-series", color: "from-green-100 to-emerald-50" },
-];
+const categoryColors: Record<string, string> = {
+  "Astronaut Series":  "from-sky-100 to-blue-50",
+  "Christmas Series":  "from-red-100 to-rose-50",
+  "Figurines":         "from-pink-100 to-rose-50",
+  "Garden Series":     "from-green-100 to-emerald-50",
+  "Halloween Series":  "from-orange-100 to-amber-50",
+  "Lucky Cat":         "from-amber-100 to-yellow-50",
+  "Piggy Bank":        "from-violet-100 to-purple-50",
+  "Prince Series":     "from-indigo-100 to-blue-50",
+  "Resin Crafts":      "from-teal-100 to-cyan-50",
+};
 
 const bottomBadges = [
   {
@@ -49,7 +54,53 @@ const bottomBadges = [
   },
 ];
 
-export default function FeaturedCollections() {
+// Priority order for featured display
+const featuredOrder = [
+  "Figurines",
+  "Astronaut Series",
+  "Lucky Cat",
+  "Christmas Series",
+  "Garden Series",
+  "Halloween Series",
+  "Piggy Bank",
+  "Prince Series",
+  "Resin Crafts",
+];
+
+export default async function FeaturedCollections() {
+  // Get one representative product (with image) per category
+  let categoryProducts: { category: string; image: string | null; id: number }[] = [];
+  try {
+    const rows = await prisma.product.findMany({
+      where: { status: "active", image: { not: "" } },
+      select: { id: true, category: true, image: true },
+      orderBy: { id: "asc" },
+    });
+
+    const seen = new Set<string>();
+    for (const row of rows) {
+      if (!seen.has(row.category) && row.image) {
+        seen.add(row.category);
+        categoryProducts.push(row);
+      }
+    }
+
+    // Sort by featured priority, then alphabetically
+    categoryProducts.sort((a, b) => {
+      const ai = featuredOrder.indexOf(a.category);
+      const bi = featuredOrder.indexOf(b.category);
+      if (ai === -1 && bi === -1) return a.category.localeCompare(b.category);
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+
+    // Take top 6
+    categoryProducts = categoryProducts.slice(0, 6);
+  } catch {
+    // DB unavailable — render nothing
+  }
+
   return (
     <section className="py-14 bg-stone-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -70,25 +121,39 @@ export default function FeaturedCollections() {
         </div>
 
         {/* Product grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-          {featured.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="group flex flex-col"
-            >
-              <div className={`aspect-square bg-gradient-to-br ${item.color} rounded-2xl border border-stone-200 flex flex-col items-center justify-center mb-2.5 group-hover:shadow-md transition-shadow`}>
-                <svg className="w-8 h-8 text-stone-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                </svg>
-                <span className="text-stone-400 text-[9px]">Product photo</span>
-              </div>
-              <p className="text-stone-700 text-xs font-medium text-center group-hover:text-[#C9A55A] transition-colors">
-                {item.label}
-              </p>
-            </Link>
-          ))}
-        </div>
+        {categoryProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+            {categoryProducts.map((item) => {
+              const color = categoryColors[item.category] ?? "from-stone-100 to-stone-50";
+              return (
+                <Link
+                  key={item.category}
+                  href={`/products?category=${encodeURIComponent(item.category)}`}
+                  className="group flex flex-col"
+                >
+                  <div className={`aspect-square bg-gradient-to-br ${color} rounded-2xl border border-stone-200 overflow-hidden mb-2.5 group-hover:shadow-md transition-shadow relative`}>
+                    {item.image && (
+                      <Image
+                        src={item.image}
+                        alt={item.category}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"
+                      />
+                    )}
+                  </div>
+                  <p className="text-stone-700 text-xs font-medium text-center group-hover:text-[#C9A55A] transition-colors">
+                    {item.category}
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mb-10 text-center text-stone-400 text-sm py-8">
+            Products loading...
+          </div>
+        )}
 
         {/* Bottom badges */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 border-t border-stone-200 pt-8">

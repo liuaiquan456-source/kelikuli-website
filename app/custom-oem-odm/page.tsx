@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import InquiryModal from "@/components/InquiryModal";
 import InquiryButton from "@/components/InquiryButton";
+import Breadcrumb from "@/components/Breadcrumb";
+
+export const metadata: Metadata = {
+  title: "Custom OEM/ODM Resin Figurines & Toys Manufacturer",
+  description:
+    "Custom OEM/ODM resin toy manufacturing from Kelikuli — blind box figurines, collectible resin crafts, Zakka ornaments. Low MOQ, AI-assisted design, hand-painted, factory-direct from Zhejiang China.",
+  alternates: { canonical: "https://kelikuli.com/custom-oem-odm" },
+};
 
 const features = [
   {
@@ -147,6 +155,10 @@ export default function CustomServicePage() {
         </div>
       </section>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+        <Breadcrumb items={[{ label: "Custom OEM/ODM" }]} />
+      </div>
+
       {/* ── Manufacturing process ── */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -230,7 +242,7 @@ export default function CustomServicePage() {
             </div>
             <div className="flex-1 w-full max-w-md">
               <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
-                <Image src="/images/process/process-2.png" alt="Handcrafted resin toy painting" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 440px" />
+                <Image src="/images/handcrafted-excellence.png" alt="Handcrafted resin toy sculpting" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 440px" />
               </div>
             </div>
           </div>

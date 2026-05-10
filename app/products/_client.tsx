@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Breadcrumb from "@/components/Breadcrumb";
 
 interface Product {
   id: number; name: string; category: string; image: string;
@@ -150,7 +151,12 @@ const categories = [
 const ITEMS_PER_PAGE = 24;
 
 export default function ProductsClient() {
-  const [activeCategory, setActiveCategory] = useState("Brand Products");
+  const searchParams = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search)
+    : null;
+  const initialCategory = searchParams?.get("category") ?? "Brand Products";
+
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [wished, setWished] = useState<number[]>([]);
@@ -202,10 +208,8 @@ export default function ProductsClient() {
           <h1 className="text-5xl md:text-6xl font-black text-white tracking-widest mb-4" style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em" }}>
             Wholesale Resin Figurines &amp; Collectibles
           </h1>
-          <div className="flex items-center justify-center gap-2 text-sm text-stone-400 mb-2">
-            <Link href="/" className="hover:text-[#C9A55A] transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-stone-300">Products</span>
+          <div className="flex justify-center mb-2">
+            <Breadcrumb items={[{ label: "Products", href: "/products" }]} />
           </div>
         </div>
       </section>
