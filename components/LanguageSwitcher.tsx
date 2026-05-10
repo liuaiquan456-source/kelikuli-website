@@ -9,6 +9,26 @@ const languages = [
   { code: "fr",    label: "Français", },
 ];
 
+// Map browser language prefix → supported Google Translate code
+const browserLangMap: Record<string, string> = {
+  "zh": "zh-CN",
+  "ar": "ar",
+  "es": "es",
+  "fr": "fr",
+  "en": "en",
+};
+
+function getCookie(name: string) {
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+  return match ? match[2] : null;
+}
+
+function detectBrowserLanguage(): string {
+  const lang = (navigator.language || "en").toLowerCase();
+  const prefix = lang.split("-")[0];
+  return browserLangMap[prefix] ?? "en";
+}
+
 declare global {
   interface Window {
     googleTranslateElementInit: () => void;
@@ -39,6 +59,35 @@ export default function LanguageSwitcher() {
         { pageLanguage: "en", includedLanguages: "zh-CN,ar,es,fr", autoDisplay: false },
         "google_translate_element"
       );
+
+      // Auto-detect language only on first visit (no existing preference)
+      const alreadySet = getCookie("googtrans") || getCookie("lang_user_set");
+      if (!alreadySet) {
+        const detected = detectBrowserLanguage();
+        if (detected !== "en") {
+          setCookie("googtrans", `/en/${detected}`);
+          setCurrent(detected);
+          // Wait for Google Translate select element to appear then trigger it
+          const trySelect = (attempts = 0) => {
+            const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+            if (select) {
+              select.value = detected;
+              select.dispatchEvent(new Event("change"));
+            } else if (attempts < 15) {
+              setTimeout(() => trySelect(attempts + 1), 400);
+            }
+          };
+          trySelect();
+        }
+      } else {
+        // Restore displayed language indicator from existing cookie
+        const existing = getCookie("googtrans");
+        if (existing) {
+          const parts = existing.split("/");
+          const code = parts[parts.length - 1];
+          if (code && code !== "en") setCurrent(code);
+        }
+      }
     };
 
     if (!document.getElementById("google-translate-script")) {
@@ -59,6 +108,8 @@ export default function LanguageSwitcher() {
   const translate = (code: string) => {
     setCurrent(code);
     setOpen(false);
+    // Mark that user explicitly chose a language — skip auto-detect next time
+    setCookie("lang_user_set", "1");
 
     if (code === "en") {
       deleteCookie("googtrans");
