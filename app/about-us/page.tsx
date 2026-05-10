@@ -55,8 +55,8 @@ export default function AboutPage() {
           </div>
           <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-stone-200 relative">
             <Image
-              src="/images/process/resin toys factory1.png"
-              alt="Kelikuli resin toy factory"
+              src="/images/factory-workshop.jpg"
+              alt="Kelikuli resin toy factory workshop"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
