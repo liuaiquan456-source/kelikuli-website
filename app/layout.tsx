@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "Kelikuli",
-    images: [{ url: "/images/kelikulilogo.png", width: 1200, height: 630, alt: "Kelikuli Resin Toy Factory" }],
+    images: [{ url: "https://kelikuli.com/images/kelikulilogo.png", width: 1200, height: 630, alt: "Kelikuli Resin Toy Factory" }],
   },
 };
 
@@ -42,7 +42,7 @@ const organizationSchema = {
   foundingDate: "2005",
   description:
     "Kelikuli is a China-based resin toy and figurine factory offering OEM/ODM custom manufacturing for wholesale brands worldwide since 2005.",
-  logo: "/images/kelikulilogo.png",
+  logo: "https://kelikuli.com/images/kelikulilogo.png",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Yiwu",

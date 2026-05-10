@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "About Us — Kelikuli Resin Toys Manufacturer",
   description:
     "Learn about Kelikuli — a professional resin toy and figurine factory established in 2005, offering OEM/ODM custom manufacturing for global brands.",
+  alternates: { canonical: "https://kelikuli.com/about-us" },
 };
 
 export default function AboutPage() {
