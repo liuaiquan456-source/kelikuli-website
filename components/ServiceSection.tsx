@@ -45,7 +45,7 @@ export default function ServiceSection() {
           {/* Center image */}
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-stone-200">
             <Image
-              src="/images/stats-bg.webp"
+              src="/images/office-showroom.png"
               alt="Kelikuli factory and showroom"
               fill
               sizes="(max-width: 1024px) 100vw, 33vw"

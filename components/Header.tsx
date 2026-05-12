@@ -89,9 +89,15 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile: language + hamburger */}
-          <div className="lg:hidden flex items-center gap-1">
+          {/* Mobile: language + inquiry + hamburger */}
+          <div className="lg:hidden flex items-center gap-2">
             <LanguageSwitcher />
+            <button
+              onClick={() => setInquiryOpen(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-full transition-colors shadow-sm"
+            >
+              Inquiry Now
+            </button>
             <button
               className="p-2 text-stone-300 rounded-lg hover:bg-white/10 transition-colors"
               onClick={() => setMobileOpen(true)}
