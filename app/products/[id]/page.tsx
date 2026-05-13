@@ -17,7 +17,7 @@ async function getRelated(category: string, excludeId: number) {
   try {
     const list = await prisma.product.findMany({
       where: { category, status: "active", NOT: { id: excludeId } },
-      take: 4,
+      take: 8,
     });
     return list.map((p) => ({ ...p, tags: JSON.parse(p.tags) as string[] }));
   } catch {
