@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumb";
 
 interface Product {
@@ -368,14 +367,16 @@ export default function ProductsClient() {
                 {paged.map((product) => (
                   <div key={product.id} className="group bg-white rounded-2xl border border-stone-100 overflow-hidden hover:shadow-md transition-shadow relative">
                     <Link href={`/products/${product.id}`} className="block">
-                      <div className="relative aspect-square bg-stone-50">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                      <div className="relative aspect-square bg-stone-50 overflow-hidden">
+                        {product.image && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                          />
+                        )}
                       </div>
                       <div className="p-3">
                         <p className="text-stone-700 text-xs font-medium line-clamp-2 leading-snug">
