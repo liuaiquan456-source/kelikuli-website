@@ -26,7 +26,7 @@ interface FormState {
   mainImage: string | null; gallery: string[];
 }
 
-interface FormErrors { name?: string; price?: string; stock?: string; description?: string; }
+interface FormErrors { name?: string; description?: string; }
 
 function productToForm(p: Product): FormState {
   return {
@@ -108,8 +108,6 @@ export default function AddProductForm({ product }: { product?: Product }) {
   const validate = (): boolean => {
     const e: FormErrors = {};
     if (!form.name.trim()) e.name = "Product name is required";
-    if (!form.price || parseFloat(form.price) <= 0) e.price = "Valid price is required";
-    if (!form.stock || parseInt(form.stock) < 0) e.stock = "Valid stock quantity is required";
     if (form.description.length > 0 && form.description.length < 10) e.description = "Description too short";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -144,8 +142,6 @@ export default function AddProductForm({ product }: { product?: Product }) {
   const checklistItems = [
     { label: "Product name",  done: !!form.name },
     { label: "Category set",  done: !!form.category },
-    { label: "Price entered", done: !!form.price && parseFloat(form.price) > 0 },
-    { label: "Stock entered", done: !!form.stock },
     { label: "MOQ set",       done: !!form.moq },
     { label: "Main image",    done: !!form.mainImage },
     { label: "Description",   done: form.description.length > 20 },
@@ -178,16 +174,6 @@ export default function AddProductForm({ product }: { product?: Product }) {
               />
             </div>
             <Select label="Category *" options={catOptions} value={form.category} onChange={(e) => set("category", e.target.value)} />
-            <div className="grid grid-cols-2 gap-4">
-              <Input label="Price (USD) *" type="number" placeholder="0.00" value={form.price}
-                onChange={(e) => { set("price", e.target.value); if (errors.price) setErrors((er) => ({ ...er, price: undefined })); }}
-                error={errors.price}
-              />
-              <Input label="Stock Quantity *" type="number" placeholder="0" value={form.stock}
-                onChange={(e) => { set("stock", e.target.value); if (errors.stock) setErrors((er) => ({ ...er, stock: undefined })); }}
-                error={errors.stock}
-              />
-            </div>
             <div className="grid grid-cols-2 gap-4">
               <Input label="MOQ (Min Order Qty)" type="number" placeholder="50" value={form.moq}
                 onChange={(e) => set("moq", e.target.value)}
@@ -245,7 +231,8 @@ export default function AddProductForm({ product }: { product?: Product }) {
             >
               {form.mainImage ? (
                 <div className="relative w-40 h-40 mx-auto rounded-lg overflow-hidden">
-                  <Image src={form.mainImage} alt="Main" fill className="object-cover" sizes="160px" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={form.mainImage} alt="Main" className="w-full h-full object-cover" />
                   <button
                     onClick={(e) => { e.stopPropagation(); set("mainImage", null); }}
                     className="absolute top-2 right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white"
@@ -381,7 +368,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
           <CardBody className="p-0">
             <div className="aspect-square bg-slate-50 overflow-hidden relative">
               {form.mainImage
-                ? <Image src={form.mainImage} alt="preview" fill className="object-contain" sizes="288px" />
+                ? <img src={form.mainImage} alt="preview" className="w-full h-full object-contain" />
                 : <div className="w-full h-full flex items-center justify-center text-slate-300">
                     <Upload className="w-10 h-10" />
                   </div>
@@ -392,10 +379,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
               <h3 className="text-sm font-bold text-slate-800 mt-1 leading-snug min-h-[2.5rem]">
                 {form.name || <span className="text-slate-300">Product name will appear here</span>}
               </h3>
-              <div className="flex items-center justify-between mt-3">
-                <span className="text-lg font-black text-slate-900">
-                  {form.price ? `$${parseFloat(form.price).toFixed(2)}` : <span className="text-slate-300 text-sm">Price not set</span>}
-                </span>
+              <div className="flex items-center justify-end mt-3">
                 <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium",
                   form.status ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"
                 )}>
@@ -403,11 +387,6 @@ export default function AddProductForm({ product }: { product?: Product }) {
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1 mt-2">
-                {form.stock && (
-                  <p className="text-xs text-slate-400">
-                    Stock: <span className={parseInt(form.stock) === 0 ? "text-red-500 font-semibold" : "text-slate-600"}>{form.stock}</span>
-                  </p>
-                )}
                 {form.moq && <p className="text-xs text-slate-400">MOQ: <span className="text-slate-600">{form.moq}pcs</span></p>}
                 {form.leadTime && <p className="text-xs text-slate-400 col-span-2">Lead: <span className="text-slate-600">{form.leadTime}</span></p>}
               </div>
