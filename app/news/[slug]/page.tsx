@@ -73,12 +73,20 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const post = await prisma.post.findUnique({ where: { slug } });
   if (!post || post.status !== "published") notFound();
 
-  const related = await prisma.post.findMany({
-    where: { status: "published", slug: { not: slug } },
-    orderBy: { publishedAt: "desc" },
-    take: 3,
-    select: { slug: true, title: true, image: true, publishedAt: true },
-  });
+  const [related, sidebarProducts] = await Promise.all([
+    prisma.post.findMany({
+      where: { status: "published", slug: { not: slug } },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: { slug: true, title: true, image: true, publishedAt: true },
+    }),
+    prisma.product.findMany({
+      where: { status: "active" },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: { id: true, name: true, image: true, category: true },
+    }),
+  ]);
 
   const dateStr = post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 10) : "";
 
@@ -119,60 +127,96 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       </div>
 
       {/* Breadcrumb */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <Breadcrumb items={[{ label: "News", href: "/news" }, { label: post.title }]} />
       </div>
 
-      {/* Content */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 pb-16">
-        <div className="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-stone-100">
-          {post.excerpt && (
-            <p className="text-stone-500 text-base leading-relaxed border-l-4 border-[#C9A55A] pl-4 mb-8 italic">
-              {post.excerpt}
-            </p>
-          )}
-          <div>{renderContent(post.content)}</div>
-        </div>
+      {/* Two-column layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 flex flex-col lg:flex-row gap-8 items-start">
 
-        {/* Back link */}
-        <div className="mt-8">
-          <Link
-            href="/news"
-            className="inline-flex items-center gap-2 text-[#C9A55A] font-semibold hover:text-[#B8935A] transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-            </svg>
-            Back to News
-          </Link>
-        </div>
-
-        {/* Related articles */}
-        {related.length > 0 && (
-          <div className="mt-12">
-            <h3 className="text-lg font-bold text-stone-800 mb-6">Related Articles</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {related.map((r) => (
-                <Link
-                  key={r.slug}
-                  href={`/news/${r.slug}`}
-                  className="group bg-white rounded-xl overflow-hidden border border-stone-100 hover:shadow-md transition-shadow"
-                >
-                  <div className="relative aspect-video bg-stone-100">
-                    {r.image && (
-                      <Image src={r.image} alt={r.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" unoptimized />
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <p className="text-stone-400 text-xs mb-1">{r.publishedAt ? new Date(r.publishedAt).toISOString().slice(0, 10) : ""}</p>
-                    <p className="text-stone-700 font-semibold text-sm leading-snug group-hover:text-[#C9A55A] transition-colors line-clamp-2">{r.title}</p>
-                  </div>
+        {/* Left sidebar — products */}
+        {sidebarProducts.length > 0 && (
+          <aside className="w-full lg:w-56 shrink-0 lg:sticky lg:top-20">
+            <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+              <div className="px-4 py-3 border-b border-stone-100 flex items-center gap-2">
+                <span className="text-[#C9A55A] text-xs">✦</span>
+                <h2 className="text-xs font-black uppercase tracking-widest text-stone-700">Our Products</h2>
+              </div>
+              <div className="p-3 space-y-3">
+                {sidebarProducts.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/products/${p.id}`}
+                    className="group flex items-center gap-3 hover:bg-[#F5EDD8] rounded-xl p-2 transition-colors"
+                  >
+                    <div className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-stone-100">
+                      {p.image
+                        ? <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        : <div className="w-full h-full flex items-center justify-center text-stone-300 text-xs">No img</div>
+                      }
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-stone-700 group-hover:text-[#C9A55A] transition-colors line-clamp-2 leading-snug">{p.name}</p>
+                      <p className="text-[10px] text-stone-400 mt-0.5">{p.category}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="px-4 py-3 border-t border-stone-100">
+                <Link href="/products" className="text-xs font-semibold text-[#C9A55A] hover:text-[#B8935A] transition-colors flex items-center gap-1">
+                  View all products
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
-              ))}
+              </div>
             </div>
-          </div>
+          </aside>
         )}
-      </article>
+
+        {/* Main article */}
+        <article className="flex-1 min-w-0">
+          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-stone-100">
+            {post.excerpt && (
+              <p className="text-stone-500 text-base leading-relaxed border-l-4 border-[#C9A55A] pl-4 mb-8 italic">
+                {post.excerpt}
+              </p>
+            )}
+            <div>{renderContent(post.content)}</div>
+          </div>
+
+          {/* Back link */}
+          <div className="mt-8">
+            <Link href="/news" className="inline-flex items-center gap-2 text-[#C9A55A] font-semibold hover:text-[#B8935A] transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+              </svg>
+              Back to News
+            </Link>
+          </div>
+
+          {/* Related articles */}
+          {related.length > 0 && (
+            <div className="mt-12">
+              <h3 className="text-lg font-bold text-stone-800 mb-6">Related Articles</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {related.map((r) => (
+                  <Link key={r.slug} href={`/news/${r.slug}`} className="group bg-white rounded-xl overflow-hidden border border-stone-100 hover:shadow-md transition-shadow">
+                    <div className="relative aspect-video bg-stone-100">
+                      {r.image && <Image src={r.image} alt={r.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" unoptimized />}
+                    </div>
+                    <div className="p-3">
+                      <p className="text-stone-400 text-xs mb-1">{r.publishedAt ? new Date(r.publishedAt).toISOString().slice(0, 10) : ""}</p>
+                      <p className="text-stone-700 font-semibold text-sm leading-snug group-hover:text-[#C9A55A] transition-colors line-clamp-2">{r.title}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </article>
+
+      </div>
     </div>
   );
 }
