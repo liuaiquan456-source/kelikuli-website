@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
 
-export default function ContactForm() {
+export default function ContactForm({ whatsapp, wechat, email, address }: { whatsapp: string; wechat: string; email: string; address: string }) {
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", product: "", message: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -129,7 +129,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">Email</p>
-                <a href="mailto:860861@qq.com" className="text-stone-800 font-medium text-sm hover:text-orange-600">860861@qq.com</a>
+                <a href={`mailto:${email}`} className="text-stone-800 font-medium text-sm hover:text-orange-600">{email}</a>
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-stone-100 p-5 flex items-start gap-4">
@@ -140,7 +140,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">WhatsApp</p>
-                <a href="https://wa.me/8613957959550" target="_blank" rel="noopener noreferrer" className="text-stone-800 font-medium text-sm hover:text-orange-600">+86 139 5795 9550</a>
+                <a href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-stone-800 font-medium text-sm hover:text-orange-600">{whatsapp}</a>
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-stone-100 p-5 flex items-start gap-4">
@@ -151,7 +151,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">WeChat</p>
-                <p className="text-stone-800 font-medium text-sm">kelikuli</p>
+                <p className="text-stone-800 font-medium text-sm">{wechat}</p>
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-stone-100 p-5 flex items-start gap-4">
@@ -162,7 +162,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">Address</p>
-                <p className="text-stone-800 font-medium text-sm">[Factory Address, City, Province, China]</p>
+                <p className="text-stone-800 font-medium text-sm">{address}</p>
               </div>
             </div>
           </div>

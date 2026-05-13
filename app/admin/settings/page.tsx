@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Save, Globe, Phone, MessageSquare, Shield, Bell, Building2, Share2, Upload, X } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardBody, Input, Textarea, Switch } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
@@ -57,16 +57,40 @@ export default function SettingsPage() {
   const [site, setSite] = useState<SiteSettings>(defaultSite);
   const [notif, setNotif] = useState<NotifSettings>(defaultNotif);
   const [saved, setSaved] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((r) => r.json())
+      .then((data) => setSite((x) => ({ ...x, ...data })))
+      .catch(() => {});
+  }, []);
 
   const s = (k: keyof SiteSettings, v: string | null) => setSite((x) => ({ ...x, [k]: v }));
   const n = (k: keyof NotifSettings, v: boolean) => setNotif((x) => ({ ...x, [k]: v }));
 
-  const save = (section: string) => { setSaved(section); setTimeout(() => setSaved(null), 2000); };
+  const save = async (section: string, fields: Partial<SiteSettings>) => {
+    setSaving(true);
+    try {
+      await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields),
+      });
+      setSaved(section);
+      setTimeout(() => setSaved(null), 2000);
+    } catch {
+      // ignore
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  const SaveBtn = ({ id }: { id: string }) => (
+  const SaveBtn = ({ id, fields }: { id: string; fields: Partial<SiteSettings> }) => (
     <div className="flex justify-end pt-2">
-      <Button onClick={() => save(id)}>
+      <Button onClick={() => save(id, fields)} disabled={saving}>
         <Save className="w-4 h-4" />
         {saved === id ? "Saved!" : "Save Changes"}
       </Button>
@@ -117,13 +141,27 @@ export default function SettingsPage() {
                       }
                     </div>
                     <div className="flex gap-2">
-                      <label className="cursor-pointer">
-                        <input type="file" accept="image/*" className="hidden"
-                          onChange={(e) => { const f = e.target.files?.[0]; if (f) s("logoUrl", URL.createObjectURL(f)); }} />
-                        <Button variant="secondary" size="sm" onClick={(e) => e.stopPropagation()}>
-                          <Upload className="w-3.5 h-3.5" />Upload
-                        </Button>
-                      </label>
+                      <input ref={logoInputRef} type="file" accept="image/*" className="hidden"
+                        onChange={async (e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          s("logoUrl", URL.createObjectURL(f));
+                          const fd = new FormData();
+                          fd.append("file", f);
+                          const res = await fetch("/api/upload", { method: "POST", body: fd });
+                          const data = await res.json();
+                          if (data.url) {
+                            s("logoUrl", data.url);
+                            await fetch("/api/admin/settings", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ logoUrl: data.url }),
+                            });
+                          }
+                        }} />
+                      <Button variant="secondary" size="sm" onClick={() => logoInputRef.current?.click()}>
+                        <Upload className="w-3.5 h-3.5" />Upload
+                      </Button>
                       {site.logoUrl && (
                         <Button variant="ghost" size="sm" onClick={() => s("logoUrl", null)}><X className="w-3.5 h-3.5" /></Button>
                       )}
@@ -135,7 +173,7 @@ export default function SettingsPage() {
                   <Input label="Tagline" value={site.siteTagline} onChange={(e) => s("siteTagline", e.target.value)} />
                 </div>
                 <Input label="Contact Email" type="email" value={site.siteEmail} onChange={(e) => s("siteEmail", e.target.value)} />
-                <SaveBtn id="general" />
+                <SaveBtn id="general" fields={{ siteName: site.siteName, siteTagline: site.siteTagline, siteEmail: site.siteEmail }} />
               </CardBody>
             </Card>
 
@@ -151,7 +189,7 @@ export default function SettingsPage() {
                   <Input label="Country" value={site.country} onChange={(e) => s("country", e.target.value)} />
                 </div>
                 <Input label="Business Registration No." placeholder="Optional" value={site.registrationNo} onChange={(e) => s("registrationNo", e.target.value)} />
-                <SaveBtn id="company" />
+                <SaveBtn id="company" fields={{ companyName: site.companyName, address: site.address, city: site.city, country: site.country, registrationNo: site.registrationNo }} />
               </CardBody>
             </Card>
           </>
@@ -173,7 +211,7 @@ export default function SettingsPage() {
                   <Input label="WeChat ID" placeholder="WeChat username" value={site.wechat} onChange={(e) => s("wechat", e.target.value)} />
                   <Input label="Fax" placeholder="Optional" value={site.fax} onChange={(e) => s("fax", e.target.value)} />
                 </div>
-                <SaveBtn id="contact" />
+                <SaveBtn id="contact" fields={{ whatsapp: site.whatsapp, phone: site.phone, wechat: site.wechat, fax: site.fax }} />
               </CardBody>
             </Card>
 
@@ -186,7 +224,7 @@ export default function SettingsPage() {
                 <Input label="Instagram URL" placeholder="https://instagram.com/kelikuli" value={site.instagram} onChange={(e) => s("instagram", e.target.value)} />
                 <Input label="LinkedIn URL" placeholder="https://linkedin.com/company/kelikuli" value={site.linkedin} onChange={(e) => s("linkedin", e.target.value)} />
                 <Input label="YouTube Channel URL" placeholder="https://youtube.com/@kelikuli" value={site.youtube} onChange={(e) => s("youtube", e.target.value)} />
-                <SaveBtn id="social" />
+                <SaveBtn id="social" fields={{ facebook: site.facebook, instagram: site.instagram, linkedin: site.linkedin, youtube: site.youtube }} />
               </CardBody>
             </Card>
           </>
@@ -217,7 +255,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{site.metaDesc}</p>
                 </div>
               )}
-              <SaveBtn id="seo" />
+              <SaveBtn id="seo" fields={{ metaTitle: site.metaTitle, metaDesc: site.metaDesc, metaKeywords: site.metaKeywords, googleAnalyticsId: site.googleAnalyticsId }} />
             </CardBody>
           </Card>
         )}
@@ -245,7 +283,7 @@ export default function SettingsPage() {
                   <Switch checked={notif[key]} onChange={(v) => n(key, v)} />
                 </div>
               ))}
-              <SaveBtn id="notif" />
+              <SaveBtn id="notif" fields={{}} />
             </CardBody>
           </Card>
         )}
@@ -284,7 +322,7 @@ export default function SettingsPage() {
               )}
               <div className="flex justify-end pt-2">
                 <Button
-                  onClick={() => save("security")}
+                  onClick={() => save("security", {})}
                   disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm}
                 >
                   <Save className="w-4 h-4" />

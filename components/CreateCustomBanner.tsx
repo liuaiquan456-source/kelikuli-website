@@ -38,17 +38,16 @@ const highlights = [
   },
 ];
 
-// Placeholder images — replace with real sample photos in public/images/samples/
 const sampleImages = [
-  "/images/collections/col-1.png",
-  "/images/collections/col-2.png",
-  "/images/collections/col-3.png",
-  "/images/collections/col-4.png",
-  "/images/collections/col-5.png",
-  "/images/collections/col-6.png",
-  "/images/collections/col-7.png",
-  "/images/collections/col-8.png",
-  "/images/process/process-1.png",
+  "/Custom Resin Toy OEM Factory/7039a31501760025a4eee65254a75a7f.jpg",
+  "/Custom Resin Toy OEM Factory/aaed115d878ce69359c66c488d0277cb.jpg",
+  "/Custom Resin Toy OEM Factory/39fa6cd2ebffccf87b3f227dcec67896.jpg",
+  "/Custom Resin Toy OEM Factory/adf93f18d4247c46f9613d3a41860baa.jpg",
+  "/Custom Resin Toy OEM Factory/a118301b3bcb2c4ff645e2ba46859fb4.jpg",
+  "/Custom Resin Toy OEM Factory/8640c17eb08187410836b876a7379a16.jpg",
+  "/Custom Resin Toy OEM Factory/c70ffd45d03d77555f65348db79cd102.jpg",
+  "/Custom Resin Toy OEM Factory/8ee05fb55b863ad4a3ed988a9fcac867.jpg",
+  "/Custom Resin Toy OEM Factory/03fdd79664fd030c9807ee51effc89ac.jpg",
 ];
 
 export default function CreateCustomBanner() {

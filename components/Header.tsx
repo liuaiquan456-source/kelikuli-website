@@ -16,6 +16,7 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const logo = "/images/kelikulilogo.png";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -47,7 +48,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <Image
-              src="/images/kelikulilogo.png"
+              src={logo}
               alt="Kelikuli"
               width={120}
               height={40}
@@ -129,7 +130,7 @@ export default function Header() {
             <div className="flex items-center justify-between px-5 h-14 border-b border-[#C9A55A]/20 shrink-0">
               <Link href="/" onClick={() => setMobileOpen(false)}>
                 <Image
-                  src="/images/kelikulilogo.png"
+                  src={logo}
                   alt="Kelikuli"
                   width={100}
                   height={34}

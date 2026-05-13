@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ContactForm from "./_form";
+import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "Request a Free Quote — Contact Kelikuli Factory",
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://kelikuli.com/contact" },
 };
 
-export default function ContactPage() {
-  return <ContactForm />;
+export default async function ContactPage() {
+  const s = await getSettings();
+  return <ContactForm whatsapp={s.whatsapp} wechat={s.wechat} email={s.email} address={s.address} />;
 }

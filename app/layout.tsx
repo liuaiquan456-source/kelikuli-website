@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
+import { getSettings } from "@/lib/settings";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -53,7 +54,7 @@ const organizationSchema = {
   contactPoint: {
     "@type": "ContactPoint",
     telephone: "+86-139-5795-9550",
-    email: "860861@qq.com",
+    email: "681682@qq.com",
     contactType: "sales",
     availableLanguage: ["English", "Chinese"],
   },
@@ -66,9 +67,10 @@ const organizationSchema = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const settings = await getSettings();
   return (
     <html lang="en" className={`${geist.variable} ${playfair.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased bg-white">
@@ -79,7 +81,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
-        <FloatingContact />
+        <FloatingContact whatsapp={settings.whatsapp} />
       </body>
     </html>
   );

@@ -2,10 +2,20 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Upload, X, Plus, Tag, ArrowLeft, Save, Eye, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Upload, X, Plus, Tag, ArrowLeft, Save, Eye, AlertCircle, Loader2 } from "lucide-react";
 import { Button, Input, Textarea, Select, Switch, Card, CardHeader, CardTitle, CardBody } from "@/app/admin/_components/ui";
-import { CATEGORIES, type Product } from "@/app/admin/_data/mock";
+import { CATEGORIES } from "@/app/admin/_data/mock";
 import { cn } from "@/app/admin/_lib/utils";
+
+interface Product {
+  id: number; name: string; category: string; price: number;
+  stock: number; moq?: number; leadTime?: string;
+  status: "active" | "inactive"; image: string;
+  tags: string[]; createdAt: string;
+  description?: string; specs?: string;
+  seoTitle?: string; seoDesc?: string; seoKeywords?: string;
+}
 
 interface FormState {
   name: string; category: string; price: string; stock: string;
@@ -21,11 +31,12 @@ interface FormErrors { name?: string; price?: string; stock?: string; descriptio
 function productToForm(p: Product): FormState {
   return {
     name: p.name, category: p.category, price: String(p.price),
-    stock: String(p.stock), moq: "50", leadTime: "30-45 days",
+    stock: String(p.stock), moq: String(p.moq ?? 50), leadTime: p.leadTime ?? "30-45 days",
     status: p.status === "active",
     tags: p.tags, tagInput: "",
-    description: "", specs: "", seoTitle: "", seoDesc: "", seoKeywords: "",
-    mainImage: p.image, gallery: [],
+    description: p.description ?? "", specs: p.specs ?? "",
+    seoTitle: p.seoTitle ?? "", seoDesc: p.seoDesc ?? "", seoKeywords: p.seoKeywords ?? "",
+    mainImage: p.image || null, gallery: [],
   };
 }
 
@@ -42,9 +53,11 @@ const META_DESC_MAX = 155;
 
 export default function AddProductForm({ product }: { product?: Product }) {
   const isEdit = !!product;
+  const router = useRouter();
   const [form, setForm] = useState<FormState>(product ? productToForm(product) : defaultForm);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const mainImgRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
 
@@ -58,9 +71,26 @@ export default function AddProductForm({ product }: { product?: Product }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.name]);
 
-  const handleMainImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMainImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) set("mainImage", URL.createObjectURL(file));
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    set("mainImage", preview);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.url) {
+        set("mainImage", data.url);
+      } else {
+        setSaveError("Image upload failed: " + (data.error ?? "unknown error"));
+        set("mainImage", null);
+      }
+    } catch {
+      setSaveError("Image upload failed. Please try again.");
+      set("mainImage", null);
+    }
   };
 
   const handleGallery = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,10 +115,29 @@ export default function AddProductForm({ product }: { product?: Product }) {
     return Object.keys(e).length === 0;
   };
 
-  const handleSave = () => {
+  const handleSave = async (statusOverride?: boolean) => {
     if (!validate()) return;
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setSaving(true);
+    setSaveError("");
+    try {
+      const payload = {
+        name: form.name, category: form.category, price: form.price,
+        stock: form.stock, moq: form.moq, leadTime: form.leadTime,
+        status: statusOverride !== undefined ? statusOverride : form.status,
+        image: form.mainImage ?? "",
+        tags: form.tags,
+        description: form.description, specs: form.specs,
+        seoTitle: form.seoTitle, seoDesc: form.seoDesc, seoKeywords: form.seoKeywords,
+      };
+      const res = isEdit
+        ? await fetch(`/api/products/${product!.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+        : await fetch("/api/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error("Save failed");
+      router.push("/admin/products");
+    } catch {
+      setSaveError("Save failed. Please try again.");
+      setSaving(false);
+    }
   };
 
   const catOptions = CATEGORIES.map((c) => ({ value: c, label: c }));
@@ -309,11 +358,18 @@ export default function AddProductForm({ product }: { product?: Product }) {
           </CardBody>
         </Card>
 
+        {saveError && (
+          <p className="text-sm text-red-500 flex items-center gap-1.5 pb-2">
+            <AlertCircle className="w-4 h-4" />{saveError}
+          </p>
+        )}
         <div className="flex gap-3 pb-4">
-          <Button variant="secondary" onClick={() => set("status", false)}>Save as Draft</Button>
-          <Button onClick={handleSave}>
-            <Save className="w-4 h-4" />
-            {saved ? "Saved!" : isEdit ? "Save Changes" : "Publish Product"}
+          <Button variant="secondary" onClick={() => handleSave(false)} disabled={saving}>
+            Save as Draft
+          </Button>
+          <Button onClick={() => handleSave()} disabled={saving}>
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {saving ? "Saving..." : isEdit ? "Save Changes" : "Publish Product"}
           </Button>
         </div>
       </div>

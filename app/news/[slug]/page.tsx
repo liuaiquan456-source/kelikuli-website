@@ -107,7 +107,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       />
       {/* Hero image */}
       <div className="relative w-full aspect-[3/1] bg-stone-200">
-        {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority />}
+        {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority unoptimized />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-4xl mx-auto">
           <span className="inline-block bg-[#C9A55A] text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
@@ -160,7 +160,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 >
                   <div className="relative aspect-video bg-stone-100">
                     {r.image && (
-                      <Image src={r.image} alt={r.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" />
+                      <Image src={r.image} alt={r.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" unoptimized />
                     )}
                   </div>
                   <div className="p-3">

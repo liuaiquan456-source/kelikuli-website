@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-export default function FloatingContact() {
+export default function FloatingContact({ whatsapp }: { whatsapp: string }) {
   const [wechatOpen, setWechatOpen] = useState(false);
 
   return (
@@ -11,7 +11,7 @@ export default function FloatingContact() {
       <div className="fixed right-4 bottom-24 z-40 flex flex-col gap-3">
         {/* WhatsApp */}
         <a
-          href="https://wa.me/8613505893913"
+          href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"

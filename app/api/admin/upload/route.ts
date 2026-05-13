@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, access } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
@@ -25,35 +25,25 @@ function findRoot(): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const form = await req.formData();
-    const file = form.get("file") as File | null;
-
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
     if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Only JPG, PNG, WEBP, GIF allowed" }, { status: 400 });
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "File too large (max 5 MB)" }, { status: 400 });
-    }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
     const root = findRoot();
-    const dir = path.join(root, "public", "images", "uploads");
+    const dir = path.join(root, "public", "images", "products");
 
     console.log("[upload] root:", root, "| dir:", dir);
 
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, filename), buffer);
 
-    return NextResponse.json({ url: `/images/uploads/${filename}` });
+    return NextResponse.json({ url: `/images/products/${filename}` });
   } catch (err) {
     console.error("[upload] error:", err);
     return NextResponse.json({ error: String(err) }, { status: 500 });
