@@ -16,8 +16,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     data: {
       ...(body.name        !== undefined && { name:        body.name }),
       ...(body.category    !== undefined && { category:    body.category }),
-      ...(body.price       !== undefined && { price:       parseFloat(body.price) }),
-      ...(body.stock       !== undefined && { stock:       parseInt(body.stock) }),
+      ...(body.price       !== undefined && { price:       parseFloat(body.price) || 0 }),
+      ...(body.stock       !== undefined && { stock:       parseInt(body.stock) || 0 }),
       ...(body.moq         !== undefined && { moq:         parseInt(body.moq) }),
       ...(body.leadTime    !== undefined && { leadTime:    body.leadTime }),
       ...(body.status      !== undefined && { status:      typeof body.status === "boolean" ? (body.status ? "active" : "inactive") : body.status }),

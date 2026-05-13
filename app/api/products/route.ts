@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
     data: {
       name:        body.name,
       category:    body.category,
-      price:       parseFloat(body.price),
-      stock:       parseInt(body.stock),
+      price:       parseFloat(body.price) || 0,
+      stock:       parseInt(body.stock) || 0,
       moq:         parseInt(body.moq ?? "50"),
       leadTime:    body.leadTime ?? "30-45 days",
       status:      body.status ? "active" : "inactive",
