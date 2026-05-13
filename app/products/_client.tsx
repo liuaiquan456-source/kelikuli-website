@@ -3,6 +3,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb";
 
+function SafeImg({ src, alt, className }: { src: string; alt: string; className: string }) {
+  const [ok, setOk] = useState(!src.startsWith("blob:"));
+  if (!ok) return null;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt={alt} className={className} onError={() => setOk(false)} />;
+}
+
 interface Product {
   id: number; name: string; category: string; image: string;
   price: number; status: string;
@@ -369,12 +376,10 @@ export default function ProductsClient() {
                     <Link href={`/products/${product.id}`} className="block">
                       <div className="relative aspect-square bg-stone-50 overflow-hidden">
                         {product.image && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
+                          <SafeImg
                             src={product.image}
                             alt={product.name}
                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                           />
                         )}
                       </div>
