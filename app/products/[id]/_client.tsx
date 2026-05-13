@@ -7,7 +7,7 @@ import InquiryModal from "@/components/InquiryModal";
 interface Product {
   id: number; name: string; category: string; image: string;
   price: number; moq: number; leadTime: string; status: string;
-  description: string; tags: string[];
+  description: string; specs: string; tags: string[];
 }
 
 function getAttributes(name: string, category: string) {
@@ -78,7 +78,11 @@ export default function ProductDetailClient({
   }
 
   const images: string[] = product.image ? [product.image] : [];
-  const attrs = getAttributes(product.name, product.category);
+  const attrs = getAttributes(product.name, product.category).map((a) => {
+    if (a.key === "MOQ") return { ...a, value: product.moq ? `${product.moq} pcs` : a.value };
+    if (a.key === "Lead Time") return { ...a, value: product.leadTime || a.value };
+    return a;
+  });
 
   return (
     <>
@@ -212,6 +216,24 @@ export default function ProductDetailClient({
 
             </div>
           </div>
+
+          {/* Description & Specs */}
+          {(product.description || product.specs) && (
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {product.description && (
+                <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">Product Description</h2>
+                  <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.description}</div>
+                </div>
+              )}
+              {product.specs && (
+                <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">Specifications</h2>
+                  <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.specs}</div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Related Products */}
           {related.length > 0 && (
