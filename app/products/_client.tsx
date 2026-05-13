@@ -11,7 +11,7 @@ interface Product {
 
 const categories = [
   {
-    label: "Brand Products",
+    label: "All Products",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
@@ -154,7 +154,7 @@ export default function ProductsClient() {
   const searchParams = typeof window !== "undefined"
     ? new URLSearchParams(window.location.search)
     : null;
-  const initialCategory = searchParams?.get("category") ?? "Brand Products";
+  const initialCategory = searchParams?.get("category") ?? "All Products";
 
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [search, setSearch] = useState("");
@@ -170,7 +170,7 @@ export default function ProductsClient() {
   }, []);
 
   const filtered = products.filter((p) => {
-    const matchCat = activeCategory === "Brand Products" || p.category === activeCategory;
+    const matchCat = activeCategory === "All Products" || p.category === activeCategory;
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
@@ -205,7 +205,7 @@ export default function ProductsClient() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-[#C9A55A]">✦</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black text-white tracking-widest mb-4" style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em" }}>
+          <h1 className="text-3xl md:text-4xl font-black text-white tracking-widest mb-4" style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em" }}>
             Wholesale Resin Figurines &amp; Collectibles
           </h1>
           <div className="flex justify-center mb-2">
