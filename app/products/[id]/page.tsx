@@ -15,11 +15,18 @@ async function getProduct(id: number) {
 
 async function getRelated(category: string, excludeId: number) {
   try {
-    const list = await prisma.product.findMany({
+    const same = await prisma.product.findMany({
       where: { category, status: "active", NOT: { id: excludeId } },
       take: 8,
     });
-    return list.map((p) => ({ ...p, tags: JSON.parse(p.tags) as string[] }));
+    if (same.length > 0) return same.map((p) => ({ ...p, tags: JSON.parse(p.tags) as string[] }));
+
+    const other = await prisma.product.findMany({
+      where: { status: "active", NOT: { id: excludeId } },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    });
+    return other.map((p) => ({ ...p, tags: JSON.parse(p.tags) as string[] }));
   } catch {
     return [];
   }
