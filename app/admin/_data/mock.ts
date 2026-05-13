@@ -23,9 +23,9 @@ export interface AdminUser { id: number; name: string; email: string; role: "Sup
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 export const CATEGORIES = [
-  "Brand Products","Christmas Series","Halloween Series","Garden Series","Resin Crafts",
-  "Bobble Head Series","Fridge Magnet","Snow Globe","Piggy Bank","Prince Series",
-  "Lucky Cat","Astronaut Series","Figurines","Blind Box Series","Religious Crafts","Phone Stand",
+  "Figurines","Christmas Series","Halloween Series","Garden Series","Resin Crafts",
+  "Smart Outdoor Lights","Bobble Head Series","Fridge Magnet","Snow Globe","Piggy Bank",
+  "Prince Series","Lucky Cat","Astronaut Series","Blind Box Series","Religious Crafts","Phone Stand",
 ];
 
 export const mockProducts: Product[] = [
