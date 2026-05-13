@@ -1,6 +1,5 @@
 "use client";
 import { useState, useMemo, useEffect, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Plus, Search, Pencil, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown, Download, Package, CheckSquare, RefreshCw } from "lucide-react";
 import { Button, Badge, Card, Modal, Table, Th, Td, Tr } from "@/app/admin/_components/ui";
@@ -194,8 +193,10 @@ export default function ProductList() {
                   <Td><input type="checkbox" checked={selected.has(p.id)} onChange={() => toggleOne(p.id)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" /></Td>
                   <Td>
                     <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                        {p.image && <Image src={p.image} alt={p.name} fill sizes="40px" className="object-cover" />}
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
+                        {p.image
+                          ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                          : null}
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-slate-800 line-clamp-1">{p.name}</p>
