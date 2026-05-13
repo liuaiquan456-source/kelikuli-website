@@ -73,6 +73,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const post = await prisma.post.findUnique({ where: { slug } });
   if (!post || post.status !== "published") notFound();
 
+  const pinnedIds: number[] = (() => {
+    try { return JSON.parse((post as Record<string, unknown>).relatedProducts as string ?? "[]"); } catch { return []; }
+  })();
+
   const [related, sidebarProducts] = await Promise.all([
     prisma.post.findMany({
       where: { status: "published", slug: { not: slug } },
@@ -80,12 +84,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       take: 3,
       select: { slug: true, title: true, image: true, publishedAt: true },
     }),
-    prisma.product.findMany({
-      where: { status: "active" },
-      orderBy: { createdAt: "desc" },
-      take: 6,
-      select: { id: true, name: true, image: true, category: true },
-    }),
+    pinnedIds.length > 0
+      ? prisma.product.findMany({
+          where: { id: { in: pinnedIds }, status: "active" },
+          select: { id: true, name: true, image: true, category: true },
+        })
+      : prisma.product.findMany({
+          where: { status: "active" },
+          orderBy: { createdAt: "desc" },
+          take: 6,
+          select: { id: true, name: true, image: true, category: true },
+        }),
   ]);
 
   const dateStr = post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 10) : "";

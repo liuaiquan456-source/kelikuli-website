@@ -18,13 +18,14 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     <NewsForm
       postId={Number(id)}
       initial={{
-        title:    post.title    as string,
-        slug:     post.slug     as string,
-        category: post.category as string,
-        excerpt:  post.excerpt  as string,
-        content:  post.content  as string,
-        image:    post.image    as string,
-        status:   post.status   as string,
+        title:           post.title          as string,
+        slug:            post.slug           as string,
+        category:        post.category       as string,
+        excerpt:         post.excerpt        as string,
+        content:         post.content        as string,
+        image:           post.image          as string,
+        status:          post.status         as string,
+        relatedProducts: post.relatedProducts as number[],
       }}
     />
   );

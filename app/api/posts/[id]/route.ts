@@ -5,7 +5,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const post = await prisma.post.findUnique({ where: { id: Number(id) } });
   if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json({ post });
+  return NextResponse.json({ post: { ...post, relatedProducts: JSON.parse(post.relatedProducts) } });
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -18,14 +18,17 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const wasPublished = current.status === "published";
   const nowPublished = body.status === "published";
 
+  const { relatedProducts, ...restBody } = body;
+
   const post = await prisma.post.update({
     where: { id: Number(id) },
     data: {
-      ...body,
+      ...restBody,
+      ...(relatedProducts !== undefined && { relatedProducts: JSON.stringify(relatedProducts) }),
       publishedAt: nowPublished && !wasPublished ? new Date() : current.publishedAt,
     },
   });
-  return NextResponse.json({ post });
+  return NextResponse.json({ post: { ...post, relatedProducts: JSON.parse(post.relatedProducts) } });
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {

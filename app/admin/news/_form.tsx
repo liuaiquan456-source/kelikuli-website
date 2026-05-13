@@ -7,9 +7,14 @@ import { cn } from "@/app/admin/_lib/utils";
 
 const CATEGORIES = ["Industry Insights", "New Product", "Exhibition Review", "Company News"];
 
+interface ProductOption {
+  id: number; name: string; image: string; category: string;
+}
+
 interface PostForm {
   title: string; slug: string; category: string;
   excerpt: string; content: string; image: string; status: string;
+  relatedProducts: number[];
 }
 
 interface Props {
@@ -62,7 +67,8 @@ export default function NewsForm({ postId, initial }: Props) {
     excerpt:  initial?.excerpt  ?? "",
     content:  initial?.content  ?? "",
     image:    initial?.image    ?? "",
-    status:   initial?.status   ?? "draft",
+    status:          initial?.status          ?? "draft",
+    relatedProducts: initial?.relatedProducts ?? [],
   });
 
   const [slugManual, setSlugManual] = useState(isEdit);
@@ -72,6 +78,8 @@ export default function NewsForm({ postId, initial }: Props) {
   const [uploading, setUploading]   = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [dragOver, setDragOver]     = useState(false);
+  const [allProducts, setAllProducts]                     = useState<ProductOption[]>([]);
+  const [productCategoryFilter, setProductCategoryFilter] = useState("");
   const [contentUploading, setContentUploading] = useState(false);
   const fileInputRef                = useRef<HTMLInputElement>(null);
   const contentFileRef              = useRef<HTMLInputElement>(null);
@@ -82,6 +90,12 @@ export default function NewsForm({ postId, initial }: Props) {
       setForm((f) => ({ ...f, slug: slugify(f.title) }));
     }
   }, [form.title, slugManual]);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data: ProductOption[]) => setAllProducts(data));
+  }, []);
 
   const set = useCallback(<K extends keyof PostForm>(k: K, v: PostForm[K]) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -140,6 +154,15 @@ export default function NewsForm({ postId, initial }: Props) {
     const file = e.target.files?.[0];
     if (file) uploadContentImage(file);
     e.target.value = "";
+  };
+
+  const toggleProduct = (id: number) => {
+    setForm((f) => ({
+      ...f,
+      relatedProducts: f.relatedProducts.includes(id)
+        ? f.relatedProducts.filter((i) => i !== id)
+        : [...f.relatedProducts, id],
+    }));
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -377,6 +400,65 @@ export default function NewsForm({ postId, initial }: Props) {
               {form.status === "published" ? <Globe className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
               {form.status === "published" ? "Will be visible on the News page" : "Only visible in admin panel"}
             </div>
+          </div>
+
+          {/* Related Products */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <p className="text-xs font-medium text-slate-600 mb-3">
+              Related Products
+              {form.relatedProducts.length > 0 && (
+                <span className="ml-2 bg-[#C9A55A] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {form.relatedProducts.length}
+                </span>
+              )}
+            </p>
+            <select
+              value={productCategoryFilter}
+              onChange={(e) => setProductCategoryFilter(e.target.value)}
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 mb-3"
+            >
+              <option value="">All Categories</option>
+              {[...new Set(allProducts.map((p) => p.category))].sort().map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+            {allProducts.length === 0 ? (
+              <p className="text-xs text-slate-400 text-center py-4">Loading products…</p>
+            ) : (
+              <div className="space-y-1 max-h-60 overflow-y-auto pr-0.5">
+                {(productCategoryFilter ? allProducts.filter((p) => p.category === productCategoryFilter) : allProducts).map((p) => (
+                  <label
+                    key={p.id}
+                    className={cn(
+                      "flex items-center gap-2 p-1.5 rounded-lg cursor-pointer transition-colors select-none",
+                      form.relatedProducts.includes(p.id) ? "bg-[#F5EDD8]" : "hover:bg-slate-50"
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={form.relatedProducts.includes(p.id)}
+                      onChange={() => toggleProduct(p.id)}
+                      className="shrink-0 accent-[#C9A55A]"
+                    />
+                    <div className="w-8 h-8 shrink-0 rounded overflow-hidden bg-stone-100">
+                      {p.image
+                        ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                        : <div className="w-full h-full bg-stone-200" />}
+                    </div>
+                    <span className="text-xs text-slate-700 line-clamp-2 leading-tight">{p.name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+            {form.relatedProducts.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, relatedProducts: [] }))}
+                className="mt-2 text-[10px] text-slate-400 hover:text-red-500 transition-colors"
+              >
+                Clear all
+              </button>
+            )}
           </div>
         </div>
       </div>

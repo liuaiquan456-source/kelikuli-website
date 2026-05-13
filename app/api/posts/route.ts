@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { title, slug, category, excerpt, content, image, status } = body;
+  const { title, slug, category, excerpt, content, image, status, relatedProducts } = body;
 
   if (!title?.trim() || !slug?.trim()) {
     return NextResponse.json({ error: "Title and slug are required." }, { status: 400 });
@@ -26,15 +26,16 @@ export async function POST(req: NextRequest) {
 
   const post = await prisma.post.create({
     data: {
-      title: title.trim(),
-      slug: slug.trim(),
-      category: category ?? "Industry Insights",
-      excerpt: excerpt?.trim() ?? "",
-      content: content?.trim() ?? "",
-      image: image?.trim() ?? "",
-      status: status ?? "draft",
-      publishedAt: status === "published" ? new Date() : null,
+      title:          title.trim(),
+      slug:           slug.trim(),
+      category:       category ?? "Industry Insights",
+      excerpt:        excerpt?.trim() ?? "",
+      content:        content?.trim() ?? "",
+      image:          image?.trim() ?? "",
+      status:         status ?? "draft",
+      relatedProducts: JSON.stringify(relatedProducts ?? []),
+      publishedAt:    status === "published" ? new Date() : null,
     },
   });
-  return NextResponse.json({ post }, { status: 201 });
+  return NextResponse.json({ post: { ...post, relatedProducts: JSON.parse(post.relatedProducts) } }, { status: 201 });
 }

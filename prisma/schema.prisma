@@ -80,8 +80,9 @@ model Post {
   excerpt     String    @default("")
   content     String    @default("")
   image       String    @default("")
-  status      String    @default("draft")
-  publishedAt DateTime?
+  status          String    @default("draft")
+  relatedProducts String    @default("[]")
+  publishedAt     DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
