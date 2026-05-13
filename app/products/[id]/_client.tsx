@@ -64,6 +64,7 @@ export default function ProductDetailClient({
   related: Product[];
 }) {
   const [activeImg, setActiveImg] = useState(0);
+  const [imgError, setImgError] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   if (!product) {
@@ -152,14 +153,13 @@ export default function ProductDetailClient({
               {/* Image Gallery */}
               <div className="lg:w-[55%] p-5 flex flex-col gap-4">
                 <div className="relative aspect-square bg-stone-50 rounded-xl overflow-hidden group">
-                  {images.length > 0 ? (
-                    <Image
+                  {images.length > 0 && !imgError ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
                       src={images[activeImg]}
                       alt={product.name}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 55vw"
-                      className="object-contain transition-transform duration-300 group-hover:scale-105"
-                      priority
+                      className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      onError={() => setImgError(true)}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
