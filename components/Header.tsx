@@ -137,7 +137,6 @@ export default function Header() {
 
           {/* Desktop right */}
           <div className="hidden lg:flex items-center gap-3">
-            <LanguageSwitcher />
             {/* Search */}
             <div ref={searchRef} className="relative">
               <button
@@ -201,6 +200,7 @@ export default function Header() {
                 </div>
               )}
             </div>
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile: language + inquiry + hamburger */}
