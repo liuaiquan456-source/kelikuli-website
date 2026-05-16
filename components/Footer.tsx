@@ -10,12 +10,12 @@ const aboutLinks = [
 ];
 
 const productLinks = [
-  { label: "Custom Resin Toys", href: "/products/custom-resin-toys" },
-  { label: "Blind Box Toys", href: "/products/blind-box" },
-  { label: "Resin Figurines", href: "/products/resin-figurines" },
-  { label: "Festival Decorations", href: "/products/seasonal-resin-crafts" },
-  { label: "Lucky Cat Series", href: "/products/lucky-cat" },
-  { label: "Garden Series", href: "/products/garden-series" },
+  { label: "Custom Resin Toys", href: "/products" },
+  { label: "Blind Box Toys", href: "/products?category=Blind+Box+Series" },
+  { label: "Resin Figurines", href: "/products?category=Figurines" },
+  { label: "Festival Decorations", href: "/products" },
+  { label: "Lucky Cat Series", href: "/products?category=Lucky+Cat" },
+  { label: "Garden Series", href: "/products?category=Garden+Series" },
 ];
 
 const newsLinks = [
