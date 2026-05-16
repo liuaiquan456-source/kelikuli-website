@@ -47,10 +47,12 @@ function renderPreview(content: string) {
       const m = t.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
       if (m) elements.push(<img key={key++} src={m[2]} alt={m[1]} className="max-w-full rounded-lg my-3" />);
     } else {
-      const withLinks = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) =>
-        `<a href="${href}" class="text-[#C9A55A] underline">${txt}</a>`
-      );
-      elements.push(<p key={key++} className="text-stone-600 text-sm leading-relaxed mb-1" dangerouslySetInnerHTML={{ __html: withLinks }} />);
+      const withMarkup = t
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, txt, href) =>
+          `<a href="${href}" class="text-[#C9A55A] underline">${txt}</a>`
+        );
+      elements.push(<p key={key++} className="text-stone-600 text-sm leading-relaxed mb-1" dangerouslySetInnerHTML={{ __html: withMarkup }} />);
     }
   }
   return elements;

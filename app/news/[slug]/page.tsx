@@ -56,6 +56,7 @@ function renderContent(content: string) {
         .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) =>
           `<img src="${src}" alt="${alt}" class="max-w-full rounded-xl my-4 mx-auto block" />`
         )
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
         .replace(/(?<!<img[^>]*)(?<!!)\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) =>
           `<a href="${href}" class="text-[#C9A55A] hover:underline font-medium">${text}</a>`
         );
