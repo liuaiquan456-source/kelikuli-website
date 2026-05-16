@@ -1,0 +1,12 @@
+# Kelikuli — Resin Toy & Figurine Factory
+
+> Kelikuli is a B2B resin toy and figurine manufacturer based in Zhejiang, China. We offer wholesale, custom OEM/ODM resin figurines, blind box series, seasonal decorations, and collectibles.
+
+## Pages
+
+- [Home](https://kelikuli.com/): Factory overview, featured products, and inquiry entry.
+- [Products](https://kelikuli.com/products): Full wholesale product catalog with category filters.
+- [Custom OEM/ODM](https://kelikuli.com/custom-oem-odm): Custom design, mold-making, and OEM/ODM services.
+- [News](https://kelikuli.com/news): Industry insights, new product launches, and company updates.
+- [About Us](https://kelikuli.com/about-us): Factory background, certifications, and production capabilities.
+- [Contact](https://kelikuli.com/contact): Inquiry form, WhatsApp, WeChat, and email contact.
