@@ -281,9 +281,9 @@ export default function NewsForm({ postId, initial }: Props) {
             {!preview && (
               <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-1 flex-wrap">
                 {[
-                  { label: "H2", title: "Section Heading", wrap: ["## ", ""] },
-                  { label: "H3", title: "Sub Heading", wrap: ["### ", ""] },
-                  { label: "B", title: "Bold", wrap: ["**", "**"], bold: true },
+                  { label: "H2", title: "Section Heading", prefix: "## ", defaultText: "Section Heading" },
+                  { label: "H3", title: "Sub Heading", prefix: "### ", defaultText: "Sub Heading" },
+                  { label: "B", title: "Bold", wrap: ["**", "**"], defaultText: "bold text", bold: true },
                   { label: "—", title: "Divider", insert: "\n---\n" },
                 ].map((btn) => (
                   <button
@@ -295,18 +295,22 @@ export default function NewsForm({ postId, initial }: Props) {
                       if (!ta) return;
                       const start = ta.selectionStart;
                       const end = ta.selectionEnd;
-                      const selected = form.content.substring(start, end) || (btn.label === "B" ? "bold text" : btn.title);
+                      const before = form.content.substring(0, start);
+                      const selected = form.content.substring(start, end) || btn.defaultText || btn.title;
                       let inserted = "";
                       if (btn.insert) {
                         inserted = btn.insert;
+                      } else if (btn.prefix) {
+                        const needsNewline = before.length > 0 && !before.endsWith("\n");
+                        inserted = (needsNewline ? "\n" : "") + btn.prefix + selected + "\n";
                       } else if (btn.wrap) {
                         inserted = btn.wrap[0] + selected + btn.wrap[1];
                       }
-                      const newContent = form.content.substring(0, start) + inserted + form.content.substring(end);
+                      const newContent = before + inserted + form.content.substring(end);
                       setForm((f) => ({ ...f, content: newContent }));
                       setTimeout(() => {
                         ta.focus();
-                        const pos = start + inserted.length;
+                        const pos = before.length + inserted.length;
                         ta.setSelectionRange(pos, pos);
                       }, 0);
                     }}
