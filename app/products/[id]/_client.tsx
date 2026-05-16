@@ -4,6 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import InquiryModal from "@/components/InquiryModal";
 
+function SafeImg({ src, alt, className }: { src: string; alt: string; className: string }) {
+  const [ok, setOk] = useState(!src.startsWith("blob:"));
+  if (!ok) return null;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt={alt} className={className} onError={() => setOk(false)} />;
+}
+
 interface Product {
   id: number; name: string; category: string; image: string;
   price: number; moq: number; leadTime: string; status: string;
@@ -296,17 +303,13 @@ export default function ProductDetailClient({
                     href={`/products/${p.id}`}
                     className="group bg-white rounded-2xl border border-stone-100 overflow-hidden hover:shadow-md transition-shadow"
                   >
-                    <div className="relative aspect-square bg-stone-50">
-                      {p.image ? (
-                        <Image
+                    <div className="relative aspect-square bg-stone-50 overflow-hidden">
+                      {p.image && (
+                        <SafeImg
                           src={p.image}
                           alt={p.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, 25vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-stone-300 text-xs">No image</div>
                       )}
                     </div>
                     <div className="p-3">
