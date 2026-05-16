@@ -77,7 +77,9 @@ export default async function ProductDetailPage({
         offers: {
           "@type": "Offer",
           availability: "https://schema.org/InStock",
+          price: "0",
           priceCurrency: "USD",
+          priceValidUntil: "2099-12-31",
           seller: { "@type": "Organization", name: "Kelikuli" },
         },
       }
