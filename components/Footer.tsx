@@ -6,7 +6,6 @@ const aboutLinks = [
   { label: "Company Profile", href: "/about-us" },
   { label: "Factory Advantage", href: "/about-us#factory" },
   { label: "OEM/ODM Service", href: "/custom-oem-odm" },
-  { label: "Quality Control", href: "/quality-control" },
   { label: "Contact Us", href: "/contact" },
 ];
 
