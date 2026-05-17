@@ -3,14 +3,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
 
-const lampProducts = [
-  "/images/products/product-001.jpg",
-  "/images/products/product-002.jpg",
-  "/images/products/product-003.jpg",
-  "/images/products/product-004.jpg",
-  "/images/products/product-005.jpg",
-  "/images/products/product-006.jpg",
-];
 
 const slides = [
   {
@@ -214,71 +206,45 @@ export default function HeroCarousel() {
 
               {/* Slide 2: lamp */}
               {slide.contentType === "lamp" && (
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-transparent">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full px-4 sm:px-6 lg:px-10 flex items-center gap-4 lg:gap-8 xl:gap-12">
-
-                      {/* Left: title + subtitle + icons */}
-                      <div className="shrink-0 w-[23%] lg:w-[20%]">
-                        <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
-                          <span className="block text-white text-lg sm:text-2xl lg:text-3xl xl:text-[2.2rem]">
-                            Resin Decoration
-                          </span>
-                          <span className="block text-[#C9A55A] text-lg sm:text-2xl lg:text-3xl xl:text-[2.2rem]">
-                            Light
-                          </span>
-                        </h2>
-                        <p className="hidden sm:block text-white/75 text-[9px] sm:text-xs lg:text-sm font-medium drop-shadow mb-3 italic">
-                          Handcrafted Resin Decor for Warm, Cozy Spaces
-                        </p>
-                        <div className="hidden lg:flex flex-col gap-2">
-                          <div className="flex items-center gap-2 text-white/85">
-                            <svg className="w-3.5 h-3.5 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                            </svg>
-                            <span className="text-xs font-medium">Handcrafted Resin</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-white/85">
-                            <svg className="w-3.5 h-3.5 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
-                            </svg>
-                            <span className="text-xs font-medium">Warm Ambient Light</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-white/85">
-                            <svg className="w-3.5 h-3.5 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                            </svg>
-                            <span className="text-xs font-medium">Unique Gift Ideas</span>
-                          </div>
-                        </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent">
+                  <div className="absolute left-4 sm:left-8 lg:left-[6%] top-1/2 -translate-y-1/2 max-w-[45%] lg:max-w-[38%]">
+                    <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
+                      <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
+                        Resin Decoration
+                      </span>
+                      <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
+                        Light
+                      </span>
+                    </h2>
+                    <p className="hidden sm:block text-white/75 text-[10px] sm:text-sm lg:text-base font-medium drop-shadow mb-4 italic">
+                      Handcrafted Resin Decor for Warm, Cozy Spaces
+                    </p>
+                    <div className="hidden sm:flex flex-col gap-2 mb-5">
+                      <div className="flex items-center gap-2 text-white/90">
+                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                        <span className="text-xs font-medium">Handcrafted Resin</span>
                       </div>
-
-                      {/* Center: product showcase grid */}
-                      <div className="hidden sm:grid grid-cols-3 gap-1.5 lg:gap-2 shrink-0 w-[36%] lg:w-[38%]">
-                        {lampProducts.map((src, idx) => (
-                          <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-stone-900/60 border border-white/10 shadow-lg">
-                            <Image
-                              src={src}
-                              alt={`Resin decoration lamp figurine ${idx + 1}`}
-                              fill
-                              sizes="15vw"
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
+                      <div className="flex items-center gap-2 text-white/90">
+                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
+                        </svg>
+                        <span className="text-xs font-medium">Warm Ambient Light</span>
                       </div>
-
-                      {/* Button */}
-                      <div className="shrink-0 ml-2 lg:ml-6">
-                        <button
-                          onClick={() => setInquiryOpen(true)}
-                          className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-4 sm:px-5 lg:px-6 py-2 lg:py-2.5 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
-                        >
-                          Get a Quote
-                        </button>
+                      <div className="flex items-center gap-2 text-white/90">
+                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                        </svg>
+                        <span className="text-xs font-medium">Unique Gift Ideas</span>
                       </div>
-
                     </div>
+                    <button
+                      onClick={() => setInquiryOpen(true)}
+                      className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-5 lg:px-6 py-2.5 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
+                    >
+                      Get a Quote
+                    </button>
                   </div>
                 </div>
               )}
