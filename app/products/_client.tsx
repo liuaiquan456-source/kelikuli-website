@@ -190,33 +190,12 @@ export default function ProductsClient() {
   return (
     <div>
       {/* Hero Banner */}
-      <section className="relative bg-[#0B1A3A] overflow-hidden py-14 text-center">
-        {/* Star dots */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(40)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-white"
-              style={{
-                width: Math.random() * 2 + 1 + "px",
-                height: Math.random() * 2 + 1 + "px",
-                top: Math.random() * 100 + "%",
-                left: Math.random() * 100 + "%",
-                opacity: Math.random() * 0.7 + 0.2,
-              }}
-            />
-          ))}
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="text-[#C9A55A]">✦</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black text-white tracking-widest mb-4" style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em" }}>
-            Wholesale Resin Figurines &amp; Collectibles
-          </h1>
-          <div className="flex justify-center mb-2">
-            <Breadcrumb items={[{ label: "Products", href: "/products" }]} />
-          </div>
+      <section className="bg-white border-b border-stone-100 py-6 text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-stone-800 mb-2">
+          Wholesale Resin Figurines &amp; Collectibles
+        </h1>
+        <div className="flex justify-center">
+          <Breadcrumb items={[{ label: "Products", href: "/products" }]} />
         </div>
       </section>
 
@@ -240,7 +219,7 @@ export default function ProductsClient() {
                   placeholder="Search products..."
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                  className="w-full border border-stone-200 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-[#F8F4ED] focus:outline-none focus:border-[#C9A55A] transition-colors"
+                  className="w-full border border-stone-200 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-gray-50 focus:outline-none focus:border-[#C9A55A] transition-colors"
                 />
                 <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
@@ -255,7 +234,7 @@ export default function ProductsClient() {
                     <button
                       onClick={() => { setActiveCategory(cat.label); setPage(1); setDrawerOpen(false); }}
                       className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
-                        isActive ? "bg-[#C9A55A] text-white font-semibold" : "text-stone-600 hover:bg-[#F5EDD8] hover:text-[#C9A55A]"
+                        isActive ? "bg-[#C9A55A] text-white font-semibold" : "text-stone-600 hover:bg-orange-50 hover:text-[#C9A55A]"
                       }`}
                     >
                       <span className={isActive ? "text-white" : "text-[#C9A55A]"}>{cat.icon}</span>
@@ -270,7 +249,7 @@ export default function ProductsClient() {
       )}
 
       {/* Main */}
-      <section className="bg-[#F8F4ED] py-10">
+      <section className="bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
           {/* Mobile top bar */}
@@ -333,7 +312,7 @@ export default function ProductsClient() {
                         className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
                           isActive
                             ? "bg-[#C9A55A] text-white font-semibold"
-                            : "text-stone-600 hover:bg-[#F5EDD8] hover:text-[#C9A55A]"
+                            : "text-stone-600 hover:bg-orange-50 hover:text-[#C9A55A]"
                         }`}
                       >
                         <span className={isActive ? "text-white" : "text-[#C9A55A]"}>{cat.icon}</span>
@@ -347,7 +326,7 @@ export default function ProductsClient() {
 
             {/* OEM Card */}
             <div className="bg-white rounded-2xl border border-[#C9A55A]/30 p-4 text-center">
-              <div className="w-14 h-14 bg-[#F5EDD8] rounded-full flex items-center justify-center mx-auto mb-3">
+              <div className="w-14 h-14 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-3">
                 <svg className="w-7 h-7 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

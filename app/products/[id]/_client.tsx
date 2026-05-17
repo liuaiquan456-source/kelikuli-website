@@ -80,7 +80,7 @@ export default function ProductDetailClient({
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#F8F4ED] flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
         <p className="text-stone-500 text-lg">Product not found.</p>
         <Link href="/products" className="text-[#C9A55A] font-semibold hover:underline">
           ← Back to Products
@@ -104,7 +104,7 @@ export default function ProductDetailClient({
 
   return (
     <>
-      <div className="min-h-screen bg-[#F8F4ED]">
+      <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:items-start">
 
           {/* Main content */}
@@ -176,7 +176,7 @@ export default function ProductDetailClient({
                           type="button"
                           onClick={() => { setActiveVariant(activeVariant === i ? null : i); setImgError(false); }}
                           className={`flex flex-col items-center gap-1 p-1.5 rounded-xl border-2 transition-colors ${
-                            activeVariant === i ? "border-[#C9A55A] bg-[#F5EDD8]" : "border-stone-200 hover:border-[#C9A55A]/50 bg-white"
+                            activeVariant === i ? "border-[#C9A55A] bg-orange-50" : "border-stone-200 hover:border-[#C9A55A]/50 bg-white"
                           }`}
                         >
                           {v.image && (
@@ -199,7 +199,7 @@ export default function ProductDetailClient({
 
               {/* Product Info */}
               <div className="lg:w-[45%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100">
-                <span className="inline-flex items-center gap-1.5 w-fit bg-[#F5EDD8] text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                <span className="inline-flex items-center gap-1.5 w-fit bg-orange-50 text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
 
@@ -231,7 +231,7 @@ export default function ProductDetailClient({
                   </div>
                 </div>
 
-                <div className="bg-[#F5EDD8]/60 rounded-xl px-4 py-3 mb-6 text-xs text-stone-600 flex items-start gap-2">
+                <div className="bg-orange-50 rounded-xl px-4 py-3 mb-6 text-xs text-stone-600 flex items-start gap-2">
                   <svg className="w-4 h-4 text-[#C9A55A] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                   </svg>
@@ -322,7 +322,7 @@ export default function ProductDetailClient({
                     <Link
                       key={p.id}
                       href={`/products/${p.id}`}
-                      className="group flex items-center gap-3 hover:bg-[#F5EDD8] rounded-xl p-2 transition-colors"
+                      className="group flex items-center gap-3 hover:bg-gray-50 rounded-xl p-2 transition-colors"
                     >
                       <div className="w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-stone-100">
                         {p.image
