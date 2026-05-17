@@ -9,6 +9,7 @@ import LatestProducts from "@/components/LatestProducts";
 import WhyChoose from "@/components/WhyChoose";
 import StatsSection from "@/components/StatsSection";
 import ServiceSection from "@/components/ServiceSection";
+import FaqSection from "@/components/FaqSection";
 
 export const metadata: Metadata = {
   title: "Resin Figurine Manufacturer — China OEM Factory",
@@ -30,6 +31,7 @@ export default function HomePage() {
       <StatsSection />
       <ServiceSection />
       <FeaturedCollections />
+      <FaqSection page="home" />
     </>
   );
 }
