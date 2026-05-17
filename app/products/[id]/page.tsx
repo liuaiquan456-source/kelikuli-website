@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ProductDetailClient from "./_client";
 import Breadcrumb from "@/components/Breadcrumb";
+
+interface Variant { name: string; image: string; }
 
 async function getProduct(id: number) {
   try {
     const p = await prisma.product.findUnique({ where: { id } });
     if (!p) return null;
+    const { variants: variantsRaw, ...rest } = p;
     return {
-      ...p,
+      ...rest,
       tags: JSON.parse(p.tags) as string[],
-      variants: JSON.parse((p as Record<string, unknown>).variants as string ?? "[]"),
+      variants: JSON.parse(variantsRaw ?? "[]") as Variant[],
     };
   } catch {
     return null;
@@ -67,40 +71,35 @@ export default async function ProductDetailPage({
   const { id: idStr } = await params;
   const id = parseInt(idStr, 10);
   const product = await getProduct(id);
-  const related = product ? await getRelated(product.category, id) : [];
+  if (!product) notFound();
+  const related = await getRelated(product.category, id);
 
-  const productSchema = product
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        name: product.name,
-        description: `Wholesale ${product.name} — factory-direct resin ${product.category.toLowerCase()} from Kelikuli, Zhejiang China. Low MOQ, hand-painted, OEM/ODM available.`,
-        image: product.image ?? undefined,
-        brand: { "@type": "Brand", name: "Kelikuli" },
-        category: product.category,
-        offers: {
-          "@type": "Offer",
-          availability: "https://schema.org/InStock",
-          price: "0",
-          priceCurrency: "USD",
-          priceValidUntil: "2099-12-31",
-          seller: { "@type": "Organization", name: "Kelikuli" },
-        },
-      }
-    : null;
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: `Wholesale ${product.name} — factory-direct resin ${product.category.toLowerCase()} from Kelikuli, Zhejiang China. Low MOQ, hand-painted, OEM/ODM available.`,
+    image: product.image || undefined,
+    brand: { "@type": "Brand", name: "Kelikuli" },
+    category: product.category,
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      price: "0",
+      priceCurrency: "USD",
+      priceValidUntil: "2099-12-31",
+      seller: { "@type": "Organization", name: "Kelikuli" },
+    },
+  };
 
-  const breadcrumbItems = product
-    ? [{ label: "Products", href: "/products" }, { label: product.name }]
-    : [{ label: "Products", href: "/products" }];
+  const breadcrumbItems = [{ label: "Products", href: "/products" }, { label: product.name }];
 
   return (
     <>
-      {productSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
         <Breadcrumb items={breadcrumbItems} />
       </div>
