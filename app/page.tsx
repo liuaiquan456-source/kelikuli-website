@@ -5,7 +5,7 @@ import RecommendedCollections from "@/components/RecommendedCollections";
 import CreateCustomBanner from "@/components/CreateCustomBanner";
 import OEMProcess from "@/components/OEMProcess";
 import FeaturedCollections from "@/components/FeaturedCollections";
-import TrustedBrands from "@/components/TrustedBrands";
+import LatestProducts from "@/components/LatestProducts";
 import WhyChoose from "@/components/WhyChoose";
 import StatsSection from "@/components/StatsSection";
 import ServiceSection from "@/components/ServiceSection";
@@ -25,7 +25,7 @@ export default function HomePage() {
       <RecommendedCollections />
       <CreateCustomBanner />
       <OEMProcess />
-      <TrustedBrands />
+      <LatestProducts />
       <WhyChoose />
       <StatsSection />
       <ServiceSection />
