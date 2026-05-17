@@ -40,7 +40,7 @@ const badges = [
 
 export default function FeatureBadges() {
   return (
-    <section className="bg-[#F8F4ED] border-b border-[#C4A97A]/30">
+    <section className="hidden sm:block bg-[#F8F4ED] border-b border-[#C4A97A]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-2 lg:grid-cols-4">
           {badges.map((badge, i) => (
