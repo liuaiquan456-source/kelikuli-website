@@ -241,14 +241,16 @@ export default function HeroCarousel() {
                       </div>
                     </div>
                   </div>
-                  {/* Center-bottom: button */}
-                  <div className="absolute left-1/2 -translate-x-1/2 bottom-8 sm:bottom-10 lg:bottom-12">
-                    <button
-                      onClick={() => setInquiryOpen(true)}
-                      className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
-                    >
-                      Get a Quote
-                    </button>
+                  {/* Center: button */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="pointer-events-auto">
+                      <button
+                        onClick={() => setInquiryOpen(true)}
+                        className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
+                      >
+                        Get a Quote
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
