@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ContactForm from "./_form";
 import { getSettings } from "@/lib/settings";
+import FaqSection from "@/components/FaqSection";
 
 export const metadata: Metadata = {
   title: "Request a Free Quote — Contact Kelikuli Factory",
@@ -11,5 +12,10 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const s = await getSettings();
-  return <ContactForm whatsapp={s.whatsapp} wechat={s.wechat} email={s.email} address={s.address} />;
+  return (
+    <>
+      <ContactForm whatsapp={s.whatsapp} wechat={s.wechat} email={s.email} address={s.address} />
+      <FaqSection page="contact" />
+    </>
+  );
 }

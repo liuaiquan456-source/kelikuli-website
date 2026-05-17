@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Package, BarChart2, Users, Settings,
   ChevronDown, ChevronRight, Globe, Search, FileText, Wifi,
-  PlusCircle, List, LogOut, Inbox, Newspaper,
+  PlusCircle, List, LogOut, Inbox, Newspaper, HelpCircle,
 } from "lucide-react";
 import { cn } from "@/app/admin/_lib/utils";
 
@@ -18,7 +18,7 @@ interface NavItem {
 export default function Sidebar() {
   const pathname = usePathname();
   const router   = useRouter();
-  const [open, setOpen] = useState<string[]>(["Products", "Analytics"]);
+  const [open, setOpen] = useState<string[]>(["Products", "Analytics", "FAQ"]);
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -48,6 +48,13 @@ export default function Sidebar() {
       children: [
         { label: "All Articles", href: "/admin/news",     icon: <List className="w-3.5 h-3.5" /> },
         { label: "New Article",  href: "/admin/news/new", icon: <PlusCircle className="w-3.5 h-3.5" /> },
+      ],
+    },
+    {
+      label: "FAQ", icon: <HelpCircle className="w-4 h-4" />,
+      children: [
+        { label: "All FAQs", href: "/admin/faqs",     icon: <List className="w-3.5 h-3.5" /> },
+        { label: "Add FAQ",  href: "/admin/faqs/new", icon: <PlusCircle className="w-3.5 h-3.5" /> },
       ],
     },
     { label: "Inquiries",  href: "/admin/inquiries",   icon: <Inbox className="w-4 h-4" />, badge: unread },

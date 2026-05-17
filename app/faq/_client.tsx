@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
+import FaqSection from "@/components/FaqSection";
 
 const faqs: { category: string; items: { q: string; a: string }[] }[] = [
   {
@@ -167,6 +168,9 @@ export default function FaqClient() {
           ))}
         </div>
       </section>
+
+      {/* DB-driven FAQs added from admin */}
+      <FaqSection page="faq" title="More FAQs" />
 
       {/* CTA */}
       <section className="py-16 bg-[#F5EDD8]">

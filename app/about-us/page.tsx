@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Breadcrumb from "@/components/Breadcrumb";
+import FaqSection from "@/components/FaqSection";
 
 export const metadata: Metadata = {
   title: "About Us — Kelikuli Resin Toys Manufacturer",
@@ -93,6 +94,7 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+      <FaqSection page="about-us" />
     </div>
   );
 }

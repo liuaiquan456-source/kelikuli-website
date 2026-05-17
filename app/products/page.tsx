@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ProductsClient from "./_client";
+import FaqSection from "@/components/FaqSection";
 
 export const metadata: Metadata = {
   title: "Wholesale Resin Figurines — Products Catalog",
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProductsPage() {
-  return <ProductsClient />;
+  return (
+    <>
+      <ProductsClient />
+      <FaqSection page="products" />
+    </>
+  );
 }

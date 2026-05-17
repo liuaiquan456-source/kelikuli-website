@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import InquiryButton from "@/components/InquiryButton";
 import Breadcrumb from "@/components/Breadcrumb";
+import FaqSection from "@/components/FaqSection";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -342,7 +343,7 @@ export default async function CustomServicePage() {
           <InquiryButton />
         </div>
       </section>
-
+      <FaqSection page="custom-oem-odm" />
     </div>
   );
 }
