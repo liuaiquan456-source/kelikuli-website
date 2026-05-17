@@ -10,15 +10,19 @@ async function getProduct(id: number) {
   try {
     const p = await prisma.product.findUnique({ where: { id } });
     if (!p) return null;
-    const { variants: variantsRaw, ...rest } = p;
-    return {
-      ...rest,
-      tags: JSON.parse(p.tags) as string[],
-      variants: JSON.parse(variantsRaw ?? "[]") as Variant[],
-    };
+    return parseProduct(p);
   } catch {
     return null;
   }
+}
+
+function parseProduct(p: { tags: string; variants: string; [key: string]: unknown }) {
+  const { variants: variantsRaw, tags: tagsRaw, ...rest } = p;
+  return {
+    ...rest,
+    tags: JSON.parse(tagsRaw) as string[],
+    variants: JSON.parse(variantsRaw ?? "[]") as Variant[],
+  };
 }
 
 async function getRelated(category: string, excludeId: number) {
@@ -27,14 +31,14 @@ async function getRelated(category: string, excludeId: number) {
       where: { category, status: "active", NOT: { id: excludeId } },
       take: 8,
     });
-    if (same.length > 0) return same.map((p) => ({ ...p, tags: JSON.parse(p.tags) as string[] }));
+    if (same.length > 0) return same.map(parseProduct);
 
     const other = await prisma.product.findMany({
       where: { status: "active", NOT: { id: excludeId } },
       orderBy: { createdAt: "desc" },
       take: 8,
     });
-    return other.map((p) => ({ ...p, tags: JSON.parse(p.tags) as string[] }));
+    return other.map(parseProduct);
   } catch {
     return [];
   }
