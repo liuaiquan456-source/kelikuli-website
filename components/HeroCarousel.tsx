@@ -7,26 +7,30 @@ const slides = [
   {
     src: "/images/banner-6.png",
     alt: "Kelikuli Resin Toy Showroom — custom resin figurines and collectibles display",
-    btnPos: "left",
-    showContent: true,
+    contentType: "main",
+  },
+  {
+    src: "/images/banner-lamp.png",
+    alt: "Resin Decoration Light — artistically crafted resin lamps and figurines by Kelikuli",
+    contentType: "lamp",
   },
   {
     src: "/images/banner-4.png",
     alt: "Prince Collection — storybook-inspired collectible resin figurines by Kelikuli",
+    contentType: "button",
     btnPos: "center",
-    showContent: false,
   },
   {
     src: "/images/banner-2.png",
     alt: "Custom Blind Box Toys — OEM ODM services for collectible figurines and blind box series",
+    contentType: "button",
     btnPos: "right",
-    showContent: false,
   },
   {
     src: "/images/banner-3.png",
     alt: "Custom Halloween and Christmas Decor — seasonal resin crafts wholesale manufacturer",
+    contentType: "button",
     btnPos: "center",
-    showContent: false,
   },
 ];
 
@@ -142,12 +146,11 @@ export default function HeroCarousel() {
                 draggable={false}
               />
 
-              {/* Slide 1 text overlay */}
-              {slide.showContent && (
+              {/* Slide 1: main */}
+              {slide.contentType === "main" && (
                 <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black/50 via-black/35 to-transparent">
                   <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="max-w-[52%] lg:max-w-[44%] lg:ml-[8%]">
-
                     <h1 className="font-black leading-tight mb-2">
                       <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
                         Resin Figurine
@@ -156,12 +159,9 @@ export default function HeroCarousel() {
                         Manufacturer
                       </span>
                     </h1>
-
                     <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm mb-3 font-medium drop-shadow">
                       Custom Resin Toy Factory &nbsp;|&nbsp; Blind Box Manufacturer &nbsp;|&nbsp; Wholesale Resin Figurines
                     </p>
-
-                    {/* Feature icons */}
                     <div className="hidden sm:flex gap-2 lg:gap-4 mb-3">
                       {featureIcons.map((f) => (
                         <div key={f.label} className="flex flex-col items-center gap-1">
@@ -174,8 +174,6 @@ export default function HeroCarousel() {
                         </div>
                       ))}
                     </div>
-
-                    {/* Pill */}
                     <div className="hidden sm:flex items-center mb-3 w-fit">
                       <span className="bg-[#C9A55A] text-white text-[10px] lg:text-xs font-black px-3 py-1.5 rounded-l-full tracking-wide uppercase">
                         Blind Box Customization
@@ -184,8 +182,6 @@ export default function HeroCarousel() {
                         Your Vision, Premium Excellence.
                       </span>
                     </div>
-
-                    {/* Bullets */}
                     <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-1 mb-4">
                       {["OEM/ODM Custom Orders", "Hand-Painted Quality", "Low MOQ Accepted", "Eco-friendly"].map((item) => (
                         <div key={item} className="flex items-center gap-1.5 text-white/90">
@@ -196,7 +192,48 @@ export default function HeroCarousel() {
                         </div>
                       ))}
                     </div>
+                    <button
+                      onClick={() => setInquiryOpen(true)}
+                      className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-5 py-2 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
+                    >
+                      Get a Quote
+                    </button>
+                  </div>
+                  </div>
+                </div>
+              )}
 
+              {/* Slide 2: lamp */}
+              {slide.contentType === "lamp" && (
+                <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black/60 via-black/40 to-transparent">
+                  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="max-w-[55%] lg:max-w-[46%] lg:ml-[8%]">
+                    <p className="text-[#C9A55A] text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-2 drop-shadow">
+                      New Collection
+                    </p>
+                    <h2 className="font-black leading-tight mb-3">
+                      <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
+                        Resin Decoration
+                      </span>
+                      <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
+                        Light
+                      </span>
+                    </h2>
+                    <p className="text-white/80 text-[10px] sm:text-sm lg:text-base mb-5 leading-relaxed drop-shadow max-w-sm">
+                      Discover artistically crafted resin lamps and figurines that blend soft ambient lighting with charming design, perfect for home decor, gifts, and collectible display.
+                    </p>
+                    <div className="hidden sm:flex gap-4 mb-5">
+                      {[
+                        { label: "Handcrafted Resin", icon: "🤲" },
+                        { label: "Warm Ambient Light", icon: "☀" },
+                        { label: "Unique Gift Ideas", icon: "🎁" },
+                      ].map((f) => (
+                        <div key={f.label} className="flex items-center gap-1.5 text-white/90">
+                          <span className="text-base">{f.icon}</span>
+                          <span className="text-[10px] lg:text-xs font-medium">{f.label}</span>
+                        </div>
+                      ))}
+                    </div>
                     <button
                       onClick={() => setInquiryOpen(true)}
                       className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-5 py-2 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
@@ -210,8 +247,8 @@ export default function HeroCarousel() {
             </div>
           ))}
 
-          {/* Other slides button */}
-          {!slides[current].showContent && (
+          {/* Other slides: simple button */}
+          {slides[current].contentType === "button" && (
             <div className={`absolute bottom-8 z-20 flex items-center left-1/2 -translate-x-1/2 ${
               slides[current].btnPos === "right"
                 ? "lg:left-auto lg:translate-x-0 lg:right-[20%]"
