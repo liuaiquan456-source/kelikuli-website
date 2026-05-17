@@ -16,7 +16,7 @@ async function getProduct(id: number) {
   }
 }
 
-function parseProduct(p: { tags: string; variants: string; [key: string]: unknown }) {
+function parseProduct<T extends { tags: string; variants: string }>(p: T) {
   const { variants: variantsRaw, tags: tagsRaw, ...rest } = p;
   return {
     ...rest,
