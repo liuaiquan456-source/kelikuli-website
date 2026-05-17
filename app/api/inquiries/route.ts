@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendInquiryEmail } from "@/lib/email";
 
 export async function GET() {
   const inquiries = await prisma.inquiry.findMany({
@@ -27,6 +28,16 @@ export async function POST(req: NextRequest) {
       message: message.trim(),
     },
   });
+
+  // Send email notification (non-blocking — inquiry is saved even if email fails)
+  sendInquiryEmail({
+    name: name.trim(),
+    company: company?.trim() ?? "",
+    email: email.trim(),
+    phone: phone?.trim() ?? "",
+    product: product?.trim() ?? "",
+    message: message.trim(),
+  }).catch((err) => console.error("[email] inquiry notification failed:", err));
 
   return NextResponse.json({ inquiry }, { status: 201 });
 }
