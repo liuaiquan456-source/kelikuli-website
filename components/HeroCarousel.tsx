@@ -205,46 +205,51 @@ export default function HeroCarousel() {
 
               {/* Slide 2: lamp */}
               {slide.contentType === "lamp" && (
-                <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent">
-                  {/* Left: text content */}
-                  <div className="absolute left-4 sm:left-8 lg:left-[22%] top-[18%] sm:top-[20%] lg:top-[22%]">
-                    <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-3">
-                      <span className="block text-white text-2xl sm:text-4xl lg:text-5xl xl:text-[3rem]">
-                        Resin Decoration
-                      </span>
-                      <span className="block text-[#C9A55A] text-2xl sm:text-4xl lg:text-5xl xl:text-[3rem]">
-                        Light
-                      </span>
-                    </h2>
-                    <div className="hidden sm:flex gap-6">
-                      <div className="flex items-center gap-2 text-white/90">
-                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                        <span className="text-xs font-medium">Handcrafted Resin</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-white/90">
-                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
-                        </svg>
-                        <span className="text-xs font-medium">Warm Ambient Light</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-white/90">
-                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                        </svg>
-                        <span className="text-xs font-medium">Unique Gift Ideas</span>
+                <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black/55 via-black/30 to-transparent">
+                  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                    {/* Left: title + subtitle + features */}
+                    <div className="max-w-[45%] lg:max-w-[38%] lg:ml-[4%]">
+                      <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
+                        <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
+                          Resin Decoration
+                        </span>
+                        <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
+                          Light
+                        </span>
+                      </h2>
+                      <p className="text-white/75 text-[10px] sm:text-sm lg:text-base font-medium drop-shadow mb-4 italic">
+                        Handcrafted Resin Decor for Warm, Cozy Spaces
+                      </p>
+                      <div className="hidden sm:flex gap-5">
+                        <div className="flex items-center gap-2 text-white/90">
+                          <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                          </svg>
+                          <span className="text-xs font-medium">Handcrafted Resin</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/90">
+                          <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
+                          </svg>
+                          <span className="text-xs font-medium">Warm Ambient Light</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/90">
+                          <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                          </svg>
+                          <span className="text-xs font-medium">Unique Gift Ideas</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/* Right: button */}
-                  <div className="absolute right-6 sm:right-10 lg:right-[8%] bottom-8 sm:bottom-10 lg:bottom-14">
-                    <button
-                      onClick={() => setInquiryOpen(true)}
-                      className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
-                    >
-                      Get a Quote
-                    </button>
+                    {/* Right: button */}
+                    <div className="lg:mr-[4%]">
+                      <button
+                        onClick={() => setInquiryOpen(true)}
+                        className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
+                      >
+                        Get a Quote
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
