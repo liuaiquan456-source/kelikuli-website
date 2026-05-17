@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Products", href: "/products" },
   { label: "Custom Service", href: "/custom-oem-odm" },
   { label: "News", href: "/news" },
+  { label: "FAQ", href: "/faq" },
   { label: "About Us", href: "/about-us" },
   { label: "Contact", href: "/contact" },
 ];
