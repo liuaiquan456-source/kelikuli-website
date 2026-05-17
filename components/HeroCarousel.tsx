@@ -205,10 +205,9 @@ export default function HeroCarousel() {
 
               {/* Slide 2: lamp */}
               {slide.contentType === "lamp" && (
-                <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black/55 via-black/30 to-transparent">
-                  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-                    {/* Left: title + subtitle + features */}
-                    <div className="max-w-[45%] lg:max-w-[38%] lg:ml-[4%]">
+                <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/30 to-transparent">
+                  {/* Center-left: title + subtitle + features */}
+                  <div className="absolute left-4 sm:left-8 lg:left-[6%] top-1/2 -translate-y-1/2 max-w-[45%] lg:max-w-[38%]">
                       <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
                         <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
                           Resin Decoration
@@ -241,15 +240,15 @@ export default function HeroCarousel() {
                         </div>
                       </div>
                     </div>
-                    {/* Right: button */}
-                    <div className="lg:mr-[4%]">
-                      <button
-                        onClick={() => setInquiryOpen(true)}
-                        className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
-                      >
-                        Get a Quote
-                      </button>
-                    </div>
+                  </div>
+                  {/* Center-bottom: button */}
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-8 sm:bottom-10 lg:bottom-12">
+                    <button
+                      onClick={() => setInquiryOpen(true)}
+                      className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
+                    >
+                      Get a Quote
+                    </button>
                   </div>
                 </div>
               )}
