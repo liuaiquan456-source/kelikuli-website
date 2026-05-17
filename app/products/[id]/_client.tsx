@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import InquiryModal from "@/components/InquiryModal";
 
@@ -209,12 +208,13 @@ export default function ProductDetailClient({
                     {images.map((src, i) => (
                       <button
                         key={i}
-                        onClick={() => setActiveImg(i)}
-                        className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
+                        onClick={() => { setActiveImg(i); setImgError(false); }}
+                        className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                           i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
                         }`}
                       >
-                        <Image src={src} alt={`${product.name} — image ${i + 1}`} fill sizes="64px" className="object-cover" />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={src} alt={`${product.name} — image ${i + 1}`} className="w-full h-full object-cover" />
                       </button>
                     ))}
                   </div>
