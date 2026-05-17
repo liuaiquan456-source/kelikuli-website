@@ -219,17 +219,25 @@ export default function HeroCarousel() {
                     <p className="text-white/80 text-[10px] sm:text-sm leading-relaxed drop-shadow max-w-xs sm:max-w-sm mb-3">
                       Discover artistically crafted resin lamps and figurines that blend soft ambient lighting with charming design, perfect for home decor, gifts, and collectible display.
                     </p>
-                    <div className="hidden sm:flex gap-4">
-                      {[
-                        { label: "Handcrafted Resin", icon: "🤲" },
-                        { label: "Warm Ambient Light", icon: "☀" },
-                        { label: "Unique Gift Ideas", icon: "🎁" },
-                      ].map((f) => (
-                        <div key={f.label} className="flex items-center gap-1.5 text-white/90">
-                          <span className="text-sm">{f.icon}</span>
-                          <span className="text-xs font-medium">{f.label}</span>
-                        </div>
-                      ))}
+                    <div className="hidden sm:flex gap-6">
+                      <div className="flex items-center gap-2 text-white/90">
+                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                        <span className="text-xs font-medium">Handcrafted Resin</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/90">
+                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
+                        </svg>
+                        <span className="text-xs font-medium">Warm Ambient Light</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/90">
+                        <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                        </svg>
+                        <span className="text-xs font-medium">Unique Gift Ideas</span>
+                      </div>
                     </div>
                   </div>
                   {/* Right: button */}
