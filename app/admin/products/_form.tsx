@@ -17,13 +17,15 @@ interface Product {
   seoTitle?: string; seoDesc?: string; seoKeywords?: string;
 }
 
+interface Variant { name: string; image: string; }
+
 interface FormState {
   name: string; category: string; price: string; stock: string;
   moq: string; leadTime: string;
   status: boolean; tags: string[]; tagInput: string;
   description: string; specs: string;
   seoTitle: string; seoDesc: string; seoKeywords: string;
-  mainImage: string | null; gallery: string[];
+  mainImage: string | null; variants: Variant[];
 }
 
 interface FormErrors { name?: string; description?: string; }
@@ -36,7 +38,7 @@ function productToForm(p: Product): FormState {
     tags: p.tags, tagInput: "",
     description: p.description ?? "", specs: p.specs ?? "",
     seoTitle: p.seoTitle ?? "", seoDesc: p.seoDesc ?? "", seoKeywords: p.seoKeywords ?? "",
-    mainImage: p.image || null, gallery: [],
+    mainImage: p.image || null, variants: [],
   };
 }
 
@@ -46,7 +48,7 @@ const defaultForm: FormState = {
   status: true, tags: [], tagInput: "",
   description: "", specs: "",
   seoTitle: "", seoDesc: "", seoKeywords: "",
-  mainImage: null, gallery: [],
+  mainImage: null, variants: [],
 };
 
 const META_DESC_MAX = 155;
@@ -59,7 +61,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const mainImgRef = useRef<HTMLInputElement>(null);
-  const galleryRef = useRef<HTMLInputElement>(null);
+  const variantImgRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const set = (key: keyof FormState, value: unknown) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -93,11 +95,33 @@ export default function AddProductForm({ product }: { product?: Product }) {
     }
   };
 
-  const handleGallery = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    const urls = files.map((f) => URL.createObjectURL(f));
-    set("gallery", [...form.gallery, ...urls].slice(0, 8));
+  const uploadVariantImage = async (file: File, index: number) => {
+    const preview = URL.createObjectURL(file);
+    setForm((f) => {
+      const v = [...f.variants];
+      v[index] = { ...v[index], image: preview };
+      return { ...f, variants: v };
+    });
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.url) {
+        setForm((f) => {
+          const v = [...f.variants];
+          v[index] = { ...v[index], image: data.url };
+          return { ...f, variants: v };
+        });
+      }
+    } catch { /* keep preview */ }
   };
+
+  const addVariant = () => setForm((f) => ({ ...f, variants: [...f.variants, { name: "", image: "" }] }));
+  const removeVariant = (i: number) => setForm((f) => ({ ...f, variants: f.variants.filter((_, j) => j !== i) }));
+  const updateVariantName = (i: number, name: string) => setForm((f) => {
+    const v = [...f.variants]; v[i] = { ...v[i], name }; return { ...f, variants: v };
+  });
 
   const addTag = () => {
     const t = form.tagInput.trim().toLowerCase();
@@ -124,6 +148,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
         status: statusOverride !== undefined ? statusOverride : form.status,
         image: form.mainImage ?? "",
         tags: form.tags,
+        variants: form.variants.filter((v) => v.name || v.image),
         description: form.description, specs: form.specs,
         seoTitle: form.seoTitle, seoDesc: form.seoDesc, seoKeywords: form.seoKeywords,
       };
@@ -252,34 +277,58 @@ export default function AddProductForm({ product }: { product?: Product }) {
           </CardBody>
         </Card>
 
-        {/* Gallery */}
+        {/* Variants */}
         <Card>
           <CardHeader>
-            <CardTitle>Product Gallery</CardTitle>
-            <span className="text-xs text-slate-400">{form.gallery.length}/8 images</span>
+            <CardTitle>Product Variants</CardTitle>
+            <span className="text-xs text-slate-400">{form.variants.length} SKU{form.variants.length !== 1 ? "s" : ""}</span>
           </CardHeader>
-          <CardBody>
-            <div className="grid grid-cols-4 gap-3">
-              {form.gallery.map((src, i) => (
-                <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 group">
-                  <Image src={src} alt={`Gallery ${i}`} fill sizes="100px" className="object-cover" />
-                  <button
-                    onClick={() => set("gallery", form.gallery.filter((_, j) => j !== i))}
-                    className="absolute top-1 right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                  ><X className="w-3 h-3" /></button>
-                </div>
-              ))}
-              {form.gallery.length < 8 && (
+          <CardBody className="space-y-3">
+            {form.variants.map((v, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 border border-slate-200 rounded-xl bg-slate-50">
+                {/* Image */}
                 <div
-                  onClick={() => galleryRef.current?.click()}
-                  className="aspect-square border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                  onClick={() => variantImgRefs.current[i]?.click()}
+                  className="w-16 h-16 shrink-0 rounded-lg border-2 border-dashed border-slate-300 hover:border-blue-400 bg-white cursor-pointer overflow-hidden flex items-center justify-center transition-colors"
                 >
-                  <Plus className="w-5 h-5 text-slate-300" />
-                  <span className="text-xs text-slate-400 mt-1">Add</span>
+                  {v.image
+                    ? <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
+                    : <Upload className="w-5 h-5 text-slate-300" />}
                 </div>
-              )}
-            </div>
-            <input ref={galleryRef} type="file" accept="image/*" multiple className="hidden" onChange={handleGallery} />
+                <input
+                  ref={(el) => { variantImgRefs.current[i] = el; }}
+                  type="file" accept="image/*" className="hidden"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadVariantImage(f, i); e.target.value = ""; }}
+                />
+                {/* Name */}
+                <input
+                  value={v.name}
+                  onChange={(e) => updateVariantName(i, e.target.value)}
+                  placeholder={`Variant name (e.g. Red, Large, Style A)`}
+                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 bg-white"
+                />
+                {/* Remove */}
+                <button
+                  type="button"
+                  onClick={() => removeVariant(i)}
+                  className="w-7 h-7 shrink-0 rounded-full bg-red-50 hover:bg-red-100 flex items-center justify-center text-red-400 hover:text-red-600 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+            {form.variants.length < 12 && (
+              <button
+                type="button"
+                onClick={addVariant}
+                className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-sm text-slate-500 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Add Variant
+              </button>
+            )}
+            {form.variants.length === 0 && (
+              <p className="text-xs text-slate-400 text-center pb-1">Add variants to show different colors, sizes, or styles.</p>
+            )}
           </CardBody>
         </Card>
 

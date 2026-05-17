@@ -18,6 +18,7 @@ model Product {
   status      String   @default("active")
   image       String   @default("")
   tags        String   @default("[]")
+  variants    String   @default("[]")
   description String   @default("")
   specs       String   @default("")
   seoTitle    String   @default("")

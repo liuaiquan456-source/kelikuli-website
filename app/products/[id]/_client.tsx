@@ -11,10 +11,13 @@ function SafeImg({ src, alt, className }: { src: string; alt: string; className:
   return <img src={src} alt={alt} className={className} onError={() => setOk(false)} />;
 }
 
+interface Variant { name: string; image: string; }
+
 interface Product {
   id: number; name: string; category: string; image: string;
   price: number; moq: number; leadTime: string; status: string;
   description: string; specs: string; tags: string[];
+  variants?: Variant[];
 }
 
 function getAttributes(name: string, category: string) {
@@ -71,6 +74,7 @@ export default function ProductDetailClient({
   related: Product[];
 }) {
   const [activeImg, setActiveImg] = useState(0);
+  const [activeVariant, setActiveVariant] = useState<number | null>(null);
   const [imgError, setImgError] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
@@ -85,7 +89,11 @@ export default function ProductDetailClient({
     );
   }
 
-  const images: string[] = product.image ? [product.image] : [];
+  const variants = product.variants?.filter((v) => v.name || v.image) ?? [];
+  const displayImage = activeVariant !== null && variants[activeVariant]?.image
+    ? variants[activeVariant].image
+    : product.image;
+  const images: string[] = displayImage ? [displayImage] : [];
   const attrs = getAttributes(product.name, product.category).map((a) => {
     if (a.key === "MOQ") return { ...a, value: product.moq ? `${product.moq} pcs` : a.value };
     if (a.key === "Lead Time") return { ...a, value: product.leadTime || a.value };
@@ -269,6 +277,36 @@ export default function ProductDetailClient({
 
             </div>
           </div>
+
+          {/* Variants */}
+          {variants.length > 0 && (
+            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+              <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">Available Options</h2>
+              <div className="flex flex-wrap gap-3">
+                {variants.map((v, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => { setActiveVariant(activeVariant === i ? null : i); setImgError(false); }}
+                    className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-colors ${
+                      activeVariant === i ? "border-[#C9A55A] bg-[#F5EDD8]" : "border-stone-200 hover:border-[#C9A55A]/50 bg-white"
+                    }`}
+                  >
+                    {v.image && (
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-50">
+                        <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    {v.name && (
+                      <span className={`text-xs font-medium max-w-[80px] text-center leading-tight ${
+                        activeVariant === i ? "text-[#C9A55A]" : "text-stone-600"
+                      }`}>{v.name}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Description & Specs */}
           {(product.description || product.specs) && (

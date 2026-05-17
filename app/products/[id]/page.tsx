@@ -7,7 +7,11 @@ async function getProduct(id: number) {
   try {
     const p = await prisma.product.findUnique({ where: { id } });
     if (!p) return null;
-    return { ...p, tags: JSON.parse(p.tags) as string[] };
+    return {
+      ...p,
+      tags: JSON.parse(p.tags) as string[],
+      variants: JSON.parse((p as Record<string, unknown>).variants as string ?? "[]"),
+    };
   } catch {
     return null;
   }

@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
   const result = products.map((p) => ({
     ...p,
     tags: JSON.parse(p.tags) as string[],
+    variants: JSON.parse((p as Record<string, unknown>).variants as string ?? "[]"),
   }));
 
   return NextResponse.json(result);
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
       status:      body.status ? "active" : "inactive",
       image:       body.image ?? "",
       tags:        JSON.stringify(body.tags ?? []),
+      variants:    JSON.stringify(body.variants ?? []),
       description: body.description ?? "",
       specs:       body.specs ?? "",
       seoTitle:    body.seoTitle ?? "",
