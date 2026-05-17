@@ -38,17 +38,6 @@ const highlights = [
   },
 ];
 
-const sampleImages = [
-  "/Custom Resin Toy OEM Factory/7039a31501760025a4eee65254a75a7f.jpg",
-  "/Custom Resin Toy OEM Factory/aaed115d878ce69359c66c488d0277cb.jpg",
-  "/Custom Resin Toy OEM Factory/39fa6cd2ebffccf87b3f227dcec67896.jpg",
-  "/Custom Resin Toy OEM Factory/adf93f18d4247c46f9613d3a41860baa.jpg",
-  "/Custom Resin Toy OEM Factory/a118301b3bcb2c4ff645e2ba46859fb4.jpg",
-  "/Custom Resin Toy OEM Factory/8640c17eb08187410836b876a7379a16.jpg",
-  "/Custom Resin Toy OEM Factory/c70ffd45d03d77555f65348db79cd102.jpg",
-  "/Custom Resin Toy OEM Factory/8ee05fb55b863ad4a3ed988a9fcac867.jpg",
-  "/Custom Resin Toy OEM Factory/03fdd79664fd030c9807ee51effc89ac.jpg",
-];
 
 export default function CreateCustomBanner() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -94,23 +83,16 @@ export default function CreateCustomBanner() {
             </div>
           </div>
 
-          {/* Right: 3×3 sample grid */}
+          {/* Right: custom examples image */}
           <div className="flex-1 w-full max-w-xs sm:max-w-sm lg:max-w-md">
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-              {sampleImages.map((src, i) => (
-                <div
-                  key={i}
-                  className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-stone-800"
-                >
-                  <Image
-                    src={src}
-                    alt={`Sample product ${i + 1}`}
-                    fill
-                    sizes="(max-width: 1024px) 30vw, 130px"
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ))}
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+              <Image
+                src="/27bf2fe34fd3fae43b575e994f236881.jpg"
+                alt="Custom resin toy OEM examples — from sketch to finished product"
+                width={600}
+                height={750}
+                className="w-full h-auto object-cover"
+              />
             </div>
           </div>
 
