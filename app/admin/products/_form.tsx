@@ -10,7 +10,7 @@ import { cn } from "@/app/admin/_lib/utils";
 
 interface Product {
   id: number; name: string; category: string; price: number;
-  stock: number; moq?: number; leadTime?: string;
+  moq?: number; leadTime?: string;
   status: "active" | "inactive"; image: string;
   tags: string[]; createdAt: string;
   description?: string; specs?: string;
@@ -21,7 +21,7 @@ interface Product {
 interface Variant { name: string; image: string; }
 
 interface FormState {
-  name: string; category: string; price: string; stock: string;
+  name: string; category: string; price: string;
   moq: string; leadTime: string;
   status: boolean; tags: string[]; tagInput: string;
   description: string; specs: string;
@@ -34,7 +34,7 @@ interface FormErrors { name?: string; description?: string; }
 function productToForm(p: Product): FormState {
   return {
     name: p.name, category: p.category, price: String(p.price),
-    stock: String(p.stock), moq: String(p.moq ?? 50), leadTime: p.leadTime ?? "30-45 days",
+    moq: String(p.moq ?? 50), leadTime: p.leadTime ?? "30-45 days",
     status: p.status === "active",
     tags: p.tags, tagInput: "",
     description: p.description ?? "", specs: p.specs ?? "",
@@ -45,7 +45,7 @@ function productToForm(p: Product): FormState {
 }
 
 const defaultForm: FormState = {
-  name: "", category: CATEGORIES[0], price: "", stock: "",
+  name: "", category: CATEGORIES[0], price: "",
   moq: "50", leadTime: "30-45 days",
   status: true, tags: [], tagInput: "",
   description: "", specs: "",
@@ -150,7 +150,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
     try {
       const payload = {
         name: form.name, category: form.category, price: form.price,
-        stock: form.stock, moq: form.moq, leadTime: form.leadTime,
+        moq: form.moq, leadTime: form.leadTime,
         status: statusOverride !== undefined ? statusOverride : form.status,
         image: form.images[0] ?? "",
         images: form.images,
@@ -214,6 +214,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
                 onChange={(e) => set("leadTime", e.target.value)}
               />
             </div>
+
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-slate-600">Status</label>
               <div className="flex items-center gap-3 h-9">

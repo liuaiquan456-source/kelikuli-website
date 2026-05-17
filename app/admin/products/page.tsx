@@ -7,12 +7,12 @@ import { CATEGORIES } from "@/app/admin/_data/mock";
 import { cn } from "@/app/admin/_lib/utils";
 
 interface Product {
-  id: number; name: string; category: string; price: number; stock: number;
+  id: number; name: string; category: string; price: number;
   moq: number; leadTime: string; status: string; image: string;
   tags: string[]; createdAt: string;
 }
 
-type SortKey = "name" | "price" | "stock" | "createdAt";
+type SortKey = "name" | "price" | "createdAt";
 type SortDir = "asc" | "desc";
 
 function SortIcon({ col, sortKey, dir }: { col: SortKey; sortKey: SortKey; dir: SortDir }) {
@@ -98,19 +98,14 @@ export default function ProductList() {
     setProducts((prev) => prev.map((x) => x.id === p.id ? { ...x, status } : x));
   };
 
-  const outOfStock  = products.filter((p) => p.stock === 0).length;
-  const lowStock    = products.filter((p) => p.stock > 0 && p.stock < 20).length;
-  const totalValue  = products.reduce((s, p) => s + p.price * p.stock, 0);
 
   return (
     <div className="space-y-4">
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {[
-          { label: "Total Products",  value: products.length, color: "bg-blue-100 text-blue-600",   icon: <Package className="w-5 h-5" /> },
-          { label: "Active",          value: products.filter(p=>p.status==="active").length, color: "bg-emerald-100 text-emerald-600", icon: <CheckSquare className="w-5 h-5" /> },
-          { label: "Out of Stock",    value: outOfStock,      color: "bg-red-100 text-red-600",    icon: <Package className="w-5 h-5" /> },
-          { label: "Low Stock (<20)", value: lowStock,        color: "bg-amber-100 text-amber-600", icon: <Package className="w-5 h-5" /> },
+          { label: "Total Products", value: products.length, color: "bg-blue-100 text-blue-600",     icon: <Package className="w-5 h-5" /> },
+          { label: "Active",         value: products.filter(p=>p.status==="active").length, color: "bg-emerald-100 text-emerald-600", icon: <CheckSquare className="w-5 h-5" /> },
         ].map(({ label, value, color, icon }) => (
           <Card key={label}>
             <div className="flex items-center gap-3 p-4">
@@ -163,7 +158,6 @@ export default function ProductList() {
       {/* Summary */}
       <div className="flex items-center gap-4 text-sm text-slate-500">
         <span>Showing: <strong className="text-slate-800">{filtered.length}</strong> products</span>
-        <span>Inventory Value: <strong className="text-slate-800">${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong></span>
       </div>
 
       {/* Table */}
@@ -181,7 +175,6 @@ export default function ProductList() {
                 <Th><button onClick={() => toggleSort("name")} className="flex items-center uppercase tracking-wider text-xs font-semibold hover:text-slate-700">Product <SortIcon col="name" sortKey={sortKey} dir={sortDir} /></button></Th>
                 <Th>Category</Th>
                 <Th><button onClick={() => toggleSort("price")} className="flex items-center uppercase tracking-wider text-xs font-semibold hover:text-slate-700">Price <SortIcon col="price" sortKey={sortKey} dir={sortDir} /></button></Th>
-                <Th><button onClick={() => toggleSort("stock")} className="flex items-center uppercase tracking-wider text-xs font-semibold hover:text-slate-700">Stock <SortIcon col="stock" sortKey={sortKey} dir={sortDir} /></button></Th>
                 <Th>Status</Th>
                 <Th><button onClick={() => toggleSort("createdAt")} className="flex items-center uppercase tracking-wider text-xs font-semibold hover:text-slate-700">Created <SortIcon col="createdAt" sortKey={sortKey} dir={sortDir} /></button></Th>
                 <Th>Actions</Th>
@@ -209,13 +202,6 @@ export default function ProductList() {
                   <Td><Badge label={p.category} variant="blue" /></Td>
                   <Td className="font-semibold text-sm">${p.price.toFixed(2)}</Td>
                   <Td>
-                    <span className={cn("text-sm font-semibold",
-                      p.stock === 0 ? "text-red-500" : p.stock < 20 ? "text-amber-600" : "text-slate-700"
-                    )}>
-                      {p.stock === 0 ? "Out of stock" : p.stock}
-                    </span>
-                  </Td>
-                  <Td>
                     <button onClick={() => toggleStatus(p)} title="Click to toggle status"
                       className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors cursor-pointer",
                         p.status === "active" ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"
@@ -234,7 +220,7 @@ export default function ProductList() {
                 </Tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="text-center py-12 text-slate-400 text-sm">No products found.</td></tr>
+                <tr><td colSpan={7} className="text-center py-12 text-slate-400 text-sm">No products found.</td></tr>
               )}
             </tbody>
           </Table>
