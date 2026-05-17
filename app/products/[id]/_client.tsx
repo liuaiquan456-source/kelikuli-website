@@ -105,10 +105,10 @@ export default function ProductDetailClient({
   return (
     <>
       <div className="min-h-screen bg-[#F8F4ED]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 items-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:items-start">
 
           {/* Main content */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 w-full">
           {/* Main Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
             <div className="flex flex-col lg:flex-row">
