@@ -207,8 +207,8 @@ export default function HeroCarousel() {
               {slide.contentType === "lamp" && (
                 <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent">
                   {/* Left: text content */}
-                  <div className="absolute left-4 sm:left-8 lg:left-[8%] bottom-8 sm:bottom-10 lg:bottom-14">
-                    <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
+                  <div className="absolute left-4 sm:left-8 lg:left-[22%] top-[18%] sm:top-[20%] lg:top-[22%]">
+                    <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-3">
                       <span className="block text-white text-2xl sm:text-4xl lg:text-5xl xl:text-[3rem]">
                         Resin Decoration
                       </span>
@@ -216,9 +216,6 @@ export default function HeroCarousel() {
                         Light
                       </span>
                     </h2>
-                    <p className="text-white/80 text-[10px] sm:text-sm leading-relaxed drop-shadow max-w-xs sm:max-w-sm mb-3">
-                      Discover artistically crafted resin lamps and figurines that blend soft ambient lighting with charming design, perfect for home decor, gifts, and collectible display.
-                    </p>
                     <div className="hidden sm:flex gap-6">
                       <div className="flex items-center gap-2 text-white/90">
                         <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
