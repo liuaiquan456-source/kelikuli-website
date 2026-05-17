@@ -5,7 +5,12 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const product = await prisma.product.findUnique({ where: { id: parseInt(id) } });
   if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json({ ...product, tags: JSON.parse(product.tags) });
+  return NextResponse.json({
+    ...product,
+    tags: JSON.parse(product.tags),
+    images: JSON.parse(product.images ?? "[]"),
+    variants: JSON.parse(product.variants ?? "[]"),
+  });
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -22,6 +27,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(body.leadTime    !== undefined && { leadTime:    body.leadTime }),
       ...(body.status      !== undefined && { status:      typeof body.status === "boolean" ? (body.status ? "active" : "inactive") : body.status }),
       ...(body.image       !== undefined && { image:       body.image }),
+      ...(body.images      !== undefined && { images:      JSON.stringify(body.images) }),
       ...(body.tags        !== undefined && { tags:        JSON.stringify(body.tags) }),
       ...(body.variants    !== undefined && { variants:    JSON.stringify(body.variants) }),
       ...(body.description !== undefined && { description: body.description }),
@@ -31,7 +37,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(body.seoKeywords !== undefined && { seoKeywords: body.seoKeywords }),
     },
   });
-  return NextResponse.json({ ...product, tags: JSON.parse(product.tags) });
+  return NextResponse.json({
+    ...product,
+    tags: JSON.parse(product.tags),
+    images: JSON.parse(product.images ?? "[]"),
+    variants: JSON.parse(product.variants ?? "[]"),
+  });
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {

@@ -16,11 +16,12 @@ async function getProduct(id: number) {
   }
 }
 
-function parseProduct<T extends { tags: string; variants: string }>(p: T) {
-  const { variants: variantsRaw, tags: tagsRaw, ...rest } = p;
+function parseProduct<T extends { tags: string; variants: string; images: string }>(p: T) {
+  const { variants: variantsRaw, tags: tagsRaw, images: imagesRaw, ...rest } = p;
   return {
     ...rest,
     tags: JSON.parse(tagsRaw) as string[],
+    images: JSON.parse(imagesRaw ?? "[]") as string[],
     variants: JSON.parse(variantsRaw ?? "[]") as Variant[],
   };
 }

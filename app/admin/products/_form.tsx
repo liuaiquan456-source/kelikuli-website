@@ -15,6 +15,7 @@ interface Product {
   tags: string[]; createdAt: string;
   description?: string; specs?: string;
   seoTitle?: string; seoDesc?: string; seoKeywords?: string;
+  images?: string[];
 }
 
 interface Variant { name: string; image: string; }
@@ -25,7 +26,7 @@ interface FormState {
   status: boolean; tags: string[]; tagInput: string;
   description: string; specs: string;
   seoTitle: string; seoDesc: string; seoKeywords: string;
-  mainImage: string | null; variants: Variant[];
+  images: string[]; variants: Variant[];
 }
 
 interface FormErrors { name?: string; description?: string; }
@@ -38,7 +39,8 @@ function productToForm(p: Product): FormState {
     tags: p.tags, tagInput: "",
     description: p.description ?? "", specs: p.specs ?? "",
     seoTitle: p.seoTitle ?? "", seoDesc: p.seoDesc ?? "", seoKeywords: p.seoKeywords ?? "",
-    mainImage: p.image || null, variants: [],
+    images: p.images?.length ? p.images : (p.image ? [p.image] : []),
+    variants: [],
   };
 }
 
@@ -48,7 +50,7 @@ const defaultForm: FormState = {
   status: true, tags: [], tagInput: "",
   description: "", specs: "",
   seoTitle: "", seoDesc: "", seoKeywords: "",
-  mainImage: null, variants: [],
+  images: [], variants: [],
 };
 
 const META_DESC_MAX = 155;
@@ -73,25 +75,29 @@ export default function AddProductForm({ product }: { product?: Product }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.name]);
 
-  const handleMainImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const preview = URL.createObjectURL(file);
-    set("mainImage", preview);
-    try {
+  const handleAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (!files.length) return;
+    const slots = files.slice(0, 8 - form.images.length);
+    const previews = slots.map((f) => URL.createObjectURL(f));
+    setForm((f) => ({ ...f, images: [...f.images, ...previews] }));
+    for (let i = 0; i < slots.length; i++) {
+      const preview = previews[i];
       const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (data.url) {
-        set("mainImage", data.url);
-      } else {
-        setSaveError("Image upload failed: " + (data.error ?? "unknown error"));
-        set("mainImage", null);
+      fd.append("file", slots[i]);
+      try {
+        const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (data.url) {
+          setForm((f) => ({ ...f, images: f.images.map((img) => img === preview ? data.url : img) }));
+        } else {
+          setForm((f) => ({ ...f, images: f.images.filter((img) => img !== preview) }));
+          setSaveError("Image upload failed.");
+        }
+      } catch {
+        setForm((f) => ({ ...f, images: f.images.filter((img) => img !== preview) }));
       }
-    } catch {
-      setSaveError("Image upload failed. Please try again.");
-      set("mainImage", null);
     }
   };
 
@@ -146,7 +152,8 @@ export default function AddProductForm({ product }: { product?: Product }) {
         name: form.name, category: form.category, price: form.price,
         stock: form.stock, moq: form.moq, leadTime: form.leadTime,
         status: statusOverride !== undefined ? statusOverride : form.status,
-        image: form.mainImage ?? "",
+        image: form.images[0] ?? "",
+        images: form.images,
         tags: form.tags,
         variants: form.variants.filter((v) => v.name || v.image),
         description: form.description, specs: form.specs,
@@ -168,7 +175,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
     { label: "Product name",  done: !!form.name },
     { label: "Category set",  done: !!form.category },
     { label: "MOQ set",       done: !!form.moq },
-    { label: "Main image",    done: !!form.mainImage },
+    { label: "Main image",    done: form.images.length > 0 },
     { label: "Description",   done: form.description.length > 20 },
     { label: "SEO title",     done: !!form.seoTitle },
   ];
@@ -243,37 +250,46 @@ export default function AddProductForm({ product }: { product?: Product }) {
           </CardBody>
         </Card>
 
-        {/* Main Image */}
+        {/* Main Images */}
         <Card>
-          <CardHeader><CardTitle>Main Product Image</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Product Images</CardTitle>
+            <span className="text-xs text-slate-400">{form.images.length} / 8</span>
+          </CardHeader>
           <CardBody>
-            <div
-              onClick={() => mainImgRef.current?.click()}
-              className={cn(
-                "border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors",
-                form.mainImage ? "border-blue-300 bg-blue-50" : "border-slate-200 hover:border-blue-300 hover:bg-slate-50"
-              )}
-            >
-              {form.mainImage ? (
-                <div className="relative w-40 h-40 mx-auto rounded-lg overflow-hidden">
+            <div className="grid grid-cols-4 gap-3">
+              {form.images.map((img, i) => (
+                <div key={i} className="relative aspect-square rounded-xl overflow-hidden border-2 border-blue-200 bg-blue-50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={form.mainImage} alt="Main" className="w-full h-full object-cover" />
+                  <img src={img} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                  {i === 0 && (
+                    <span className="absolute top-1 left-1 text-[9px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-semibold leading-none">
+                      Main
+                    </span>
+                  )}
                   <button
-                    onClick={(e) => { e.stopPropagation(); set("mainImage", null); }}
-                    className="absolute top-2 right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white"
+                    type="button"
+                    onClick={() => set("images", form.images.filter((_, j) => j !== i))}
+                    className="absolute top-1 right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-3 h-3" />
                   </button>
                 </div>
-              ) : (
-                <>
-                  <Upload className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                  <p className="text-sm text-slate-500 font-medium">Click to upload main image</p>
-                  <p className="text-xs text-slate-400 mt-1">JPG, PNG, WEBP · Max 5MB · Recommended 800×800px</p>
-                </>
+              ))}
+              {form.images.length < 8 && (
+                <div
+                  onClick={() => mainImgRef.current?.click()}
+                  className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-slate-50 cursor-pointer flex flex-col items-center justify-center gap-1.5 transition-colors"
+                >
+                  <Upload className="w-6 h-6 text-slate-300" />
+                  <span className="text-xs text-slate-400">Add Photo</span>
+                </div>
               )}
             </div>
-            <input ref={mainImgRef} type="file" accept="image/*" className="hidden" onChange={handleMainImg} />
+            <input ref={mainImgRef} type="file" accept="image/*" multiple className="hidden" onChange={handleAddImages} />
+            {form.images.length > 1 && (
+              <p className="text-xs text-slate-400 mt-2">First photo is the main display image.</p>
+            )}
           </CardBody>
         </Card>
 
@@ -416,8 +432,8 @@ export default function AddProductForm({ product }: { product?: Product }) {
           <CardHeader><CardTitle><Eye className="w-4 h-4 inline mr-1" />Product Preview</CardTitle></CardHeader>
           <CardBody className="p-0">
             <div className="aspect-square bg-slate-50 overflow-hidden relative">
-              {form.mainImage
-                ? <img src={form.mainImage} alt="preview" className="w-full h-full object-contain" />
+              {form.images[0]
+                ? <img src={form.images[0]} alt="preview" className="w-full h-full object-contain" />
                 : <div className="w-full h-full flex items-center justify-center text-slate-300">
                     <Upload className="w-10 h-10" />
                   </div>

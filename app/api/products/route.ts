@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
   const result = products.map((p) => ({
     ...p,
     tags: JSON.parse(p.tags) as string[],
-    variants: JSON.parse((p as Record<string, unknown>).variants as string ?? "[]"),
+    images: JSON.parse(p.images ?? "[]") as string[],
+    variants: JSON.parse(p.variants ?? "[]"),
   }));
 
   return NextResponse.json(result);
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
       leadTime:    body.leadTime ?? "30-45 days",
       status:      body.status ? "active" : "inactive",
       image:       body.image ?? "",
+      images:      JSON.stringify(body.images ?? []),
       tags:        JSON.stringify(body.tags ?? []),
       variants:    JSON.stringify(body.variants ?? []),
       description: body.description ?? "",

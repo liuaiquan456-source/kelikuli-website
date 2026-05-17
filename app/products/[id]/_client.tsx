@@ -18,6 +18,7 @@ interface Product {
   price: number; moq: number; leadTime: string; status: string;
   description: string; specs: string; tags: string[];
   variants?: Variant[];
+  images?: string[];
 }
 
 function getAttributes(name: string, category: string) {
@@ -90,10 +91,12 @@ export default function ProductDetailClient({
   }
 
   const variants = product.variants?.filter((v) => v.name || v.image) ?? [];
-  const displayImage = activeVariant !== null && variants[activeVariant]?.image
-    ? variants[activeVariant].image
-    : product.image;
-  const images: string[] = displayImage ? [displayImage] : [];
+  const productImages = (product.images?.filter(Boolean) ?? []).length > 0
+    ? product.images!.filter(Boolean)
+    : product.image ? [product.image] : [];
+  const images = activeVariant !== null && variants[activeVariant]?.image
+    ? [variants[activeVariant].image]
+    : productImages;
   const attrs = getAttributes(product.name, product.category).map((a) => {
     if (a.key === "MOQ") return { ...a, value: product.moq ? `${product.moq} pcs` : a.value };
     if (a.key === "Lead Time") return { ...a, value: product.leadTime || a.value };

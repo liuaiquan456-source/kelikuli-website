@@ -17,6 +17,7 @@ model Product {
   leadTime    String   @default("30-45 days")
   status      String   @default("active")
   image       String   @default("")
+  images      String   @default("[]")
   tags        String   @default("[]")
   variants    String   @default("[]")
   description String   @default("")
