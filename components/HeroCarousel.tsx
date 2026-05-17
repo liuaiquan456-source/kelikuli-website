@@ -207,7 +207,7 @@ export default function HeroCarousel() {
               {/* Slide 2: lamp */}
               {slide.contentType === "lamp" && (
                 <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent">
-                  <div className="absolute left-4 sm:left-8 lg:left-[6%] top-1/2 -translate-y-1/2 max-w-[45%] lg:max-w-[38%]">
+                  <div className="absolute left-[5%] sm:left-[12%] lg:left-[22%] top-1/2 -translate-y-1/2 max-w-[45%] lg:max-w-[36%]">
                     <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
                       <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
                         Resin Decoration
