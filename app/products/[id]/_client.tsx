@@ -105,17 +105,6 @@ export default function ProductDetailClient({
   return (
     <>
       <div className="min-h-screen bg-[#F8F4ED]">
-        {/* Breadcrumb */}
-        <div className="bg-white border-b border-stone-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 text-xs text-stone-500">
-            <Link href="/" className="hover:text-[#C9A55A] transition-colors">Home</Link>
-            <span>/</span>
-            <Link href="/products" className="hover:text-[#C9A55A] transition-colors">Products</Link>
-            <span>/</span>
-            <span className="text-stone-400 truncate max-w-[200px] sm:max-w-xs">{product.name}</span>
-          </div>
-        </div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 items-start">
 
           {/* Left sidebar — same category */}
