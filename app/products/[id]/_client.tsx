@@ -208,6 +208,36 @@ export default function ProductDetailClient({
                     ))}
                   </div>
                 )}
+
+                {variants.length > 0 && (
+                  <div className="pt-2 border-t border-stone-100">
+                    <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">Available Options</p>
+                    <div className="flex flex-wrap gap-2">
+                      {variants.map((v, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => { setActiveVariant(activeVariant === i ? null : i); setImgError(false); }}
+                          className={`flex flex-col items-center gap-1 p-1.5 rounded-xl border-2 transition-colors ${
+                            activeVariant === i ? "border-[#C9A55A] bg-[#F5EDD8]" : "border-stone-200 hover:border-[#C9A55A]/50 bg-white"
+                          }`}
+                        >
+                          {v.image && (
+                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-50">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          {v.name && (
+                            <span className={`text-[10px] font-medium max-w-[72px] text-center leading-tight ${
+                              activeVariant === i ? "text-[#C9A55A]" : "text-stone-600"
+                            }`}>{v.name}</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}
@@ -269,36 +299,6 @@ export default function ProductDetailClient({
 
             </div>
           </div>
-
-          {/* Variants */}
-          {variants.length > 0 && (
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-              <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">Available Options</h2>
-              <div className="flex flex-wrap gap-3">
-                {variants.map((v, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => { setActiveVariant(activeVariant === i ? null : i); setImgError(false); }}
-                    className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-colors ${
-                      activeVariant === i ? "border-[#C9A55A] bg-[#F5EDD8]" : "border-stone-200 hover:border-[#C9A55A]/50 bg-white"
-                    }`}
-                  >
-                    {v.image && (
-                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-50">
-                        <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                    {v.name && (
-                      <span className={`text-xs font-medium max-w-[80px] text-center leading-tight ${
-                        activeVariant === i ? "text-[#C9A55A]" : "text-stone-600"
-                      }`}>{v.name}</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Description & Specs */}
           {(product.description || product.specs) && (
