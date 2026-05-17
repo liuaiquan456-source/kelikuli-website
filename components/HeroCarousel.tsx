@@ -240,7 +240,6 @@ export default function HeroCarousel() {
                         </div>
                       </div>
                     </div>
-                  </div>
                   {/* Center: button */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="pointer-events-auto">
