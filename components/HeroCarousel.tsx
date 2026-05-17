@@ -205,36 +205,41 @@ export default function HeroCarousel() {
 
               {/* Slide 2: lamp */}
               {slide.contentType === "lamp" && (
-                <div className="absolute inset-0 flex items-end pb-10 sm:pb-14 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                    <div>
-                      <h2 className="font-black leading-none mb-3 drop-shadow-lg uppercase text-2xl sm:text-4xl lg:text-5xl xl:text-[3.2rem] text-white whitespace-nowrap">
-                        Resin Decoration Light
-                      </h2>
-                      <p className="text-white/80 text-[10px] sm:text-sm lg:text-base leading-relaxed drop-shadow max-w-md mb-4">
-                        Discover artistically crafted resin lamps and figurines that blend soft ambient lighting with charming design, perfect for home decor, gifts, and collectible display.
-                      </p>
-                      <div className="hidden sm:flex gap-5">
-                        {[
-                          { label: "Handcrafted Resin", icon: "🤲" },
-                          { label: "Warm Ambient Light", icon: "☀" },
-                          { label: "Unique Gift Ideas", icon: "🎁" },
-                        ].map((f) => (
-                          <div key={f.label} className="flex items-center gap-1.5 text-white/90">
-                            <span className="text-sm">{f.icon}</span>
-                            <span className="text-xs font-medium">{f.label}</span>
-                          </div>
-                        ))}
-                      </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent">
+                  {/* Left: text content */}
+                  <div className="absolute left-4 sm:left-8 lg:left-[8%] bottom-8 sm:bottom-10 lg:bottom-14">
+                    <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
+                      <span className="block text-white text-2xl sm:text-4xl lg:text-5xl xl:text-[3rem]">
+                        Resin Decoration
+                      </span>
+                      <span className="block text-[#C9A55A] text-2xl sm:text-4xl lg:text-5xl xl:text-[3rem]">
+                        Light
+                      </span>
+                    </h2>
+                    <p className="text-white/80 text-[10px] sm:text-sm leading-relaxed drop-shadow max-w-xs sm:max-w-sm mb-3">
+                      Discover artistically crafted resin lamps and figurines that blend soft ambient lighting with charming design, perfect for home decor, gifts, and collectible display.
+                    </p>
+                    <div className="hidden sm:flex gap-4">
+                      {[
+                        { label: "Handcrafted Resin", icon: "🤲" },
+                        { label: "Warm Ambient Light", icon: "☀" },
+                        { label: "Unique Gift Ideas", icon: "🎁" },
+                      ].map((f) => (
+                        <div key={f.label} className="flex items-center gap-1.5 text-white/90">
+                          <span className="text-sm">{f.icon}</span>
+                          <span className="text-xs font-medium">{f.label}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="shrink-0">
-                      <button
-                        onClick={() => setInquiryOpen(true)}
-                        className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
-                      >
-                        Get a Quote
-                      </button>
-                    </div>
+                  </div>
+                  {/* Right: button */}
+                  <div className="absolute right-6 sm:right-10 lg:right-[8%] bottom-8 sm:bottom-10 lg:bottom-14">
+                    <button
+                      onClick={() => setInquiryOpen(true)}
+                      className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-2.5 rounded-full text-sm tracking-wide transition-colors shadow-lg"
+                    >
+                      Get a Quote
+                    </button>
                   </div>
                 </div>
               )}
