@@ -2,13 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 
 const featured = {
-  label: "Christmas Series",
-  href: "/products?category=Christmas+Series",
-  img: "/images/collections/col-5.png",
+  label: "Resin Light",
+  href: "/products?category=Resin+Light",
+  img: "/images/collections/col-resin-light.jpg",
 };
 
 const gridItems = [
-  { label: "Prince Series",     href: "/products?category=Prince+Series",     img: "/images/collections/col-3.png" },
+  { label: "Christmas Series",  href: "/products?category=Christmas+Series",  img: "/images/collections/col-5.png" },
   { label: "Garden Series",     href: "/products?category=Garden+Series",     img: "/images/collections/col-6.png" },
   { label: "Astronaut Series",  href: "/products?category=Astronaut+Series",  img: "/images/collections/col-4.png" },
   { label: "Blind Box Series",  href: "/products?category=Blind+Box+Series",  img: "/images/collections/col-8.png" },
