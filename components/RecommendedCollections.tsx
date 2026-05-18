@@ -26,18 +26,20 @@ export default function RecommendedCollections() {
           <div className="w-8 h-0.5 bg-stone-800 mx-auto mt-3" />
         </div>
 
-        <div className="flex gap-3 h-[420px] sm:h-[500px] md:h-[540px]">
+        {/* Mobile: row1=featured full-width, row2+3=2 cols
+            Desktop: left large + right 2×2 grid */}
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-[3fr_1fr_1fr] lg:grid-rows-2 lg:h-[540px]">
 
-          {/* Featured large image — left */}
+          {/* Featured — full width on mobile, left spanning 2 rows on desktop */}
           <Link
             href={featured.href}
-            className="relative flex-[3] rounded-xl overflow-hidden group cursor-pointer"
+            className="col-span-2 lg:col-span-1 lg:row-span-2 relative h-52 sm:h-64 lg:h-full rounded-xl overflow-hidden group cursor-pointer"
           >
             <Image
               src={featured.img}
               alt={`${featured.label} — Kelikuli wholesale resin toys`}
               fill
-              sizes="(max-width: 640px) 60vw, 55vw"
+              sizes="(max-width: 1024px) 100vw, 55vw"
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-4 py-4 flex items-end justify-between">
@@ -50,32 +52,30 @@ export default function RecommendedCollections() {
             </div>
           </Link>
 
-          {/* 2×2 grid — right */}
-          <div className="flex-[2] grid grid-cols-2 grid-rows-2 gap-3">
-            {gridItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="relative rounded-xl overflow-hidden group cursor-pointer"
-              >
-                <Image
-                  src={item.img}
-                  alt={`${item.label} — Kelikuli wholesale resin toys`}
-                  fill
-                  sizes="(max-width: 640px) 20vw, 22vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2 sm:px-3 py-2 sm:py-3 flex items-end justify-between">
-                  <span className="text-white font-medium text-[10px] sm:text-xs md:text-sm leading-tight">
-                    {item.label}
-                  </span>
-                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {/* 4 items — 2 per row on mobile, fill 2×2 right grid on desktop */}
+          {gridItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="relative h-36 sm:h-44 lg:h-full rounded-xl overflow-hidden group cursor-pointer"
+            >
+              <Image
+                src={item.img}
+                alt={`${item.label} — Kelikuli wholesale resin toys`}
+                fill
+                sizes="(max-width: 1024px) 50vw, 22vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2 sm:px-3 py-2 sm:py-3 flex items-end justify-between">
+                <span className="text-white font-medium text-[10px] sm:text-xs md:text-sm leading-tight">
+                  {item.label}
+                </span>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
+          ))}
 
         </div>
 
