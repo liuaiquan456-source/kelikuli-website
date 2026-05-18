@@ -221,7 +221,7 @@ export default function ProductsClient() {
                   placeholder="Search products..."
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                  className="w-full border border-stone-200 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-gray-50 focus:outline-none focus:border-[#C9A55A] transition-colors"
+                  className="w-full border border-stone-900 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-gray-50 focus:outline-none focus:border-stone-900 transition-colors"
                 />
                 <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
@@ -258,7 +258,7 @@ export default function ProductsClient() {
           <div className="flex items-center gap-3 mb-4 lg:hidden">
             <button
               onClick={() => setDrawerOpen(true)}
-              className="flex items-center gap-2 bg-white border border-[#C9A55A]/35 rounded-xl px-4 py-2.5 text-sm text-stone-700 font-medium shadow-sm"
+              className="flex items-center gap-2 bg-white border border-stone-900 rounded-xl px-4 py-2.5 text-sm text-stone-700 font-medium shadow-sm"
             >
               <svg className="w-4 h-4 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h18M7 8h10M11 12h4" />
@@ -271,7 +271,7 @@ export default function ProductsClient() {
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full border border-stone-200 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-white focus:outline-none focus:border-[#C9A55A] transition-colors"
+                className="w-full border border-stone-900 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-white focus:outline-none focus:border-stone-900 transition-colors"
               />
               <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
@@ -290,7 +290,7 @@ export default function ProductsClient() {
                 placeholder="Search products..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full border border-[#C9A55A]/35 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-white focus:outline-none focus:border-[#C9A55A] transition-colors"
+                className="w-full border border-stone-900 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-white focus:outline-none focus:border-stone-900 transition-colors"
               />
               <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
