@@ -168,11 +168,13 @@ export default function ProductsClient() {
   const [wished, setWished] = useState<number[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/products?status=active")
       .then((r) => r.json())
-      .then((data) => setProducts(Array.isArray(data) ? data : []));
+      .then((data) => setProducts(Array.isArray(data) ? data : []))
+      .finally(() => setLoading(false));
   }, []);
 
   const filtered = products.filter((p) => {
@@ -346,7 +348,19 @@ export default function ProductsClient() {
           {/* Product Grid */}
           <div className="flex-1 min-w-0">
             <h2 className="sr-only">Resin Figurine Products — Browse &amp; Inquire</h2>
-            {paged.length === 0 ? (
+            {loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-stone-200 overflow-hidden animate-pulse">
+                    <div className="aspect-square bg-stone-100" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 bg-stone-100 rounded w-3/4" />
+                      <div className="h-2 bg-stone-100 rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : paged.length === 0 ? (
               <div className="text-center py-20 text-stone-400 text-sm">No products found.</div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
