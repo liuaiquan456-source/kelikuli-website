@@ -93,9 +93,9 @@ export default function ProductDetailClient({
   const productImages = (product.images?.filter(Boolean) ?? []).length > 0
     ? product.images!.filter(Boolean)
     : product.image ? [product.image] : [];
-  const images = activeVariant !== null && variants[activeVariant]?.image
-    ? [variants[activeVariant].image]
-    : productImages;
+  const mainImage = activeVariant !== null && variants[activeVariant]?.image
+    ? variants[activeVariant].image
+    : productImages[activeImg] ?? productImages[0] ?? "";
   const attrs = getAttributes(product.name, product.category).map((a) => {
     if (a.key === "MOQ") return { ...a, value: product.moq ? `${product.moq} pcs` : a.value };
     if (a.key === "Lead Time") return { ...a, value: product.leadTime || a.value };
@@ -116,10 +116,10 @@ export default function ProductDetailClient({
               {/* Image Gallery */}
               <div className="lg:w-[55%] p-5 flex flex-col gap-4">
                 <div className="relative aspect-[4/3] bg-stone-50 rounded-xl overflow-hidden group">
-                  {images.length > 0 && !imgError ? (
+                  {mainImage && !imgError ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={images[activeImg]}
+                      src={mainImage}
                       alt={product.name}
                       className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                       onError={() => setImgError(true)}
@@ -127,10 +127,10 @@ export default function ProductDetailClient({
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
                   )}
-                  {images.length > 1 && (
+                  {productImages.length > 1 && (
                     <>
                       <button
-                        onClick={() => setActiveImg((i) => (i - 1 + images.length) % images.length)}
+                        onClick={() => { setActiveImg((i) => (i - 1 + productImages.length) % productImages.length); setActiveVariant(null); setImgError(false); }}
                         className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center text-stone-600 hover:bg-white transition-colors"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +138,7 @@ export default function ProductDetailClient({
                         </svg>
                       </button>
                       <button
-                        onClick={() => setActiveImg((i) => (i + 1) % images.length)}
+                        onClick={() => { setActiveImg((i) => (i + 1) % productImages.length); setActiveVariant(null); setImgError(false); }}
                         className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center text-stone-600 hover:bg-white transition-colors"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,14 +149,14 @@ export default function ProductDetailClient({
                   )}
                 </div>
 
-                {images.length > 1 && (
+                {productImages.length > 1 && (
                   <div className="flex gap-2 overflow-x-auto pb-1">
-                    {images.map((src, i) => (
+                    {productImages.map((src, i) => (
                       <button
                         key={i}
-                        onClick={() => { setActiveImg(i); setImgError(false); }}
+                        onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
                         className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
-                          i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
+                          activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
                         }`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
