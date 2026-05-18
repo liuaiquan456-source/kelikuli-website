@@ -15,7 +15,7 @@ interface Product {
   tags: string[]; createdAt: string;
   description?: string; specs?: string;
   seoTitle?: string; seoDesc?: string; seoKeywords?: string;
-  images?: string[];
+  images?: string[]; video?: string;
 }
 
 interface Variant { name: string; image: string; }
@@ -26,7 +26,7 @@ interface FormState {
   status: boolean; tags: string[]; tagInput: string;
   description: string; specs: string;
   seoTitle: string; seoDesc: string; seoKeywords: string;
-  images: string[]; variants: Variant[];
+  images: string[]; video: string; variants: Variant[];
 }
 
 interface FormErrors { name?: string; description?: string; }
@@ -40,6 +40,7 @@ function productToForm(p: Product): FormState {
     description: p.description ?? "", specs: p.specs ?? "",
     seoTitle: p.seoTitle ?? "", seoDesc: p.seoDesc ?? "", seoKeywords: p.seoKeywords ?? "",
     images: p.images?.length ? p.images : (p.image ? [p.image] : []),
+    video: p.video ?? "",
     variants: [],
   };
 }
@@ -50,7 +51,7 @@ const defaultForm: FormState = {
   status: true, tags: [], tagInput: "",
   description: "", specs: "",
   seoTitle: "", seoDesc: "", seoKeywords: "",
-  images: [], variants: [],
+  images: [], video: "", variants: [],
 };
 
 const META_DESC_MAX = 155;
@@ -63,6 +64,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const mainImgRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLInputElement>(null);
   const variantImgRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const set = (key: keyof FormState, value: unknown) => setForm((f) => ({ ...f, [key]: value }));
@@ -99,6 +101,22 @@ export default function AddProductForm({ product }: { product?: Product }) {
         setForm((f) => ({ ...f, images: f.images.filter((img) => img !== preview) }));
       }
     }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    set("video", preview);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.url) set("video", data.url);
+      else { set("video", ""); setSaveError("Video upload failed."); }
+    } catch { set("video", ""); }
   };
 
   const uploadVariantImage = async (file: File, index: number) => {
@@ -154,6 +172,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
         status: statusOverride !== undefined ? statusOverride : form.status,
         image: form.images[0] ?? "",
         images: form.images,
+        video: form.video,
         tags: form.tags,
         variants: form.variants.filter((v) => v.name || v.image),
         description: form.description, specs: form.specs,
@@ -291,6 +310,48 @@ export default function AddProductForm({ product }: { product?: Product }) {
             {form.images.length > 1 && (
               <p className="text-xs text-slate-400 mt-2">First photo is the main display image.</p>
             )}
+          </CardBody>
+        </Card>
+
+        {/* Product Video */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Product Video</CardTitle>
+            <span className="text-xs text-slate-400">Optional</span>
+          </CardHeader>
+          <CardBody className="space-y-3">
+            {form.video ? (
+              <div className="relative rounded-xl overflow-hidden bg-black aspect-video">
+                <video src={form.video} controls className="w-full h-full" />
+                <button
+                  type="button"
+                  onClick={() => set("video", "")}
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => videoRef.current?.click()}
+                className="aspect-video rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-slate-50 cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors"
+              >
+                <Upload className="w-8 h-8 text-slate-300" />
+                <span className="text-sm text-slate-400">Click to upload video</span>
+                <span className="text-xs text-slate-300">MP4, MOV, WebM — max 100MB</span>
+              </div>
+            )}
+            <input ref={videoRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-400 shrink-0">Or paste URL:</span>
+              <input
+                type="text"
+                placeholder="https://..."
+                value={form.video}
+                onChange={(e) => set("video", e.target.value)}
+                className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400"
+              />
+            </div>
           </CardBody>
         </Card>
 

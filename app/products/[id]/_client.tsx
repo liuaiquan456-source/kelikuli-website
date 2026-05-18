@@ -18,6 +18,7 @@ interface Product {
   description: string; specs: string; tags: string[];
   variants?: Variant[];
   images?: string[];
+  video?: string;
 }
 
 function getAttributes(name: string, category: string) {
@@ -77,6 +78,7 @@ export default function ProductDetailClient({
   const [activeVariant, setActiveVariant] = useState<number | null>(null);
   const [imgError, setImgError] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"photos" | "video" | "attributes">("photos");
 
   if (!product) {
     return (
@@ -113,55 +115,100 @@ export default function ProductDetailClient({
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
             <div className="flex flex-col lg:flex-row">
 
-              {/* Image Gallery */}
+              {/* Image Gallery with tabs */}
               <div className="lg:w-[55%] p-5 flex flex-col gap-4">
-                <div className="relative aspect-[4/3] bg-stone-50 rounded-xl overflow-hidden group">
-                  {mainImage && !imgError ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={mainImage}
-                      alt={product.name}
-                      className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                      onError={() => setImgError(true)}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
-                  )}
-                  {productImages.length > 1 && (
-                    <>
-                      <button
-                        onClick={() => { setActiveImg((i) => (i - 1 + productImages.length) % productImages.length); setActiveVariant(null); setImgError(false); }}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center text-stone-600 hover:bg-white transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => { setActiveImg((i) => (i + 1) % productImages.length); setActiveVariant(null); setImgError(false); }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center text-stone-600 hover:bg-white transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </>
-                  )}
+
+                {/* Tab bar */}
+                <div className="flex border-b border-stone-200">
+                  {(["photos", ...(product.video ? ["video"] : []), "attributes"]).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab as "photos" | "video" | "attributes")}
+                      className={`px-4 py-2 text-sm font-semibold capitalize transition-colors border-b-2 -mb-px ${
+                        activeTab === tab
+                          ? "border-stone-800 text-stone-800"
+                          : "border-transparent text-stone-400 hover:text-stone-600"
+                      }`}
+                    >
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
                 </div>
 
-                {productImages.length > 1 && (
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {productImages.map((src, i) => (
-                      <button
-                        key={i}
-                        onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
-                        className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
-                          activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
-                        }`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={src} alt={`${product.name} — image ${i + 1}`} className="w-full h-full object-cover" />
-                      </button>
+                {/* Photos tab */}
+                {activeTab === "photos" && (
+                  <>
+                    <div className="relative aspect-[4/3] bg-stone-50 rounded-xl overflow-hidden group">
+                      {mainImage && !imgError ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={mainImage}
+                          alt={product.name}
+                          className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                          onError={() => setImgError(true)}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
+                      )}
+                      {productImages.length > 1 && (
+                        <>
+                          <button
+                            onClick={() => { setActiveImg((i) => (i - 1 + productImages.length) % productImages.length); setActiveVariant(null); setImgError(false); }}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center text-stone-600 hover:bg-white transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => { setActiveImg((i) => (i + 1) % productImages.length); setActiveVariant(null); setImgError(false); }}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center text-stone-600 hover:bg-white transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    {productImages.length > 1 && (
+                      <div className="flex gap-2 overflow-x-auto pb-1">
+                        {productImages.map((src, i) => (
+                          <button
+                            key={i}
+                            onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
+                            className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
+                              activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
+                            }`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={src} alt={`${product.name} — image ${i + 1}`} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* Video tab */}
+                {activeTab === "video" && (
+                  <div className="aspect-video bg-black rounded-xl overflow-hidden">
+                    {product.video ? (
+                      <video src={product.video} controls className="w-full h-full" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm">No video available</div>
+                    )}
+                  </div>
+                )}
+
+                {/* Attributes tab */}
+                {activeTab === "attributes" && (
+                  <div className="rounded-xl border border-stone-100 overflow-hidden">
+                    {attrs.map((attr, i) => (
+                      <div key={attr.key} className={`flex text-sm ${i % 2 === 0 ? "bg-stone-50" : "bg-white"}`}>
+                        <div className="w-[42%] px-4 py-2.5 text-stone-500 font-medium shrink-0">{attr.key}</div>
+                        <div className="flex-1 px-4 py-2.5 text-stone-800 font-semibold border-l border-stone-100">{attr.value}</div>
+                      </div>
                     ))}
                   </div>
                 )}

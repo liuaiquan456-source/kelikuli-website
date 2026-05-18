@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       status:      body.status ? "active" : "inactive",
       image:       body.image ?? "",
       images:      JSON.stringify(body.images ?? []),
+      video:       body.video ?? "",
       tags:        JSON.stringify(body.tags ?? []),
       variants:    JSON.stringify(body.variants ?? []),
       description: body.description ?? "",

@@ -28,6 +28,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(body.status      !== undefined && { status:      typeof body.status === "boolean" ? (body.status ? "active" : "inactive") : body.status }),
       ...(body.image       !== undefined && { image:       body.image }),
       ...(body.images      !== undefined && { images:      JSON.stringify(body.images) }),
+      ...(body.video       !== undefined && { video:       body.video }),
       ...(body.tags        !== undefined && { tags:        JSON.stringify(body.tags) }),
       ...(body.variants    !== undefined && { variants:    JSON.stringify(body.variants) }),
       ...(body.description !== undefined && { description: body.description }),
