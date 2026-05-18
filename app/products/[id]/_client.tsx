@@ -107,16 +107,16 @@ export default function ProductDetailClient({
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="max-w-7xl mx-auto px-0 sm:px-6 py-0 sm:py-8">
 
           {/* Main content */}
           <div className="w-full">
           {/* Main Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+          <div className="bg-white rounded-none sm:rounded-2xl shadow-sm border-0 sm:border border-stone-100 overflow-hidden">
             <div className="flex flex-col lg:flex-row">
 
               {/* Image Gallery with tabs */}
-              <div className="lg:w-[55%] p-5 flex flex-col gap-4">
+              <div className="lg:w-[55%] p-4 sm:p-5 flex flex-col gap-4">
 
                 {/* Tab bar */}
                 <div className="flex border-b border-stone-200">
