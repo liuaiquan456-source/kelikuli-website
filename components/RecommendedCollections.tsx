@@ -1,48 +1,82 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 
-const collections = [
-  { label: "Custom Character",  href: "/products/custom-resin-toys",      img: "/images/collections/col-1.png" },
-  { label: "Cartoon Series",    href: "/products/resin-figurines",         img: "/images/collections/col-2.png" },
-  { label: "Prince Series",     href: "/products/resin-figurines",         img: "/images/collections/col-3.png" },
-  { label: "Astronaut Series",  href: "/products/custom-resin-toys",      img: "/images/collections/col-4.png" },
-  { label: "Christmas Series",  href: "/products/seasonal-resin-crafts",  img: "/images/collections/col-5.png" },
-  { label: "Garden Series",     href: "/products/zakka-series",           img: "/images/collections/col-6.png" },
-  { label: "Lucky Cat Series",  href: "/products/lucky-cat",              img: "/images/collections/col-7.png" },
-  { label: "Blind Box Series",  href: "/products/blind-box",              img: "/images/collections/col-8.png" },
+const featured = {
+  label: "Christmas Series",
+  href: "/products?category=Christmas+Series",
+  img: "/images/collections/col-5.png",
+};
+
+const gridItems = [
+  { label: "Prince Series",     href: "/products?category=Prince+Series",     img: "/images/collections/col-3.png" },
+  { label: "Garden Series",     href: "/products?category=Garden+Series",     img: "/images/collections/col-6.png" },
+  { label: "Astronaut Series",  href: "/products?category=Astronaut+Series",  img: "/images/collections/col-4.png" },
+  { label: "Blind Box Series",  href: "/products?category=Blind+Box+Series",  img: "/images/collections/col-8.png" },
 ];
 
 export default function RecommendedCollections() {
   return (
-    <section className="py-14 bg-stone-50">
+    <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-stone-900 text-center mb-10">
-          Recommended Resin Toy Collections
-        </h2>
 
-        <div className="relative">
-          <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:-mx-6 sm:px-6">
-            {collections.map((col) => (
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-stone-900">
+            Recommended Products
+          </h2>
+          <div className="w-8 h-0.5 bg-stone-800 mx-auto mt-3" />
+        </div>
+
+        <div className="flex gap-3 h-[420px] sm:h-[500px] md:h-[540px]">
+
+          {/* Featured large image — left */}
+          <Link
+            href={featured.href}
+            className="relative flex-[3] rounded-xl overflow-hidden group cursor-pointer"
+          >
+            <Image
+              src={featured.img}
+              alt={`${featured.label} — Kelikuli wholesale resin toys`}
+              fill
+              sizes="(max-width: 640px) 60vw, 55vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-4 py-4 flex items-end justify-between">
+              <span className="text-white font-semibold text-sm sm:text-base leading-tight">
+                {featured.label}
+              </span>
+              <svg className="w-5 h-5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
+          {/* 2×2 grid — right */}
+          <div className="flex-[2] grid grid-cols-2 grid-rows-2 gap-3">
+            {gridItems.map((item) => (
               <Link
-                key={col.label}
-                href={col.href}
-                className="flex-none w-36 sm:w-44 snap-start group"
+                key={item.label}
+                href={item.href}
+                className="relative rounded-xl overflow-hidden group cursor-pointer"
               >
-                <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-stone-200 mb-3 bg-stone-100 group-hover:shadow-md transition-shadow">
-                  <Image
-                    src={col.img}
-                    alt={`${col.label} — Kelikuli resin toy collection`}
-                    fill
-                    sizes="(max-width: 640px) 144px, 176px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <Image
+                  src={item.img}
+                  alt={`${item.label} — Kelikuli wholesale resin toys`}
+                  fill
+                  sizes="(max-width: 640px) 20vw, 22vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2 sm:px-3 py-2 sm:py-3 flex items-end justify-between">
+                  <span className="text-white font-medium text-[10px] sm:text-xs md:text-sm leading-tight">
+                    {item.label}
+                  </span>
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
-                <p className="text-stone-700 text-sm font-medium text-center group-hover:text-[#C9A55A] transition-colors leading-tight">
-                  {col.label}
-                </p>
               </Link>
             ))}
           </div>
+
         </div>
 
         <div className="text-center mt-8">
@@ -56,6 +90,7 @@ export default function RecommendedCollections() {
             </svg>
           </Link>
         </div>
+
       </div>
     </section>
   );
