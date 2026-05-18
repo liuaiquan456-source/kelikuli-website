@@ -365,7 +365,7 @@ export default function ProductsClient() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {paged.map((product) => (
-                  <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow relative">
+                  <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-[#C9A55A]/40 hover:shadow-lg transition-all duration-200 relative">
                     <Link href={`/products/${product.id}`} className="block">
                       <div className="relative aspect-square bg-stone-50 overflow-hidden">
                         {product.image && (
@@ -376,11 +376,11 @@ export default function ProductsClient() {
                           />
                         )}
                       </div>
-                      <div className="p-3">
+                      <div className="p-3 pb-4">
                         <p className="text-stone-700 text-xs font-medium line-clamp-2 leading-snug">
                           {product.name}
                         </p>
-                        <p className="text-[#C9A55A] text-[10px] mt-1 font-medium">{product.category}</p>
+                        <p className="text-[#C9A55A] text-[10px] mt-1.5 font-semibold tracking-wide">{product.category}</p>
                       </div>
                     </Link>
                     <button
