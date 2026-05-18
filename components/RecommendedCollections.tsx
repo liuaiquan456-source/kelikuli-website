@@ -8,7 +8,7 @@ const featured = {
 };
 
 const gridItems = [
-  { label: "Fridge Magnet",     href: "/products?category=Fridge+Magnet",     img: "/images/collections/col-fridge-magnet.jpg" },
+  { label: "Fridge Magnet",     href: "/products?category=Fridge+Magnet",     img: "/images/collections/col-fridge-magnet-v2.jpg" },
   { label: "Garden Series",     href: "/products?category=Garden+Series",     img: "/images/collections/col-6.png" },
   { label: "Astronaut Series",  href: "/products?category=Astronaut+Series",  img: "/images/collections/col-4.png" },
   { label: "Blind Box Series",  href: "/products?category=Blind+Box+Series",  img: "/images/collections/col-8.png" },
