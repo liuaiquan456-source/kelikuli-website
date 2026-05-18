@@ -208,7 +208,7 @@ export default function ProductsClient() {
           ))}
         </div>
         <div className="relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4"
+          <h1 className="text-2xl md:text-3xl font-black text-white mb-4"
             style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
             Wholesale Resin Figurines &amp; Collectibles
           </h1>
