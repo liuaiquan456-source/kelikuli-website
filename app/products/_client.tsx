@@ -351,7 +351,7 @@ export default function ProductsClient() {
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-[#C9A55A]/20 overflow-hidden animate-pulse">
+                  <div key={i} className="bg-white rounded-2xl border border-stone-200 overflow-hidden animate-pulse">
                     <div className="aspect-square bg-stone-100" />
                     <div className="p-3 space-y-2">
                       <div className="h-3 bg-stone-100 rounded w-3/4" />
@@ -365,7 +365,7 @@ export default function ProductsClient() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {paged.map((product) => (
-                  <div key={product.id} className="group bg-white rounded-2xl border border-[#C9A55A]/25 overflow-hidden hover:border-[#C9A55A]/60 hover:shadow-lg transition-all duration-200 relative">
+                  <div key={product.id} className="group bg-white rounded-2xl border border-stone-900 overflow-hidden hover:border-stone-900 hover:shadow-lg transition-all duration-200 relative">
                     <Link href={`/products/${product.id}`} className="block">
                       <div className="relative aspect-square bg-stone-50 overflow-hidden">
                         {product.image && (
