@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import HeroCarousel from "@/components/HeroCarousel";
-import FeatureBadges from "@/components/FeatureBadges";
 import RecommendedCollections from "@/components/RecommendedCollections";
 import CreateCustomBanner from "@/components/CreateCustomBanner";
 import OEMProcess from "@/components/OEMProcess";
@@ -22,7 +21,6 @@ export default function HomePage() {
   return (
     <>
       <HeroCarousel />
-      <FeatureBadges />
       <RecommendedCollections />
       <CreateCustomBanner />
       <OEMProcess />
