@@ -105,17 +105,17 @@ export default function ProductDetailClient({
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8 lg:items-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
           {/* Main content */}
-          <div className="flex-1 min-w-0 w-full">
+          <div className="w-full">
           {/* Main Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
             <div className="flex flex-col lg:flex-row">
 
               {/* Image Gallery */}
               <div className="lg:w-[55%] p-5 flex flex-col gap-4">
-                <div className="relative aspect-square bg-stone-50 rounded-xl overflow-hidden group">
+                <div className="relative aspect-[4/3] bg-stone-50 rounded-xl overflow-hidden group">
                   {images.length > 0 && !imgError ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -307,50 +307,7 @@ export default function ProductDetailClient({
               </div>
             </div>
           )}
-          </div>{/* end flex-1 */}
-
-          {/* Same Category sidebar — after content in DOM (below on mobile), left on desktop */}
-          {related.length > 0 && (
-            <aside className="w-full lg:w-56 shrink-0 lg:sticky lg:top-20 lg:order-first">
-              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-                <div className="px-4 py-3 border-b border-stone-100 flex items-center gap-2">
-                  <span className="text-[#C9A55A] text-xs">✦</span>
-                  <h2 className="text-xs font-black uppercase tracking-widest text-stone-700">Same Category</h2>
-                </div>
-                <div className="p-3 space-y-3">
-                  {related.slice(0, 6).map((p) => (
-                    <Link
-                      key={p.id}
-                      href={`/products/${p.id}`}
-                      className="group flex items-center gap-3 hover:bg-gray-50 rounded-xl p-2 transition-colors"
-                    >
-                      <div className="w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-stone-100">
-                        {p.image
-                          ? <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                          : <div className="w-full h-full flex items-center justify-center text-stone-300 text-xs">No img</div>
-                        }
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-medium text-stone-700 group-hover:text-[#C9A55A] transition-colors line-clamp-2 leading-snug">{p.name}</p>
-                        <p className="text-[10px] text-stone-400 mt-0.5">{p.category}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-                <div className="px-4 py-3 border-t border-stone-100">
-                  <Link
-                    href={`/products?category=${encodeURIComponent(product.category)}`}
-                    className="text-xs font-semibold text-[#C9A55A] hover:text-[#B8935A] transition-colors flex items-center gap-1"
-                  >
-                    More {product.category}
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            </aside>
-          )}
+          </div>{/* end main content */}
         </div>
       </div>
 
