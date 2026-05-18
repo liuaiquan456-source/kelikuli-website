@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Breadcrumb from "@/components/Breadcrumb";
 
 function SafeImg({ src, alt, className }: { src: string; alt: string; className: string }) {
   const [ok, setOk] = useState(!src.startsWith("blob:"));
@@ -192,12 +191,32 @@ export default function ProductsClient() {
   return (
     <div>
       {/* Hero Banner */}
-      <section className="bg-white border-b border-stone-100 py-6 text-center">
-        <h1 className="text-2xl md:text-3xl font-bold text-stone-800 mb-2">
-          Wholesale Resin Figurines &amp; Collectibles
-        </h1>
-        <div className="flex justify-center">
-          <Breadcrumb items={[{ label: "Products", href: "/products" }]} />
+      <section className="relative bg-[#0B1A3A] overflow-hidden py-14 text-center">
+        <div className="absolute inset-0 pointer-events-none">
+          {Array.from({ length: 35 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-white"
+              style={{
+                width: (((i * 7) % 3) + 1) + "px",
+                height: (((i * 7) % 3) + 1) + "px",
+                top: ((i * 13) % 100) + "%",
+                left: ((i * 17) % 100) + "%",
+                opacity: ((i * 3) % 7) / 10 + 0.15,
+              }}
+            />
+          ))}
+        </div>
+        <div className="relative z-10">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4"
+            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            Wholesale Resin Figurines &amp; Collectibles
+          </h1>
+          <div className="flex items-center justify-center gap-2 text-sm text-stone-400">
+            <a href="/" className="hover:text-[#C9A55A] transition-colors">Home</a>
+            <span>/</span>
+            <span className="text-stone-300">Products</span>
+          </div>
         </div>
       </section>
 
