@@ -4,6 +4,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useCart } from "@/hooks/useCart";
 
 interface Product {
   id: number; name: string; category: string; image: string;
@@ -158,7 +160,8 @@ export default function ProductsClient() {
   const [activeCategory, setActiveCategory] = useState(urlCategory);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [wished, setWished] = useState<number[]>([]);
+  const { isWished, toggle: toggleWish } = useWishlist();
+  const { isInCart, toggle: toggleCart } = useCart();
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -185,8 +188,6 @@ export default function ProductsClient() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  const toggleWish = (id: number) =>
-    setWished((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
   return (
     <div>
@@ -411,21 +412,21 @@ export default function ProductsClient() {
                       </div>
                     </Link>
                     <button
-                      onClick={() => toggleWish(product.id)}
+                      onClick={() => toggleWish({ id: product.id, name: product.name, category: product.category, image: product.image })}
                       className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors z-10"
                     >
                       <svg
-                        className={`w-4 h-4 transition-colors ${wished.includes(product.id) ? "text-red-500 fill-red-500" : "text-stone-400"}`}
+                        className={`w-4 h-4 transition-colors ${isWished(product.id) ? "text-red-500 fill-red-500" : "text-stone-400"}`}
                         fill="none" stroke="currentColor" viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                       </svg>
                     </button>
                     <button
-                      onClick={() => setInquiryOpen(true)}
+                      onClick={() => toggleCart({ id: product.id, name: product.name, category: product.category, image: product.image })}
                       className="absolute top-[42px] right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors z-10"
                     >
-                      <svg className="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className={`w-4 h-4 transition-colors ${isInCart(product.id) ? "text-[#C9A55A]" : "text-stone-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                       </svg>
                     </button>
