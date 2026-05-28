@@ -1,14 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
-
-function SafeImg({ src, alt, className }: { src: string; alt: string; className: string }) {
-  const [ok, setOk] = useState(!src.startsWith("blob:"));
-  if (!ok) return null;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={className} onError={() => setOk(false)} />;
-}
 
 interface Variant { name: string; image: string; }
 
@@ -140,12 +134,14 @@ export default function ProductDetailClient({
                   <>
                     <div className="relative aspect-[4/3] bg-stone-50 rounded-xl overflow-hidden group">
                       {mainImage && !imgError ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={mainImage}
                           alt={product.name}
-                          className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 55vw"
+                          className="object-contain transition-transform duration-300 group-hover:scale-105"
                           onError={() => setImgError(true)}
+                          priority
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
@@ -177,12 +173,11 @@ export default function ProductDetailClient({
                           <button
                             key={i}
                             onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
-                            className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
+                            className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                               activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
                             }`}
                           >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={src} alt={`${product.name} — image ${i + 1}`} className="w-full h-full object-cover" />
+                            <Image src={src} alt={`${product.name} — image ${i + 1}`} fill sizes="64px" className="object-cover" />
                           </button>
                         ))}
                       </div>
@@ -227,9 +222,8 @@ export default function ProductDetailClient({
                           }`}
                         >
                           {v.image && (
-                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-50">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
+                            <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-stone-50">
+                              <Image src={v.image} alt={v.name} fill sizes="56px" className="object-cover" />
                             </div>
                           )}
                           {v.name && (
@@ -339,10 +333,12 @@ export default function ProductDetailClient({
                   >
                     <div className="relative aspect-square bg-stone-50 overflow-hidden">
                       {p.image && (
-                        <SafeImg
+                        <Image
                           src={p.image}
                           alt={p.name}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       )}
                     </div>

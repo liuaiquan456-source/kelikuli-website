@@ -1,13 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-function SafeImg({ src, alt, className }: { src: string; alt: string; className: string }) {
-  const [ok, setOk] = useState(!src.startsWith("blob:"));
-  if (!ok) return null;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={className} onError={() => setOk(false)} />;
-}
+import Image from "next/image";
 
 interface Product {
   id: number; name: string; category: string; image: string;
@@ -388,10 +382,12 @@ export default function ProductsClient() {
                     <Link href={`/products/${product.id}`} className="block">
                       <div className="relative aspect-square bg-stone-50 overflow-hidden">
                         {product.image && (
-                          <SafeImg
+                          <Image
                             src={product.image}
                             alt={product.name}
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         )}
                       </div>
