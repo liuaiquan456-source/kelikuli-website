@@ -46,7 +46,7 @@ export default function CartPage() {
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {items.map((product) => (
-                <div key={product.id} className="group bg-white rounded-2xl border border-stone-900 overflow-hidden hover:shadow-lg transition-all duration-200 relative">
+                <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-400 hover:shadow-lg transition-all duration-200 relative">
                   <Link href={`/products/${product.id}`} className="block">
                     <div className="relative aspect-square bg-stone-50 overflow-hidden">
                       {product.image && (
