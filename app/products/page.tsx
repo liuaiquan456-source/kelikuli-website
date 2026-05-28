@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ProductsClient from "./_client";
 import FaqSection from "@/components/FaqSection";
 
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <ProductsClient />
+      <Suspense>
+        <ProductsClient />
+      </Suspense>
       <FaqSection page="products" />
     </>
   );
