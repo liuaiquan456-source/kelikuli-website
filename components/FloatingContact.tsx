@@ -8,19 +8,19 @@ export default function FloatingContact({ whatsapp }: { whatsapp: string }) {
 
   return (
     <>
+      {/* Chat Now — desktop only, vertically centered right side */}
+      <Link
+        href="/contact"
+        className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 items-center gap-2 bg-stone-900 hover:bg-stone-700 text-white text-xs font-bold pl-4 pr-3 py-3 rounded-l-full shadow-lg transition-all hover:pr-5 whitespace-nowrap"
+      >
+        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        Chat Now
+      </Link>
+
       {/* Floating buttons */}
       <div className="fixed right-4 bottom-24 z-40 flex flex-col gap-3">
-        {/* Chat Now — desktop only */}
-        <Link
-          href="/contact"
-          className="hidden lg:flex items-center gap-2 bg-stone-900 hover:bg-stone-700 text-white text-xs font-bold px-4 py-3 rounded-full shadow-lg transition-all hover:scale-105 whitespace-nowrap"
-        >
-          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-          Chat Now
-        </Link>
-
         {/* WhatsApp */}
         <a
           href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
