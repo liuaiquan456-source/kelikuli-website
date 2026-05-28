@@ -94,6 +94,7 @@ export default function CartPage() {
               >
                 Send Inquiry ({items.length})
               </button>
+
             </div>
 
             <div className="mt-6 text-center">
@@ -104,7 +105,7 @@ export default function CartPage() {
           </>
         )}
       </div>
-      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
+      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} cartProducts={items} />
     </div>
   );
 }

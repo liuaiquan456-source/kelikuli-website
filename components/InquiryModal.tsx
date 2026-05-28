@@ -33,12 +33,32 @@ const productOptions = [
   "Other Resin Crafts",
 ];
 
+interface CartItem {
+  id: number;
+  name: string;
+  category: string;
+}
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  cartProducts?: CartItem[];
 }
 
-export default function InquiryModal({ isOpen, onClose }: Props) {
+// Map product category strings to productOptions checkboxes
+function mapCategoryToOption(category: string): string | null {
+  const c = category.toLowerCase();
+  if (c.includes("fridge") || c.includes("magnet")) return "Fridge Magnet";
+  if (c.includes("bobble")) return "Bobble Head";
+  if (c.includes("snow")) return "Snow Globe";
+  if (c.includes("piggy")) return "Piggy Bank";
+  if (c.includes("photo") || c.includes("frame")) return "Photo Frame";
+  if (c.includes("brand")) return "Brand Products";
+  if (c.includes("resin light") || c.includes("figurine") || c.includes("statue") || c.includes("astronaut") || c.includes("garden") || c.includes("prince") || c.includes("lucky") || c.includes("blind") || c.includes("religious") || c.includes("phone")) return "Statue & Figurine & Sculpture";
+  return "Other Resin Crafts";
+}
+
+export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
   const [form, setForm] = useState({
     email: "",
     countryCode: "+1",
@@ -48,6 +68,17 @@ export default function InquiryModal({ isOpen, onClose }: Props) {
     products: [] as string[],
     message: "",
   });
+
+  // Pre-fill form when cartProducts are provided and modal opens
+  useEffect(() => {
+    if (!isOpen || !cartProducts || cartProducts.length === 0) return;
+    const productList = cartProducts
+      .map((p, i) => `${i + 1}. ${p.name} (${p.category})`)
+      .join("\n");
+    const autoMessage = `I'm interested in the following products:\n${productList}\n\nPlease provide pricing and MOQ information.`;
+    const autoCategories = [...new Set(cartProducts.map((p) => mapCategoryToOption(p.category)).filter(Boolean) as string[])];
+    setForm((f) => ({ ...f, message: autoMessage, products: autoCategories }));
+  }, [isOpen, cartProducts]);
   const [files, setFiles] = useState<File[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -117,6 +148,14 @@ export default function InquiryModal({ isOpen, onClose }: Props) {
     setFiles([]);
     onClose();
   };
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSubmitted(false);
+      setError("");
+    }
+  }, [isOpen]);
 
   return (
     <div
