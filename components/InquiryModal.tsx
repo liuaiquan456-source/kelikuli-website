@@ -68,6 +68,12 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
     products: [] as string[],
     message: "",
   });
+  const [files, setFiles] = useState<File[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   // Pre-fill form when cartProducts are provided and modal opens
   useEffect(() => {
@@ -79,12 +85,6 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
     const autoCategories = [...new Set(cartProducts.map((p) => mapCategoryToOption(p.category)).filter(Boolean) as string[])];
     setForm((f) => ({ ...f, message: autoMessage, products: autoCategories }));
   }, [isOpen, cartProducts]);
-  const [files, setFiles] = useState<File[]>([]);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   // Close on Escape key
   useEffect(() => {
@@ -148,14 +148,6 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
     setFiles([]);
     onClose();
   };
-
-  // Reset form when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setSubmitted(false);
-      setError("");
-    }
-  }, [isOpen]);
 
   return (
     <div
