@@ -138,12 +138,12 @@ export default function Header() {
             >
               Inquiry Now
             </button>
-            <Link href="/wishlist" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-red-400 transition-colors">
+            <Link href="/wishlist" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-orange-400 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
               {wishCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">
                   {wishCount > 9 ? "9+" : wishCount}
                 </span>
               )}
@@ -317,13 +317,13 @@ export default function Header() {
                 <Link
                   href="/wishlist"
                   onClick={() => setMobileOpen(false)}
-                  className="relative flex-1 flex items-center justify-center gap-2 border border-stone-600 text-stone-300 text-sm font-semibold py-2.5 rounded-xl hover:border-red-400 hover:text-red-400 transition-colors"
+                  className="relative flex-1 flex items-center justify-center gap-2 border border-stone-600 text-stone-300 text-sm font-semibold py-2.5 rounded-xl hover:border-orange-400 hover:text-orange-400 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                   </svg>
                   Wishlist
-                  {wishCount > 0 && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">{wishCount > 9 ? "9+" : wishCount}</span>}
+                  {wishCount > 0 && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center">{wishCount > 9 ? "9+" : wishCount}</span>}
                 </Link>
                 <Link
                   href="/cart"
