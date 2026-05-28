@@ -155,7 +155,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
       className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       onClick={(e) => { if (e.target === overlayRef.current) handleClose(); }}
     >
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+      <div className={`relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col ${cartProducts && cartProducts.length > 0 ? "max-w-4xl" : "max-w-xl"}`}>
         {/* Close button */}
         <button
           onClick={handleClose}
@@ -167,6 +167,39 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
           </svg>
         </button>
 
+        <div className="flex flex-1 min-h-0">
+          {/* Left: cart product list */}
+          {cartProducts && cartProducts.length > 0 && (
+            <div className="w-60 shrink-0 border-r border-stone-100 bg-[#FAFAF9] flex flex-col">
+              <div className="px-4 py-5 border-b border-stone-100">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                  </svg>
+                  <h3 className="text-xs font-black uppercase tracking-widest text-stone-600">
+                    Selected <span className="text-orange-500">({cartProducts.length})</span>
+                  </h3>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+                {cartProducts.map((p) => (
+                  <div key={p.id} className="flex gap-2.5 p-2 bg-white rounded-xl border border-stone-100">
+                    {p.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.image} alt={p.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-stone-700 line-clamp-2 leading-snug">{p.name}</p>
+                      <p className="text-[10px] text-orange-500 font-semibold mt-0.5">{p.category}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Right: form */}
+          <div className="flex-1 overflow-y-auto">
         <div className="px-7 py-8">
           {submitted ? (
             <div className="text-center py-10">
@@ -343,6 +376,8 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
             </>
           )}
         </div>
+          </div>{/* end right scroll */}
+        </div>{/* end flex row */}
       </div>
     </div>
   );
