@@ -101,17 +101,28 @@ export default function Header() {
           : "bg-[#1E1812] border-b border-[#C9A55A]/20"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-          {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
-            <Image
-              src={logo}
-              alt="Kelikuli"
-              width={120}
-              height={40}
-              className="h-9 w-auto rounded-md"
-              priority
-            />
-          </Link>
+          {/* Logo — with hamburger on mobile */}
+          <div className="flex items-center gap-2">
+            <button
+              className="lg:hidden p-2 text-stone-300 rounded-lg hover:bg-white/10 transition-colors"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <Link href="/" className="flex items-center shrink-0">
+              <Image
+                src={logo}
+                alt="Kelikuli"
+                width={120}
+                height={40}
+                className="h-9 w-auto rounded-md"
+                priority
+              />
+            </Link>
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-6">
@@ -204,7 +215,7 @@ export default function Header() {
             <LanguageSwitcher />
           </div>
 
-          {/* Mobile: language + inquiry + hamburger */}
+          {/* Mobile: language + inquiry */}
           <div className="lg:hidden flex items-center gap-2">
             <LanguageSwitcher />
             <button
@@ -213,35 +224,26 @@ export default function Header() {
             >
               Inquiry Now
             </button>
-            <button
-              className="p-2 text-stone-300 rounded-lg hover:bg-white/10 transition-colors"
-              onClick={() => setMobileOpen(true)}
-              aria-label="Open menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile right-side drawer */}
+      {/* Mobile dropdown menu */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40"
             onClick={() => setMobileOpen(false)}
           />
 
-          {/* Drawer panel */}
+          {/* Dropdown panel — slides down from top */}
           <div
-            className="absolute top-0 right-0 h-full w-72 bg-[#1E1812] flex flex-col shadow-2xl"
-            style={{ animation: "slideInRight 0.25s ease-out" }}
+            className="absolute top-0 left-0 right-0 bg-white rounded-b-3xl shadow-2xl overflow-hidden"
+            style={{ animation: "slideDown 0.25s ease-out" }}
           >
-            {/* Drawer header */}
-            <div className="flex items-center justify-between px-5 h-14 border-b border-[#C9A55A]/20 shrink-0">
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-3">
               <Link href="/" onClick={() => setMobileOpen(false)}>
                 <Image
                   src={logo}
@@ -253,7 +255,7 @@ export default function Header() {
               </Link>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+                className="p-1.5 text-stone-500 hover:text-stone-800 rounded-full hover:bg-stone-100 transition-colors"
                 aria-label="Close menu"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,39 +264,44 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Nav links */}
-            <nav className="flex-1 overflow-y-auto px-4 py-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-3.5 rounded-xl text-sm font-medium transition-colors mb-1 ${
-                    pathname === link.href
-                      ? "bg-[#C9A55A]/15 text-[#C9A55A]"
-                      : "text-stone-300 hover:bg-white/5 hover:text-[#C9A55A]"
-                  }`}
-                >
-                  {pathname === link.href && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A55A] shrink-0" />
-                  )}
-                  {link.label}
-                </Link>
+            {/* Nav links with dividers */}
+            <nav className="px-5">
+              {navLinks.map((link, i) => (
+                <div key={link.href}>
+                  {i > 0 && <div className="h-px bg-stone-100" />}
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center justify-between py-4 text-base font-medium transition-colors ${
+                      pathname === link.href
+                        ? "text-[#C9A55A]"
+                        : "text-stone-800 hover:text-[#C9A55A]"
+                    }`}
+                  >
+                    {link.label}
+                    {pathname === link.href && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C9A55A] shrink-0" />
+                    )}
+                  </Link>
+                </div>
               ))}
             </nav>
 
-            {/* Bottom actions */}
-            <div className="px-4 py-5 border-t border-[#C9A55A]/20 space-y-3 shrink-0">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-stone-400 text-xs">Language</span>
+            {/* Bottom CTA */}
+            <div className="px-5 pt-3 pb-6 space-y-3">
+              <div className="h-px bg-stone-100" />
+              <div className="flex items-center justify-between pt-1">
                 <LanguageSwitcher />
+                <button
+                  onClick={() => { setInquiryOpen(true); setMobileOpen(false); }}
+                  className="inline-flex items-center gap-1.5 bg-[#3d4a2e] hover:bg-[#2e3822] text-white text-sm font-bold px-5 py-2.5 rounded-full transition-colors shadow-sm"
+                >
+                  Inquiry Now
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 17L17 7M17 7H7M17 7v10" />
+                  </svg>
+                </button>
               </div>
-              <button
-                onClick={() => { setInquiryOpen(true); setMobileOpen(false); }}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-4 py-3 rounded-xl transition-colors shadow-sm"
-              >
-                Inquiry Now
-              </button>
             </div>
           </div>
         </div>
