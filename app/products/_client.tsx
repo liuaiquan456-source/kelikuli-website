@@ -424,9 +424,13 @@ export default function ProductsClient() {
                     </button>
                     <button
                       onClick={() => toggleCart({ id: product.id, name: product.name, category: product.category, image: product.image })}
-                      className="absolute top-[42px] right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors z-10"
+                      className={`absolute top-[42px] right-2.5 w-7 h-7 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-all z-10 ${
+                        isInCart(product.id)
+                          ? "bg-[#C9A55A] hover:bg-[#B8935A]"
+                          : "bg-white/80 hover:bg-white"
+                      }`}
                     >
-                      <svg className={`w-4 h-4 transition-colors ${isInCart(product.id) ? "text-[#C9A55A]" : "text-stone-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className={`w-4 h-4 transition-colors ${isInCart(product.id) ? "text-white" : "text-stone-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                       </svg>
                     </button>
