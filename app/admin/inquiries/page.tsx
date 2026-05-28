@@ -15,6 +15,7 @@ interface Inquiry {
   phone: string;
   product: string;
   message: string;
+  cartItems: string;
   status: "unread" | "read" | "replied";
   notes: string;
   createdAt: string;
@@ -228,6 +229,35 @@ export default function InquiriesPage() {
                         </div>
                       ))}
                     </div>
+
+                    {(() => {
+                      try {
+                        const items: { id: number; name: string; category: string; image?: string }[] =
+                          inq.cartItems ? JSON.parse(inq.cartItems) : [];
+                        if (items.length === 0) return null;
+                        return (
+                          <div className="bg-orange-50 rounded-xl p-4 mb-4 border border-orange-100">
+                            <p className="text-[10px] text-orange-400 font-medium uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                              <Tag className="w-3 h-3" /> Selected Products ({items.length})
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {items.map((item) => (
+                                <div key={item.id} className="flex gap-2.5 bg-white rounded-lg p-2 border border-orange-100">
+                                  {item.image && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                                  )}
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-medium text-slate-700 line-clamp-2 leading-snug">{item.name}</p>
+                                    <p className="text-[10px] text-orange-500 font-semibold mt-0.5">{item.category}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      } catch { return null; }
+                    })()}
 
                     <div className="bg-slate-50 rounded-xl p-4 mb-4">
                       <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mb-2 flex items-center gap-1.5">

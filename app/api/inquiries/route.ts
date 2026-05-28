@@ -12,11 +12,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { name, company, email, phone, product, message } = body;
+  const { name, company, email, phone, product, message, cartItems } = body;
 
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
     return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
   }
+
+  const cartItemsStr = cartItems ? JSON.stringify(cartItems) : "";
 
   const inquiry = await prisma.inquiry.create({
     data: {
@@ -26,6 +28,7 @@ export async function POST(req: NextRequest) {
       phone: phone?.trim() ?? "",
       product: product?.trim() ?? "",
       message: message.trim(),
+      cartItems: cartItemsStr,
     },
   });
 

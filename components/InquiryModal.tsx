@@ -125,12 +125,13 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name:    form.name,
-          company: form.company,
-          email:   form.email,
-          phone:   form.countryCode + " " + form.phone,
-          product: form.products.join(", "),
-          message: form.message,
+          name:      form.name,
+          company:   form.company,
+          email:     form.email,
+          phone:     form.countryCode + " " + form.phone,
+          product:   form.products.join(", "),
+          message:   form.message,
+          cartItems: cartProducts ?? [],
         }),
       });
       if (!res.ok) throw new Error("Submission failed");

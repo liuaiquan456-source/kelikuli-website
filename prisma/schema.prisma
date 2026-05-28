@@ -109,6 +109,7 @@ model Inquiry {
   phone     String   @default("")
   product   String   @default("")
   message   String
+  cartItems String   @default("")
   status    String   @default("unread")
   notes     String   @default("")
   createdAt DateTime @default(now())
