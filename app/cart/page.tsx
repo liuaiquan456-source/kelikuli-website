@@ -60,11 +60,11 @@ export default function CartPage() {
                       )}
                     </div>
                     <div className="p-3 pb-2">
-                      <p className="text-stone-700 text-xs font-medium line-clamp-2 leading-snug">{product.name}</p>
-                      <p className="text-[#C9A55A] text-[10px] mt-1.5 font-semibold tracking-wide">{product.category}</p>
+                      <p className="text-stone-700 text-sm font-medium line-clamp-2 leading-snug">{product.name}</p>
+                      <p className="text-[#C9A55A] text-xs mt-1.5 font-semibold tracking-wide">{product.category}</p>
                       <button
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInquiryOpen(true); }}
-                        className="mt-2 w-full text-[10px] font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
+                        className="mt-2 w-full text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
                       >
                         Inquiry Now
                       </button>
