@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -150,18 +151,21 @@ const categories = [
 const ITEMS_PER_PAGE = 24;
 
 export default function ProductsClient() {
-  const searchParams = typeof window !== "undefined"
-    ? new URLSearchParams(window.location.search)
-    : null;
-  const initialCategory = searchParams?.get("category") ?? "All Products";
+  const searchParams = useSearchParams();
+  const urlCategory = searchParams.get("category") ?? "All Products";
 
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [activeCategory, setActiveCategory] = useState(urlCategory);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [wished, setWished] = useState<number[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setActiveCategory(urlCategory);
+    setPage(1);
+  }, [urlCategory]);
 
   useEffect(() => {
     fetch("/api/products?status=active")
