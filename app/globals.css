@@ -18,6 +18,11 @@ html {
   to   { transform: translateX(0); }
 }
 
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
 /* Hide Google Translate default toolbar */
 .goog-te-banner-frame,
 .goog-te-balloon-frame,

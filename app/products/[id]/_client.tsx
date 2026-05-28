@@ -288,7 +288,7 @@ export default function ProductDetailClient({
                   </button>
                   <Link
                     href="/contact"
-                    className="flex-1 border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white font-bold py-3 rounded-full transition-colors text-sm text-center"
+                    className="flex-1 lg:hidden border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white font-bold py-3 rounded-full transition-colors text-sm text-center"
                   >
                     Chat Now
                   </Link>
