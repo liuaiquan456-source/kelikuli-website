@@ -40,6 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# AI-generated and uploaded images (not tracked in git)
+public/images/uploads/
+public/ChatGPT*
+public/images/ChatGPT*
+
 /app/generated/prisma
 
 .vercel
