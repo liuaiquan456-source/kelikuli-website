@@ -37,6 +37,7 @@ interface CartItem {
   id: number;
   name: string;
   category: string;
+  image?: string;
 }
 
 interface Props {
@@ -200,7 +201,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
 
           {/* Right: form */}
           <div className="flex-1 overflow-y-auto">
-        <div className="px-7 py-8">
+            <div className="px-7 py-8">
           {submitted ? (
             <div className="text-center py-10">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -375,9 +376,9 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
               </form>
             </>
           )}
+            </div>
+          </div>
         </div>
-          </div>{/* end right scroll */}
-        </div>{/* end flex row */}
       </div>
     </div>
   );
