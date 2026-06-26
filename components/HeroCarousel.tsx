@@ -16,7 +16,7 @@ const slides = [
     contentType: "lamp",
   },
   {
-    src: "/images/banner-4.png",
+    src: "/images/王子海报2026626.png",
     alt: "Prince Collection — storybook-inspired collectible resin figurines by Kelikuli",
     contentType: "button",
     btnPos: "center",
