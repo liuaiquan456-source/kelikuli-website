@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
+import ProductImage from "@/components/ProductImage";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 
@@ -388,15 +388,12 @@ export default function ProductsClient() {
                   <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-400 hover:shadow-lg transition-all duration-200 relative">
                     <Link href={`/products/${product.id}`} className="block">
                       <div className="relative aspect-square bg-stone-50 overflow-hidden">
-                        {product.image && (
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            fill
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        )}
+                        <ProductImage
+                          src={product.image}
+                          alt={product.name}
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
                       <div className="p-3 pb-2">
                         <p className="text-stone-700 text-sm font-medium line-clamp-2 leading-snug">

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
+import ProductImage from "@/components/ProductImage";
 
 interface Variant { name: string; image: string; }
 
@@ -177,7 +178,7 @@ export default function ProductDetailClient({
                               activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
                             }`}
                           >
-                            <Image src={src} alt={`${product.name} — image ${i + 1}`} fill sizes="64px" className="object-cover" />
+                            <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="64px" className="object-cover" />
                           </button>
                         ))}
                       </div>
@@ -223,7 +224,7 @@ export default function ProductDetailClient({
                         >
                           {v.image && (
                             <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-stone-50">
-                              <Image src={v.image} alt={v.name} fill sizes="56px" className="object-cover" />
+                              <ProductImage src={v.image} alt={v.name} sizes="56px" className="object-cover" />
                             </div>
                           )}
                           {v.name && (
@@ -332,15 +333,12 @@ export default function ProductDetailClient({
                     className="group bg-white rounded-2xl border border-stone-100 overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="relative aspect-square bg-stone-50 overflow-hidden">
-                      {p.image && (
-                        <Image
-                          src={p.image}
-                          alt={p.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, 25vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      )}
+                      <ProductImage
+                        src={p.image}
+                        alt={p.name}
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
                     <div className="p-3">
                       <p className="text-stone-700 text-xs font-medium line-clamp-2 leading-snug">{p.name}</p>
