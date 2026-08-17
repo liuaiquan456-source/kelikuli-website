@@ -1,5 +1,8 @@
+import { getTranslator } from "@/lib/i18n";
+
 const badges = [
   {
+    key: "home.featureBadges.design",
     title: "Original Design",
     description: "Turn your ideas into unique resin toys and collectible figurines.",
     icon: (
@@ -9,6 +12,7 @@ const badges = [
     ),
   },
   {
+    key: "home.featureBadges.quality",
     title: "Quality Assurance",
     description: "Strict quality control for hand-painted resin products.",
     icon: (
@@ -18,6 +22,7 @@ const badges = [
     ),
   },
   {
+    key: "home.featureBadges.oem",
     title: "OEM & ODM Service",
     description: "Custom design, mold development, painting and packaging.",
     icon: (
@@ -28,6 +33,7 @@ const badges = [
     ),
   },
   {
+    key: "home.featureBadges.global",
     title: "Global Partner",
     description: "Trusted by brands, importers and wholesalers worldwide.",
     icon: (
@@ -38,7 +44,8 @@ const badges = [
   },
 ];
 
-export default function FeatureBadges() {
+export default async function FeatureBadges() {
+  const t = await getTranslator();
   return (
     <section className="hidden lg:block bg-[#F8F4ED] border-b border-[#C4A97A]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -56,8 +63,8 @@ export default function FeatureBadges() {
                 {badge.icon}
               </div>
               <div>
-                <h3 className="font-bold text-stone-800 text-sm mb-1">{badge.title}</h3>
-                <p className="text-stone-500 text-xs leading-relaxed">{badge.description}</p>
+                <h3 className="font-bold text-stone-800 text-sm mb-1">{t(`${badge.key}.title`, badge.title)}</h3>
+                <p className="text-stone-500 text-xs leading-relaxed">{t(`${badge.key}.description`, badge.description)}</p>
               </div>
             </div>
           ))}

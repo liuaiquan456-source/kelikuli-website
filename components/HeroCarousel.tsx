@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
+import { useTranslation } from "@/components/I18nProvider";
 
 
 const slides = [
@@ -37,6 +38,7 @@ const slides = [
 
 const featureIcons = [
   {
+    key: "home.hero.feature.oem",
     label: "OEM/ODM\nCustomization",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -46,6 +48,7 @@ const featureIcons = [
     ),
   },
   {
+    key: "home.hero.feature.design",
     label: "Custom\nDesign",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -54,6 +57,7 @@ const featureIcons = [
     ),
   },
   {
+    key: "home.hero.feature.moq",
     label: "Low MOQ\nManufacture",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -62,6 +66,7 @@ const featureIcons = [
     ),
   },
   {
+    key: "home.hero.feature.global",
     label: "Global\nStandards",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -70,6 +75,7 @@ const featureIcons = [
     ),
   },
   {
+    key: "home.hero.feature.qc",
     label: "Strict QC\nProcesses",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -80,6 +86,7 @@ const featureIcons = [
 ];
 
 export default function HeroCarousel() {
+  const { t } = useTranslation();
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -154,14 +161,14 @@ export default function HeroCarousel() {
                   <div className="max-w-[52%] lg:max-w-[44%] lg:ml-[8%]">
                     <h1 className="font-black leading-tight mb-2">
                       <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
-                        Resin Figurine
+                        {t("home.hero.main.titleLine1", "Resin Figurine")}
                       </span>
                       <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.6rem] drop-shadow-lg uppercase">
-                        Manufacturer
+                        {t("home.hero.main.titleLine2", "Manufacturer")}
                       </span>
                     </h1>
                     <p className="text-white/80 text-[10px] sm:text-xs lg:text-sm mb-3 font-medium drop-shadow">
-                      Custom Resin Toy Factory &nbsp;|&nbsp; Blind Box Manufacturer &nbsp;|&nbsp; Wholesale Resin Figurines
+                      {t("home.hero.main.subtitle", "Custom Resin Toy Factory | Blind Box Manufacturer | Wholesale Resin Figurines")}
                     </p>
                     <div className="hidden sm:flex gap-2 lg:gap-4 mb-3">
                       {featureIcons.map((f) => (
@@ -170,26 +177,31 @@ export default function HeroCarousel() {
                             {f.icon}
                           </div>
                           <span className="text-[8px] lg:text-[9px] text-white/80 text-center whitespace-pre-line leading-tight font-medium">
-                            {f.label}
+                            {t(f.key, f.label)}
                           </span>
                         </div>
                       ))}
                     </div>
                     <div className="hidden sm:flex items-center mb-3 w-fit">
                       <span className="bg-[#C9A55A] text-white text-[10px] lg:text-xs font-black px-3 py-1.5 rounded-l-full tracking-wide uppercase">
-                        Blind Box Customization
+                        {t("home.hero.main.badge", "Blind Box Customization")}
                       </span>
                       <span className="bg-white/90 text-stone-700 text-[10px] lg:text-xs font-medium px-3 py-1.5 rounded-r-full italic">
-                        Your Vision, Premium Excellence.
+                        {t("home.hero.main.tagline", "Your Vision, Premium Excellence.")}
                       </span>
                     </div>
                     <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-1 mb-4">
-                      {["OEM/ODM Custom Orders", "Hand-Painted Quality", "Low MOQ Accepted", "Eco-friendly"].map((item) => (
-                        <div key={item} className="flex items-center gap-1.5 text-white/90">
+                      {[
+                        { key: "home.hero.main.check1", text: "OEM/ODM Custom Orders" },
+                        { key: "home.hero.main.check2", text: "Hand-Painted Quality" },
+                        { key: "home.hero.main.check3", text: "Low MOQ Accepted" },
+                        { key: "home.hero.main.check4", text: "Eco-friendly" },
+                      ].map((item) => (
+                        <div key={item.key} className="flex items-center gap-1.5 text-white/90">
                           <svg className="w-3 h-3 text-[#C9A55A] shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-[10px] lg:text-xs font-medium">{item}</span>
+                          <span className="text-[10px] lg:text-xs font-medium">{t(item.key, item.text)}</span>
                         </div>
                       ))}
                     </div>
@@ -197,7 +209,7 @@ export default function HeroCarousel() {
                       onClick={() => setInquiryOpen(true)}
                       className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-5 py-2 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
                     >
-                      Get a Quote
+                      {t("home.hero.getQuote", "Get a Quote")}
                     </button>
                   </div>
                   </div>
@@ -210,40 +222,40 @@ export default function HeroCarousel() {
                   <div className="absolute left-[5%] sm:left-[12%] lg:left-[22%] top-1/2 -translate-y-1/2 max-w-[45%] lg:max-w-[36%]">
                     <h2 className="font-black leading-tight drop-shadow-lg uppercase mb-2">
                       <span className="block text-white text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
-                        Resin Decoration
+                        {t("home.hero.lamp.titleLine1", "Resin Decoration")}
                       </span>
                       <span className="block text-[#C9A55A] text-xl sm:text-3xl lg:text-4xl xl:text-[2.8rem]">
-                        Light
+                        {t("home.hero.lamp.titleLine2", "Light")}
                       </span>
                     </h2>
                     <p className="hidden sm:block text-white/75 text-[10px] sm:text-sm lg:text-base font-medium drop-shadow mb-4 italic">
-                      Handcrafted Resin Decor for Warm, Cozy Spaces
+                      {t("home.hero.lamp.subtitle", "Handcrafted Resin Decor for Warm, Cozy Spaces")}
                     </p>
                     <div className="hidden sm:flex flex-col gap-2 mb-5">
                       <div className="flex items-center gap-2 text-white/90">
                         <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                         </svg>
-                        <span className="text-xs font-medium">Handcrafted Resin</span>
+                        <span className="text-xs font-medium">{t("home.hero.lamp.feature1", "Handcrafted Resin")}</span>
                       </div>
                       <div className="flex items-center gap-2 text-white/90">
                         <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0z" />
                         </svg>
-                        <span className="text-xs font-medium">Warm Ambient Light</span>
+                        <span className="text-xs font-medium">{t("home.hero.lamp.feature2", "Warm Ambient Light")}</span>
                       </div>
                       <div className="flex items-center gap-2 text-white/90">
                         <svg className="w-4 h-4 text-[#C9A55A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                         </svg>
-                        <span className="text-xs font-medium">Unique Gift Ideas</span>
+                        <span className="text-xs font-medium">{t("home.hero.lamp.feature3", "Unique Gift Ideas")}</span>
                       </div>
                     </div>
                     <button
                       onClick={() => setInquiryOpen(true)}
                       className="bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-5 lg:px-6 py-2.5 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
                     >
-                      Get a Quote
+                      {t("home.hero.getQuote", "Get a Quote")}
                     </button>
                   </div>
                 </div>
@@ -262,7 +274,7 @@ export default function HeroCarousel() {
                 onClick={() => setInquiryOpen(true)}
                 className="bg-[#C9A55A]/60 hover:bg-[#C9A55A]/80 backdrop-blur-sm border border-[#C4A97A]/50 text-white font-bold px-5 py-2 rounded-full text-sm tracking-wide transition-colors shadow-lg"
               >
-                Get a quote
+                {t("home.hero.getQuoteLower", "Get a quote")}
               </button>
             </div>
           )}

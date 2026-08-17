@@ -1,8 +1,10 @@
 ﻿import Link from "next/link";
 import Image from "next/image";
+import { getTranslator } from "@/lib/i18n";
 
 const steps = [
   {
+    key: "home.oemProcess.step1",
     num: "01",
     title: "Idea & Artwork Review",
     icon: (
@@ -12,6 +14,7 @@ const steps = [
     ),
   },
   {
+    key: "home.oemProcess.step2",
     num: "02",
     title: "3D Design / Prototype",
     icon: (
@@ -21,6 +24,7 @@ const steps = [
     ),
   },
   {
+    key: "home.oemProcess.step3",
     num: "03",
     title: "Mold Development",
     icon: (
@@ -30,6 +34,7 @@ const steps = [
     ),
   },
   {
+    key: "home.oemProcess.step4",
     num: "04",
     title: "Resin Casting",
     icon: (
@@ -40,6 +45,7 @@ const steps = [
     ),
   },
   {
+    key: "home.oemProcess.step5",
     num: "05",
     title: "Hand Painting",
     icon: (
@@ -49,6 +55,7 @@ const steps = [
     ),
   },
   {
+    key: "home.oemProcess.step6",
     num: "06",
     title: "QC & Packaging",
     icon: (
@@ -59,7 +66,8 @@ const steps = [
   },
 ];
 
-export default function OEMProcess() {
+export default async function OEMProcess() {
+  const t = await getTranslator();
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -67,13 +75,13 @@ export default function OEMProcess() {
           {/* Left: steps */}
           <div className="flex-1">
             <p className="text-[#C9A55A] text-xs font-bold uppercase tracking-widest mb-2">
-              One-Stop Service
+              {t("home.oemProcess.eyebrow", "One-Stop Service")}
             </p>
             <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mb-4">
-              One-Stop OEM/ODM Resin Toy Service
+              {t("home.oemProcess.heading", "One-Stop OEM/ODM Resin Toy Service")}
             </h2>
             <p className="text-stone-500 text-sm leading-relaxed mb-8">
-              Kelikuli provides one-stop OEM/ODM resin toy services for brands, wholesalers, and gift companies. From 3D design, mold making, resin casting, hand painting to bulk production, we create custom resin figurines, blind box toys, ornaments, and collectible crafts.
+              {t("home.oemProcess.intro", "Kelikuli provides one-stop OEM/ODM resin toy services for brands, wholesalers, and gift companies. From 3D design, mold making, resin casting, hand painting to bulk production, we create custom resin figurines, blind box toys, ornaments, and collectible crafts.")}
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
@@ -85,7 +93,7 @@ export default function OEMProcess() {
                       {step.icon}
                     </div>
                   </div>
-                  <p className="text-stone-700 text-sm font-semibold leading-tight">{step.title}</p>
+                  <p className="text-stone-700 text-sm font-semibold leading-tight">{t(step.key, step.title)}</p>
                 </div>
               ))}
             </div>
@@ -94,7 +102,7 @@ export default function OEMProcess() {
               href="/custom-oem-odm"
               className="mt-8 inline-flex items-center gap-2 text-[#C9A55A] font-semibold hover:text-[#A8843A] text-sm transition-colors"
             >
-              Learn More About Our Process
+              {t("home.oemProcess.learnMore", "Learn More About Our Process")}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -130,7 +138,7 @@ export default function OEMProcess() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                   </svg>
-                  <span className="font-bold text-xs leading-tight">Quality in<br />Every Step</span>
+                  <span className="font-bold text-xs leading-tight">{t("home.oemProcess.qualityBadge", "Quality in Every Step")}</span>
                 </div>
               </div>
             </div>

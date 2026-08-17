@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import { getTranslator } from "@/lib/i18n";
 
 const categoryColors: Record<string, string> = {
   "Astronaut Series":  "from-sky-100 to-blue-50",
@@ -16,6 +17,7 @@ const categoryColors: Record<string, string> = {
 
 const bottomBadges = [
   {
+    key: "home.featured.badge1",
     title: "Strict Quality Control",
     sub: "From raw materials to finished products",
     icon: (
@@ -25,6 +27,7 @@ const bottomBadges = [
     ),
   },
   {
+    key: "home.featured.badge2",
     title: "OEM/ODM Support",
     sub: "Low MOQ & flexible solutions",
     icon: (
@@ -35,6 +38,7 @@ const bottomBadges = [
     ),
   },
   {
+    key: "home.featured.badge3",
     title: "On-Time Delivery",
     sub: "Fast lead time & reliable shipping",
     icon: (
@@ -44,6 +48,7 @@ const bottomBadges = [
     ),
   },
   {
+    key: "home.featured.badge4",
     title: "Worldwide Shipping",
     sub: "Export to 30+ countries",
     icon: (
@@ -68,6 +73,7 @@ const featuredOrder = [
 ];
 
 export default async function FeaturedCollections() {
+  const t = await getTranslator();
   // Get one representative product (with image) per category
   let categoryProducts: { category: string; image: string | null; id: number }[] = [];
   try {
@@ -107,13 +113,13 @@ export default async function FeaturedCollections() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-stone-900">
-            Featured Resin Toy Collections
+            {t("home.featured.heading", "Featured Resin Toy Collections")}
           </h2>
           <Link
             href="/products"
             className="hidden sm:flex items-center gap-1 text-[#C9A55A] hover:text-[#A8843A] font-semibold text-sm transition-colors"
           >
-            View All Products
+            {t("home.featured.viewAll", "View All Products")}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -151,7 +157,7 @@ export default async function FeaturedCollections() {
           </div>
         ) : (
           <div className="mb-10 text-center text-stone-400 text-sm py-8">
-            Products loading...
+            {t("home.featured.loading", "Products loading...")}
           </div>
         )}
 
@@ -163,8 +169,8 @@ export default async function FeaturedCollections() {
                 {b.icon}
               </div>
               <div>
-                <p className="font-semibold text-stone-900 text-sm">{b.title}</p>
-                <p className="text-stone-500 text-xs">{b.sub}</p>
+                <p className="font-semibold text-stone-900 text-sm">{t(`${b.key}.title`, b.title)}</p>
+                <p className="text-stone-500 text-xs">{t(`${b.key}.sub`, b.sub)}</p>
               </div>
             </div>
           ))}

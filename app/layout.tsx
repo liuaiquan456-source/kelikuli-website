@@ -4,7 +4,9 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
+import I18nProvider from "@/components/I18nProvider";
 import { getSettings } from "@/lib/settings";
+import { getCurrentLanguage, getTranslationMap } from "@/lib/i18n";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -71,17 +73,21 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const settings = await getSettings();
+  const lang = await getCurrentLanguage();
+  const dict = await getTranslationMap(lang);
   return (
-    <html lang="en" className={`${geist.variable} ${playfair.variable} h-full`}>
+    <html lang={lang} className={`${geist.variable} ${playfair.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased bg-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <FloatingContact whatsapp={settings.whatsapp} />
+        <I18nProvider lang={lang} dict={dict}>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <FloatingContact whatsapp={settings.whatsapp} />
+        </I18nProvider>
       </body>
     </html>
   );

@@ -101,6 +101,29 @@ model FAQ {
   updatedAt DateTime @updatedAt
 }
 
+model Language {
+  code       String   @id
+  name       String
+  nativeName String
+  flag       String   @default("")
+  isDefault  Boolean  @default(false)
+  active     Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Translation {
+  id           Int      @id @default(autoincrement())
+  key          String
+  languageCode String
+  value        String
+  updatedAt    DateTime @updatedAt
+
+  @@unique([key, languageCode])
+  @@index([languageCode])
+}
+
 model Inquiry {
   id        Int      @id @default(autoincrement())
   name      String

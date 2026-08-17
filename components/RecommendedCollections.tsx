@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getTranslator } from "@/lib/i18n";
 
 const featured = {
   label: "Resin Light",
@@ -14,14 +15,15 @@ const gridItems = [
   { label: "Blind Box Series",  href: "/products?category=Blind+Box+Series",  img: "/images/collections/col-8.png" },
 ];
 
-export default function RecommendedCollections() {
+export default async function RecommendedCollections() {
+  const t = await getTranslator();
   return (
     <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-stone-900">
-            Recommended Products
+            {t("home.recommended.heading", "Recommended Products")}
           </h2>
           <div className="w-8 h-0.5 bg-stone-800 mx-auto mt-3" />
         </div>
@@ -84,7 +86,7 @@ export default function RecommendedCollections() {
             href="/products"
             className="inline-flex items-center gap-2 text-[#C9A55A] font-semibold hover:text-[#A8843A] transition-colors text-sm"
           >
-            View All Product Collections
+            {t("home.recommended.viewAll", "View All Product Collections")}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

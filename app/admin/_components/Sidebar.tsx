@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Package, BarChart2, Users, Settings,
   ChevronDown, ChevronRight, Globe, Search, FileText, Wifi,
-  PlusCircle, List, LogOut, Inbox, Newspaper, HelpCircle,
+  PlusCircle, List, LogOut, Inbox, Newspaper, HelpCircle, Languages,
 } from "lucide-react";
 import { cn } from "@/app/admin/_lib/utils";
 
@@ -65,6 +65,13 @@ export default function Sidebar() {
         { label: "Keywords",        href: "/admin/analytics/keywords", icon: <Search className="w-3.5 h-3.5" /> },
         { label: "Page Views",      href: "/admin/analytics/pages",    icon: <FileText className="w-3.5 h-3.5" /> },
         { label: "IP Logs",         href: "/admin/analytics/ip-logs",  icon: <Wifi className="w-3.5 h-3.5" /> },
+      ],
+    },
+    {
+      label: "语言管理", icon: <Languages className="w-4 h-4" />,
+      children: [
+        { label: "Languages",    href: "/admin/languages",              icon: <List className="w-3.5 h-3.5" /> },
+        { label: "Translations", href: "/admin/languages/translations", icon: <FileText className="w-3.5 h-3.5" /> },
       ],
     },
     { label: "Users",    href: "/admin/users",    icon: <Users className="w-4 h-4" /> },

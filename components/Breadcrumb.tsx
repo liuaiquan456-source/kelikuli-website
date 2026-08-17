@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useTranslation } from "@/components/I18nProvider";
 
 interface BreadcrumbItem {
   label: string;
@@ -12,7 +13,8 @@ interface BreadcrumbProps {
 }
 
 export default function Breadcrumb({ items, className = "" }: BreadcrumbProps) {
-  const all = [{ label: "Home", href: "/" }, ...items];
+  const { t } = useTranslation();
+  const all = [{ label: t("breadcrumb.home", "Home"), href: "/" }, ...items];
 
   const schema = {
     "@context": "https://schema.org",

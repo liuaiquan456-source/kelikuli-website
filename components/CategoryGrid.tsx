@@ -1,7 +1,9 @@
 ﻿import Link from "next/link";
+import { getTranslator } from "@/lib/i18n";
 
 const categories = [
   {
+    key: "home.categories.figurines",
     title: "Resin Figurines",
     description:
       "Hand-painted matte resin figurines for collectibles, retail, and brand gifting. Custom character development available.",
@@ -15,6 +17,7 @@ const categories = [
     color: "bg-[#F5EDD8] text-[#C9A55A]",
   },
   {
+    key: "home.categories.blindBox",
     title: "Blind Box Collectibles",
     description:
       "Mystery blind box series with full art direction, packaging, and character IP development for brands and retailers.",
@@ -27,6 +30,7 @@ const categories = [
     color: "bg-violet-50 text-violet-600",
   },
   {
+    key: "home.categories.zakka",
     title: "Zakka Resin Ornaments",
     description:
       "Charming Zakka-style resin home decor — miniature figures, animals, and lifestyle pieces for wholesale and retail.",
@@ -39,6 +43,7 @@ const categories = [
     color: "bg-green-50 text-green-600",
   },
   {
+    key: "home.categories.seasonal",
     title: "Seasonal Resin Crafts",
     description:
       "Christmas, Halloween, Easter, and holiday-themed resin gifts. Ready-to-wholesale seasonal collections updated annually.",
@@ -51,6 +56,7 @@ const categories = [
     color: "bg-red-50 text-red-600",
   },
   {
+    key: "home.categories.customToys",
     title: "Custom Resin Toys",
     description:
       "Fully custom resin toy development from sketch to mass production. OEM/ODM for brands, IPs, and promotional campaigns.",
@@ -63,6 +69,7 @@ const categories = [
     color: "bg-amber-50 text-amber-700",
   },
   {
+    key: "home.categories.snowGlobes",
     title: "Snow Globes & More",
     description:
       "Resin snow globes, fridge magnets, and piggy banks. Great for souvenirs, promotional gifts, and gift shop wholesale.",
@@ -76,20 +83,20 @@ const categories = [
   },
 ];
 
-export default function CategoryGrid() {
+export default async function CategoryGrid() {
+  const t = await getTranslator();
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-14">
           <p className="text-[#C9A55A] font-semibold text-sm uppercase tracking-widest mb-3">
-            Our Products
+            {t("home.categories.eyebrow", "Our Products")}
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-4">
-            Resin Craft Categories
+            {t("home.categories.heading", "Resin Craft Categories")}
           </h2>
           <p className="text-stone-500 text-lg max-w-2xl mx-auto">
-            From collectible figurines to branded blind boxes — we manufacture a
-            wide range of hand-painted resin products for global buyers.
+            {t("home.categories.intro", "From collectible figurines to branded blind boxes — we manufacture a wide range of hand-painted resin products for global buyers.")}
           </p>
         </div>
 
@@ -104,13 +111,13 @@ export default function CategoryGrid() {
                 {cat.icon}
               </div>
               <h3 className="text-lg font-bold text-stone-900 mb-2 group-hover:text-[#C9A55A] transition-colors">
-                {cat.title}
+                {t(`${cat.key}.title`, cat.title)}
               </h3>
               <p className="text-stone-500 text-sm leading-relaxed">
-                {cat.description}
+                {t(`${cat.key}.description`, cat.description)}
               </p>
               <div className="mt-4 flex items-center gap-1 text-[#C9A55A] text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                Learn more
+                {t("home.categories.learnMore", "Learn more")}
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>

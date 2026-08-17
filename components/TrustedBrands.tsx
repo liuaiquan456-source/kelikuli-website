@@ -1,3 +1,5 @@
+import { getTranslator } from "@/lib/i18n";
+
 const brands = [
   "Pure Design",
   "Nordic Living",
@@ -7,12 +9,13 @@ const brands = [
   "Creative Collective",
 ];
 
-export default function TrustedBrands() {
+export default async function TrustedBrands() {
+  const t = await getTranslator();
   return (
     <section className="py-10 bg-white border-y border-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <p className="text-center text-xs font-bold uppercase tracking-widest text-stone-400 mb-8">
-          Trusted by Global Brands
+          {t("home.trustedBrands.heading", "Trusted by Global Brands")}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-5 lg:gap-14">
           {brands.map((brand) => (

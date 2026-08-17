@@ -1,42 +1,44 @@
 ﻿import Image from "next/image";
+import { getTranslator } from "@/lib/i18n";
 
 const preSale = [
-  "Understand your design needs and target market",
-  "Provide professional quotation and cost analysis",
-  "Offer MOQ and production solutions",
-  "Sample planning and sample confirmation",
+  { key: "home.service.preSale1", text: "Understand your design needs and target market" },
+  { key: "home.service.preSale2", text: "Provide professional quotation and cost analysis" },
+  { key: "home.service.preSale3", text: "Offer MOQ and production solutions" },
+  { key: "home.service.preSale4", text: "Sample planning and sample confirmation" },
 ];
 
 const production = [
-  "Confirm samples and approve for mass production",
-  "Track production progress and keep you updated",
-  "Strict quality control during production and before shipment",
-  "Professional packaging and on-time shipment",
+  { key: "home.service.production1", text: "Confirm samples and approve for mass production" },
+  { key: "home.service.production2", text: "Track production progress and keep you updated" },
+  { key: "home.service.production3", text: "Strict quality control during production and before shipment" },
+  { key: "home.service.production4", text: "Professional packaging and on-time shipment" },
 ];
 
-export default function ServiceSection() {
+export default async function ServiceSection() {
+  const t = await getTranslator();
   return (
     <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <h2 className="text-2xl md:text-3xl font-bold text-stone-900 text-center mb-3">
-          Your Resin Figurine Supplier from China — Full-Service OEM/ODM
+          {t("home.service.heading", "Your Resin Figurine Supplier from China — Full-Service OEM/ODM")}
         </h2>
         <p className="text-stone-500 text-sm text-center max-w-2xl mx-auto mb-10">
-          As a collectible figurine factory in Zhejiang, China, Kelikuli supports end-to-end orders from design consultation to global shipment. We specialize in wholesale resin Zakka decor figurines, seasonal resin figurine OEM for Christmas and Halloween, and custom blind box series — accepting resin figurine sample orders and bulk wholesale.
+          {t("home.service.intro", "As a collectible figurine factory in Zhejiang, China, Kelikuli supports end-to-end orders from design consultation to global shipment. We specialize in wholesale resin Zakka decor figurines, seasonal resin figurine OEM for Christmas and Halloween, and custom blind box series — accepting resin figurine sample orders and bulk wholesale.")}
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Pre-sale service */}
           <div className="bg-stone-50 rounded-2xl p-6 border border-stone-100">
             <h3 className="text-[#C9A55A] font-black text-sm uppercase tracking-widest mb-4">
-              Pre-Sale Service
+              {t("home.service.preSaleTitle", "Pre-Sale Service")}
             </h3>
             <ul className="space-y-3">
               {preSale.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-stone-700">
+                <li key={item.key} className="flex items-start gap-2.5 text-sm text-stone-700">
                   <svg className="w-4 h-4 text-[#C9A55A] mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
                   </svg>
-                  {item}
+                  {t(item.key, item.text)}
                 </li>
               ))}
             </ul>
@@ -56,15 +58,15 @@ export default function ServiceSection() {
           {/* Production service */}
           <div className="bg-stone-50 rounded-2xl p-6 border border-stone-100">
             <h3 className="text-[#C9A55A] font-black text-sm uppercase tracking-widest mb-4">
-              Production Service
+              {t("home.service.productionTitle", "Production Service")}
             </h3>
             <ul className="space-y-3">
               {production.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-stone-700">
+                <li key={item.key} className="flex items-start gap-2.5 text-sm text-stone-700">
                   <svg className="w-4 h-4 text-[#C9A55A] mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
                   </svg>
-                  {item}
+                  {t(item.key, item.text)}
                 </li>
               ))}
             </ul>

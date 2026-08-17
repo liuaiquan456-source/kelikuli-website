@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getTranslator } from "@/lib/i18n";
 
 export default async function LatestProducts() {
+  const t = await getTranslator();
   const raw = await prisma.product.findMany({
     where: { status: "active" },
     orderBy: { createdAt: "desc" },
@@ -25,14 +27,14 @@ export default async function LatestProducts() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-1">New Arrivals</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-stone-900">Latest Products</h2>
+            <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-1">{t("home.latestProducts.eyebrow", "New Arrivals")}</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-stone-900">{t("home.latestProducts.heading", "Latest Products")}</h2>
           </div>
           <Link
             href="/products"
             className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-[#C9A55A] hover:text-[#A8843A] transition-colors"
           >
-            View All
+            {t("home.latestProducts.viewAll", "View All")}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -75,7 +77,7 @@ export default async function LatestProducts() {
             href="/products"
             className="inline-flex items-center gap-2 text-[#C9A55A] font-semibold hover:text-[#A8843A] transition-colors text-sm"
           >
-            View All Products
+            {t("home.latestProducts.viewAllMobile", "View All Products")}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

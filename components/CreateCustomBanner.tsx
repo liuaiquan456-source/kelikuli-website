@@ -2,9 +2,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
+import { useTranslation } from "@/components/I18nProvider";
 
 const highlights = [
   {
+    key: "home.customBanner.highlight.design",
     label: "Creative Design",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -13,6 +15,7 @@ const highlights = [
     ),
   },
   {
+    key: "home.customBanner.highlight.quality",
     label: "Premium Quality",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -21,6 +24,7 @@ const highlights = [
     ),
   },
   {
+    key: "home.customBanner.highlight.global",
     label: "Global Standards",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -29,6 +33,7 @@ const highlights = [
     ),
   },
   {
+    key: "home.customBanner.highlight.delivery",
     label: "Reliable Delivery",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -40,6 +45,7 @@ const highlights = [
 
 
 export default function CreateCustomBanner() {
+  const { t } = useTranslation();
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
@@ -53,19 +59,19 @@ export default function CreateCustomBanner() {
           {/* Left: text */}
           <div className="flex-1">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
-              Custom Resin Toy OEM Factory<br />— Your Vision, Our Craft
+              {t("home.customBanner.heading", "Custom Resin Toy OEM Factory — Your Vision, Our Craft")}
             </h2>
             <p className="text-stone-300 text-base leading-relaxed mb-4">
-              As a trusted resin figurine supplier from China, we help brands, wholesalers and creative studios turn original ideas into high-quality resin figurines, blind box collectibles and Zakka decor — from concept to finished product.
+              {t("home.customBanner.paragraph1", "As a trusted resin figurine supplier from China, we help brands, wholesalers and creative studios turn original ideas into high-quality resin figurines, blind box collectibles and Zakka decor — from concept to finished product.")}
             </p>
             <p className="text-stone-300 text-sm leading-relaxed mb-8">
-              Kelikuli is a custom resin toy manufacturer with low MOQ — supporting sample orders, small batches and large-volume wholesale resin figurines. Every piece is hand-painted by skilled craftsmen, making us the go-to resin toy OEM manufacturer for brands seeking quality and flexibility.
+              {t("home.customBanner.paragraph2", "Kelikuli is a custom resin toy manufacturer with low MOQ — supporting sample orders, small batches and large-volume wholesale resin figurines. Every piece is hand-painted by skilled craftsmen, making us the go-to resin toy OEM manufacturer for brands seeking quality and flexibility.")}
             </p>
             <button
               onClick={() => setInquiryOpen(true)}
               className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-full text-sm tracking-wide transition-colors shadow-lg shadow-orange-900/30"
             >
-              Get a Free Quote
+              {t("home.customBanner.cta", "Get a Free Quote")}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -77,7 +83,7 @@ export default function CreateCustomBanner() {
                   <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-[#C9A55A]/30 flex items-center justify-center text-[#B8935A]">
                     {h.icon}
                   </div>
-                  <span className="text-sm font-medium">{h.label}</span>
+                  <span className="text-sm font-medium">{t(h.key, h.label)}</span>
                 </div>
               ))}
             </div>

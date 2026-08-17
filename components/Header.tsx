@@ -7,15 +7,16 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import InquiryModal from "@/components/InquiryModal";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
+import { useTranslation } from "@/components/I18nProvider";
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Products", href: "/products" },
-  { label: "Custom Service", href: "/custom-oem-odm" },
-  { label: "News", href: "/news" },
-  { label: "FAQ", href: "/faq" },
-  { label: "About Us", href: "/about-us" },
-  { label: "Contact", href: "/contact" },
+  { key: "header.nav.home",     label: "Home", href: "/" },
+  { key: "header.nav.products", label: "Products", href: "/products" },
+  { key: "header.nav.custom",   label: "Custom Service", href: "/custom-oem-odm" },
+  { key: "header.nav.news",     label: "News", href: "/news" },
+  { key: "header.nav.faq",      label: "FAQ", href: "/faq" },
+  { key: "header.nav.about",    label: "About Us", href: "/about-us" },
+  { key: "header.nav.contact",  label: "Contact", href: "/contact" },
 ];
 
 interface SearchResult {
@@ -28,6 +29,7 @@ interface SearchResult {
 }
 
 export default function Header() {
+  const { t } = useTranslation();
   const logo = "/images/kelikulilogo.png";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -129,14 +131,14 @@ export default function Header() {
                     : "text-stone-300 hover:text-[#C9A55A]"
                 }`}
               >
-                {link.label}
+                {t(link.key, link.label)}
               </Link>
             ))}
             <button
               onClick={() => setInquiryOpen(true)}
               className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-5 py-1.5 rounded-full transition-colors shadow-sm"
             >
-              Inquiry Now
+              {t("header.inquiryNow", "Inquiry Now")}
             </button>
             <Link href="/wishlist" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-orange-400 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +174,7 @@ export default function Header() {
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
                 </svg>
-                Search
+                {t("header.search", "Search")}
               </button>
               {searchOpen && (
                 <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-stone-100 z-50 overflow-hidden">
@@ -185,7 +187,7 @@ export default function Header() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter" && searchResults[0]) { router.push(searchResults[0].href); setSearchOpen(false); setSearchQuery(""); } }}
-                      placeholder="Search products, news..."
+                      placeholder={t("header.searchPlaceholder", "Search products, news...")}
                       className="flex-1 text-sm text-stone-800 placeholder-stone-400 focus:outline-none bg-transparent"
                     />
                     {searchQuery && (
@@ -212,15 +214,15 @@ export default function Header() {
                           </div>
                           <div className="min-w-0">
                             <p className="text-xs font-medium text-stone-700 line-clamp-1">{r.title}</p>
-                            <p className="text-[10px] text-stone-400">{r.type === "product" ? "Product" : "News"} · {r.category}</p>
+                            <p className="text-[10px] text-stone-400">{r.type === "product" ? t("header.searchTypeProduct", "Product") : t("header.searchTypeNews", "News")} · {r.category}</p>
                           </div>
                         </Link>
                       ))}
                     </div>
                   ) : searchQuery ? (
-                    <p className="text-xs text-stone-400 text-center py-6">No results for "{searchQuery}"</p>
+                    <p className="text-xs text-stone-400 text-center py-6">{t("header.searchNoResults", "No results for")} "{searchQuery}"</p>
                   ) : (
-                    <p className="text-xs text-stone-400 text-center py-6">Type to search products &amp; news</p>
+                    <p className="text-xs text-stone-400 text-center py-6">{t("header.searchHint", "Type to search products & news")}</p>
                   )}
                 </div>
               )}
@@ -235,7 +237,7 @@ export default function Header() {
               onClick={() => setInquiryOpen(true)}
               className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-full transition-colors shadow-sm"
             >
-              Inquiry Now
+              {t("header.inquiryNow", "Inquiry Now")}
             </button>
             <button
               className="p-2 text-stone-300 rounded-lg hover:bg-white/10 transition-colors"
@@ -302,7 +304,7 @@ export default function Header() {
                   {pathname === link.href && (
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C9A55A] shrink-0" />
                   )}
-                  {link.label}
+                  {t(link.key, link.label)}
                 </Link>
               ))}
             </nav>
@@ -310,7 +312,7 @@ export default function Header() {
             {/* Bottom actions */}
             <div className="px-4 py-5 border-t border-[#C9A55A]/20 space-y-3 shrink-0">
               <div className="flex items-center justify-between px-1">
-                <span className="text-stone-400 text-xs">Language</span>
+                <span className="text-stone-400 text-xs">{t("header.language", "Language")}</span>
                 <LanguageSwitcher />
               </div>
               <div className="flex gap-2">
@@ -322,7 +324,7 @@ export default function Header() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                   </svg>
-                  Wishlist
+                  {t("header.wishlist", "Wishlist")}
                   {wishCount > 0 && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center">{wishCount > 9 ? "9+" : wishCount}</span>}
                 </Link>
                 <Link
@@ -333,7 +335,7 @@ export default function Header() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                   </svg>
-                  Cart
+                  {t("header.cart", "Cart")}
                   {cartCount > 0 && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#C9A55A] text-white text-[9px] font-bold flex items-center justify-center">{cartCount > 9 ? "9+" : cartCount}</span>}
                 </Link>
               </div>
@@ -341,7 +343,7 @@ export default function Header() {
                 onClick={() => { setInquiryOpen(true); setMobileOpen(false); }}
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-4 py-3 rounded-xl transition-colors shadow-sm"
               >
-                Inquiry Now
+                {t("header.inquiryNow", "Inquiry Now")}
               </button>
             </div>
           </div>

@@ -1,5 +1,8 @@
-﻿const reasons = [
+﻿import { getTranslator } from "@/lib/i18n";
+
+const reasons = [
   {
+    key: "home.whyChoose.quality",
     title: "Good Product Quality",
     description:
       "We use premium materials and strict QC to deliver durable, safe and high-quality resin toys that meet global standards.",
@@ -11,6 +14,7 @@
     iconBg: "bg-green-50 text-green-600",
   },
   {
+    key: "home.whyChoose.custom",
     title: "Custom-Made Service",
     description:
       "From concept to finished product, our custom resin toy factory provides full OEM/ODM solutions — design, molding, hand painting and packaging to match your brand vision.",
@@ -22,6 +26,7 @@
     iconBg: "bg-[#F5EDD8] text-[#C9A55A]",
   },
   {
+    key: "home.whyChoose.support",
     title: "After-Sales Support",
     description:
       "Our professional team offers fast response and reliable after-sales service, ensuring long-term partnerships and peace of mind.",
@@ -33,6 +38,7 @@
     iconBg: "bg-red-50 text-red-500",
   },
   {
+    key: "home.whyChoose.reliable",
     title: "Reliable Factory Experience",
     description:
       "Established in 2005, our polyresin figurine factory brings advanced equipment and skilled craftsmen to guarantee consistent quality and on-time delivery for wholesale orders worldwide.",
@@ -45,12 +51,13 @@
   },
 ];
 
-export default function WhyChoose() {
+export default async function WhyChoose() {
+  const t = await getTranslator();
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <h2 className="text-2xl md:text-3xl font-bold text-stone-900 text-center mb-10">
-          Why Choose Kelikuli as Your Resin Figurine Manufacturer
+          {t("home.whyChoose.heading", "Why Choose Kelikuli as Your Resin Figurine Manufacturer")}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -59,8 +66,8 @@ export default function WhyChoose() {
               <div className={`w-16 h-16 rounded-full ${r.iconBg} flex items-center justify-center mx-auto mb-4`}>
                 {r.icon}
               </div>
-              <h3 className="font-bold text-stone-900 mb-2">{r.title}</h3>
-              <p className="text-stone-500 text-sm leading-relaxed">{r.description}</p>
+              <h3 className="font-bold text-stone-900 mb-2">{t(`${r.key}.title`, r.title)}</h3>
+              <p className="text-stone-500 text-sm leading-relaxed">{t(`${r.key}.description`, r.description)}</p>
             </div>
           ))}
         </div>
