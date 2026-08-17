@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { prisma } from "./prisma";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST ?? "smtp.qq.com",
@@ -18,7 +19,8 @@ export async function sendInquiryEmail(data: {
   product: string;
   message: string;
 }) {
-  const to = process.env.INQUIRY_EMAIL ?? "681682@qq.com";
+  const siteEmail = await prisma.setting.findUnique({ where: { key: "siteEmail" } });
+  const to = siteEmail?.value || process.env.INQUIRY_EMAIL || "681682@qq.com";
   const from = process.env.SMTP_USER ?? "";
 
   await transporter.sendMail({
