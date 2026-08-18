@@ -1,8 +1,19 @@
 "use client";
 import { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
+import { useTranslation } from "@/components/I18nProvider";
+
+const productOptionKeys = [
+  { key: "contact.product.custom", text: "Custom Resin Toys (OEM/ODM)" },
+  { key: "contact.product.blindBox", text: "Blind Box Collectibles" },
+  { key: "contact.product.figurines", text: "Resin Figurines" },
+  { key: "contact.product.zakka", text: "Zakka Ornaments" },
+  { key: "contact.product.seasonal", text: "Seasonal Resin Crafts" },
+  { key: "contact.product.other", text: "Other" },
+];
 
 export default function ContactForm({ whatsapp, wechat, email, address }: { whatsapp: string; wechat: string; email: string; address: string }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", product: "", message: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,23 +46,23 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
     <div>
       <section className="bg-stone-900 py-14 text-center">
         <div className="max-w-2xl mx-auto px-6">
-          <p className="text-orange-500 text-xs font-bold uppercase tracking-widest mb-3">Contact Us</p>
-          <h1 className="text-4xl font-black text-white mb-4">Get a Free Quote</h1>
+          <p className="text-orange-500 text-xs font-bold uppercase tracking-widest mb-3">{t("contact.eyebrow", "Contact Us")}</p>
+          <h1 className="text-4xl font-black text-white mb-4">{t("inquiryModal.title", "Get a Free Quote")}</h1>
           <p className="text-stone-300 text-lg">
-            Tell us about your custom resin toy project and we will respond within 24 hours.
+            {t("contact.heroDesc", "Tell us about your custom resin toy project and we will respond within 24 hours.")}
           </p>
         </div>
       </section>
 
       <div className="max-w-7xl mx-auto px-6 py-3">
-        <Breadcrumb items={[{ label: "Contact" }]} />
+        <Breadcrumb items={[{ label: t("header.nav.contact", "Contact") }]} />
       </div>
 
       <section className="py-16 bg-stone-50">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Form */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
-            <h2 className="text-lg font-bold text-stone-800 mb-6">Send Us Your Inquiry</h2>
+            <h2 className="text-lg font-bold text-stone-800 mb-6">{t("contact.formTitle", "Send Us Your Inquiry")}</h2>
             {sent ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -59,44 +70,41 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-stone-900 mb-2">Message Sent!</h3>
-                <p className="text-stone-500">We will get back to you within 24 hours.</p>
+                <h3 className="text-xl font-bold text-stone-900 mb-2">{t("contact.sentTitle", "Message Sent!")}</h3>
+                <p className="text-stone-500">{t("contact.sentDesc", "We will get back to you within 24 hours.")}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Your Name *</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("contact.yourName", "Your Name")} *</label>
                     <input required type="text" className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Company Name</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("inquiryModal.company", "Company Name")}</label>
                     <input type="text" className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Email Address *</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("contact.emailAddress", "Email Address")} *</label>
                     <input required type="email" className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Phone / WhatsApp</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("contact.phoneWhatsapp", "Phone / WhatsApp")}</label>
                     <input type="tel" className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Product / Category of Interest</label>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("contact.productCategory", "Product / Category of Interest")}</label>
                   <select className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors bg-white" value={form.product} onChange={e => setForm({ ...form, product: e.target.value })}>
-                    <option value="">— Please select —</option>
-                    <option>Custom Resin Toys (OEM/ODM)</option>
-                    <option>Blind Box Collectibles</option>
-                    <option>Resin Figurines</option>
-                    <option>Zakka Ornaments</option>
-                    <option>Seasonal Resin Crafts</option>
-                    <option>Other</option>
+                    <option value="">{t("contact.selectPlaceholder", "— Please select —")}</option>
+                    {productOptionKeys.map((o) => (
+                      <option key={o.text} value={o.text}>{t(o.key, o.text)}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Message / Project Details *</label>
-                  <textarea required rows={5} className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors resize-none" placeholder="Describe your design idea, quantity, timeline, or any questions..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("contact.messageLabel", "Message / Project Details")} *</label>
+                  <textarea required rows={5} className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400 transition-colors resize-none" placeholder={t("contact.messagePlaceholder", "Describe your design idea, quantity, timeline, or any questions...")} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
                 </div>
                 {error && (
                   <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -110,9 +118,9 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                      Sending...
+                      {t("contact.sending", "Sending...")}
                     </>
-                  ) : "Send Inquiry"}
+                  ) : t("contact.sendInquiry", "Send Inquiry")}
                 </button>
               </form>
             )}
@@ -120,7 +128,7 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
 
           {/* Contact info */}
           <div className="space-y-6">
-            <h2 className="text-base font-bold text-stone-800">Contact Our Factory</h2>
+            <h2 className="text-base font-bold text-stone-800">{t("contact.infoTitle", "Contact Our Factory")}</h2>
             <div className="bg-white rounded-2xl border border-stone-100 p-5 flex items-start gap-4">
               <div className="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center shrink-0">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +136,7 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">Email</p>
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">{t("inquiryModal.email", "Email")}</p>
                 <a href={`mailto:${email}`} className="text-stone-800 font-medium text-sm hover:text-orange-600">{email}</a>
               </div>
             </div>
@@ -139,7 +147,7 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">WhatsApp</p>
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">{t("footer.whatsapp", "WhatsApp")}</p>
                 <a href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-stone-800 font-medium text-sm hover:text-orange-600">{whatsapp}</a>
               </div>
             </div>
@@ -150,7 +158,7 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">WeChat</p>
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">{t("footer.wechat", "WeChat")}</p>
                 <p className="text-stone-800 font-medium text-sm">{wechat}</p>
               </div>
             </div>
@@ -161,7 +169,7 @@ export default function ContactForm({ whatsapp, wechat, email, address }: { what
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">Address</p>
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-0.5">{t("contact.address", "Address")}</p>
                 <p className="text-stone-800 font-medium text-sm">{address}</p>
               </div>
             </div>

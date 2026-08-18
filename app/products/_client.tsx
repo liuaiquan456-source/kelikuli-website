@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
+import { useTranslation } from "@/components/I18nProvider";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 
@@ -14,6 +15,7 @@ interface Product {
 
 const categories = [
   {
+    key: "products.category.all",
     label: "All Products",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -22,6 +24,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.halloween",
     label: "Halloween Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -30,6 +33,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.christmas",
     label: "Christmas Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -38,6 +42,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.garden",
     label: "Garden Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -46,6 +51,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.resinCrafts",
     label: "Resin Crafts",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -54,6 +60,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.resinLight",
     label: "Resin Light",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -62,6 +69,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.bobbleHead",
     label: "Bobble Head Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -70,6 +78,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.fridgeMagnet",
     label: "Fridge Magnet",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -78,6 +87,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.snowGlobe",
     label: "Snow Globe",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -86,6 +96,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.piggyBank",
     label: "Piggy Bank",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -94,6 +105,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.prince",
     label: "Prince Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -102,6 +114,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.luckyCat",
     label: "Lucky Cat",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -110,6 +123,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.astronaut",
     label: "Astronaut Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -118,6 +132,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.figurines",
     label: "Figurines",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -126,6 +141,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.blindBox",
     label: "Blind Box Series",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -134,6 +150,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.religious",
     label: "Religious Crafts",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -142,6 +159,7 @@ const categories = [
     ),
   },
   {
+    key: "products.category.phoneStand",
     label: "Phone Stand",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -154,6 +172,7 @@ const categories = [
 const ITEMS_PER_PAGE = 24;
 
 export default function ProductsClient() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const urlCategory = searchParams.get("category") ?? "All Products";
 
@@ -211,12 +230,12 @@ export default function ProductsClient() {
         <div className="relative z-10">
           <h1 className="text-2xl md:text-3xl font-black text-white mb-4"
             style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
-            Wholesale Resin Figurines &amp; Collectibles
+            {t("products.heroTitle", "Wholesale Resin Figurines & Collectibles")}
           </h1>
           <div className="flex items-center justify-center gap-2 text-sm text-stone-400">
-            <a href="/" className="hover:text-[#C9A55A] transition-colors">Home</a>
+            <a href="/" className="hover:text-[#C9A55A] transition-colors">{t("breadcrumb.home", "Home")}</a>
             <span>/</span>
-            <span className="text-stone-300">Products</span>
+            <span className="text-stone-300">{t("header.nav.products", "Products")}</span>
           </div>
         </div>
       </section>
@@ -227,7 +246,7 @@ export default function ProductsClient() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
           <div className="absolute left-0 top-0 h-full w-72 bg-white shadow-xl flex flex-col">
             <div className="flex items-center justify-between px-4 py-4 border-b border-stone-100">
-              <span className="font-black text-stone-800 uppercase tracking-widest text-sm">Categories</span>
+              <span className="font-black text-stone-800 uppercase tracking-widest text-sm">{t("products.categoriesTitle", "Categories")}</span>
               <button onClick={() => setDrawerOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -238,7 +257,7 @@ export default function ProductsClient() {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t("products.searchPlaceholder", "Search products...")}
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                   className="w-full border border-stone-900 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-gray-50 focus:outline-none focus:border-stone-900 transition-colors"
@@ -260,7 +279,7 @@ export default function ProductsClient() {
                       }`}
                     >
                       <span className={isActive ? "text-white" : "text-[#C9A55A]"}>{cat.icon}</span>
-                      {cat.label}
+                      {t(cat.key, cat.label)}
                     </button>
                   </li>
                 );
@@ -283,12 +302,12 @@ export default function ProductsClient() {
               <svg className="w-4 h-4 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h18M7 8h10M11 12h4" />
               </svg>
-              {activeCategory}
+              {(() => { const c = categories.find((c) => c.label === activeCategory); return c ? t(c.key, c.label) : activeCategory; })()}
             </button>
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder={t("products.searchShort", "Search...")}
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 className="w-full border border-stone-900 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-white focus:outline-none focus:border-stone-900 transition-colors"
@@ -307,7 +326,7 @@ export default function ProductsClient() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t("products.searchPlaceholder", "Search products...")}
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 className="w-full border border-stone-900 rounded-xl pl-4 pr-10 py-2.5 text-sm bg-white focus:outline-none focus:border-stone-900 transition-colors"
@@ -321,7 +340,7 @@ export default function ProductsClient() {
             <div className="bg-white rounded-2xl border border-stone-900 overflow-hidden">
               <div className="flex items-center justify-center gap-2 py-4 border-b border-[#C9A55A]/20">
                 <span className="text-[#C9A55A] text-xs">✦</span>
-                <h2 className="text-xs font-black uppercase tracking-widest text-stone-800">Categories</h2>
+                <h2 className="text-xs font-black uppercase tracking-widest text-stone-800">{t("products.categoriesTitle", "Categories")}</h2>
                 <span className="text-[#C9A55A] text-xs">✦</span>
               </div>
               <ul className="py-2">
@@ -338,7 +357,7 @@ export default function ProductsClient() {
                         }`}
                       >
                         <span className={isActive ? "text-white" : "text-[#C9A55A]"}>{cat.icon}</span>
-                        {cat.label}
+                        {t(cat.key, cat.label)}
                       </button>
                     </li>
                   );
@@ -354,10 +373,10 @@ export default function ProductsClient() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <p className="font-black text-stone-800 text-sm mb-0.5">OEM / ODM</p>
-              <p className="text-stone-500 text-xs mb-3 leading-relaxed">Custom Resin Crafts Manufacturer</p>
+              <p className="font-black text-stone-800 text-sm mb-0.5">{t("products.oemCard.title", "OEM / ODM")}</p>
+              <p className="text-stone-500 text-xs mb-3 leading-relaxed">{t("products.oemCard.desc", "Custom Resin Crafts Manufacturer")}</p>
               <Link href="/contact" className="inline-flex items-center gap-1 text-[#C9A55A] text-xs font-semibold hover:text-[#B8935A] transition-colors">
-                Learn More
+                {t("home.categories.learnMore", "Learn more")}
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -381,7 +400,7 @@ export default function ProductsClient() {
                 ))}
               </div>
             ) : paged.length === 0 ? (
-              <div className="text-center py-20 text-stone-400 text-sm">No products found.</div>
+              <div className="text-center py-20 text-stone-400 text-sm">{t("products.noResults", "No products found.")}</div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {paged.map((product) => (
@@ -417,7 +436,7 @@ export default function ProductsClient() {
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInquiryOpen(true); }}
                             className="flex-1 text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
                           >
-                            Inquiry Now
+                            {t("header.inquiryNow", "Inquiry Now")}
                           </button>
                         </div>
                       </div>

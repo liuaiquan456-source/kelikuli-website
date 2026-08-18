@@ -5,6 +5,7 @@ import InquiryButton from "@/components/InquiryButton";
 import Breadcrumb from "@/components/Breadcrumb";
 import FaqSection from "@/components/FaqSection";
 import { prisma } from "@/lib/prisma";
+import { getTranslator } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "Custom OEM/ODM Resin Figurines & Toys Manufacturer",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 
 const features = [
   {
+    key: "oem.feature.aiDesign",
     label: "AI Design",
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -23,6 +25,7 @@ const features = [
     ),
   },
   {
+    key: "oem.feature.handPainted",
     label: "Hand-Painted",
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -31,6 +34,7 @@ const features = [
     ),
   },
   {
+    key: "oem.feature.independentDev",
     label: "Independent Development",
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -39,6 +43,7 @@ const features = [
     ),
   },
   {
+    key: "oem.feature.customization",
     label: "OEM/ODM Customization",
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -48,6 +53,7 @@ const features = [
     ),
   },
   {
+    key: "oem.feature.factoryDirect",
     label: "Factory Direct Supply",
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -58,15 +64,16 @@ const features = [
 ];
 
 const steps = [
-  { num: "1", label: "Concept &\nAI Design",     img: "/images/process/process-1.png" },
-  { num: "2", label: "Mold\nMaking",              img: "/images/process/process-2.png" },
-  { num: "3", label: "Sample\nProduction",        img: "/images/process/process-3.png" },
-  { num: "4", label: "Hand\nPainting",            img: "/images/process/process-2.png" },
-  { num: "5", label: "Mass\nProduction",          img: "/images/process/process-4.png" },
-  { num: "6", label: "Packaging &\nDelivery",     img: "/images/process/process-3.png" },
+  { num: "1", key: "oem.step.concept",   label: "Concept &\nAI Design",     img: "/images/process/process-1.png" },
+  { num: "2", key: "oem.step.mold",      label: "Mold\nMaking",              img: "/images/process/process-2.png" },
+  { num: "3", key: "oem.step.sample",    label: "Sample\nProduction",        img: "/images/process/process-3.png" },
+  { num: "4", key: "oem.step.painting",  label: "Hand\nPainting",            img: "/images/process/process-2.png" },
+  { num: "5", key: "oem.step.mass",      label: "Mass\nProduction",          img: "/images/process/process-4.png" },
+  { num: "6", key: "oem.step.packaging", label: "Packaging &\nDelivery",     img: "/images/process/process-3.png" },
 ];
 
 export default async function CustomServicePage() {
+  const t = await getTranslator();
   const highlights = await prisma.product.findMany({
     where: { status: "active", image: { not: "" } },
     orderBy: { id: "desc" },
@@ -93,19 +100,20 @@ export default async function CustomServicePage() {
         {/* Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 lg:py-28 flex flex-col lg:flex-row items-center gap-10">
           <div className="flex-1 max-w-2xl">
-            <p className="text-[#C9A55A] text-xs font-bold uppercase tracking-widest mb-3">OEM / ODM Custom Service</p>
+            <p className="text-[#C9A55A] text-xs font-bold uppercase tracking-widest mb-3">{t("oem.eyebrow", "OEM / ODM Custom Service")}</p>
             <h1 className="text-3xl md:text-5xl font-black text-white leading-tight mb-4">
-              Kelikuli Resin Toy Series<br />
-              <span className="text-[#C9A55A]">Customizable and Handcrafted</span> Collectibles
+              {t("oem.heroTitle1", "Kelikuli Resin Toy Series")}<br />
+              <span className="text-[#C9A55A]">{t("oem.heroTitle2", "Customizable and Handcrafted")}</span> {t("oem.heroTitle3", "Collectibles")}
             </h1>
-            <h2 className="text-base font-semibold text-stone-200 mb-3">Discover Our Unique Resin Toy Collections</h2>
+            <h2 className="text-base font-semibold text-stone-200 mb-3">{t("oem.heroSubtitle", "Discover Our Unique Resin Toy Collections")}</h2>
             <p className="text-stone-300 text-sm leading-relaxed mb-8 max-w-xl">
-              At Kelikuli, we specialize in creating high-quality resin toys and collectible figurines with an artistic touch. We provide both OEM and ODM services to help you bring your unique ideas to life.
+              {t("oem.heroDesc", "At Kelikuli, we specialize in creating high-quality resin toys and collectible figurines with an artistic touch. We provide both OEM and ODM services to help you bring your unique ideas to life.")}
             </p>
             {/* Badges */}
             <div className="flex flex-wrap gap-3">
               {[
                 {
+                  key: "home.customBanner.highlight.design",
                   label: "Creative Design",
                   icon: (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -114,6 +122,7 @@ export default async function CustomServicePage() {
                   ),
                 },
                 {
+                  key: "home.customBanner.highlight.quality",
                   label: "Premium Quality",
                   icon: (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -122,6 +131,7 @@ export default async function CustomServicePage() {
                   ),
                 },
                 {
+                  key: "oem.badge.heart",
                   label: "Collectibles with Heart",
                   icon: (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -131,7 +141,7 @@ export default async function CustomServicePage() {
                 },
               ].map((b) => (
                 <span key={b.label} className="flex items-center gap-2 border border-[#C9A55A]/60 rounded-full px-4 py-1.5 text-sm text-[#F5EDD8] bg-black/30 backdrop-blur-sm">
-                  <span className="text-[#C9A55A]">{b.icon}</span> {b.label}
+                  <span className="text-[#C9A55A]">{b.icon}</span> {t(b.key, b.label)}
                 </span>
               ))}
             </div>
@@ -148,7 +158,7 @@ export default async function CustomServicePage() {
                 <div className="w-14 h-14 rounded-full border border-[#C9A55A]/40 bg-white flex items-center justify-center text-[#C9A55A]">
                   {f.icon}
                 </div>
-                <p className="text-stone-700 text-xs font-semibold leading-tight">{f.label}</p>
+                <p className="text-stone-700 text-xs font-semibold leading-tight">{t(f.key, f.label)}</p>
               </div>
             ))}
           </div>
@@ -156,14 +166,14 @@ export default async function CustomServicePage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-        <Breadcrumb items={[{ label: "Custom OEM/ODM" }]} />
+        <Breadcrumb items={[{ label: t("header.nav.custom", "Custom Service") }]} />
       </div>
 
       {/* ── Manufacturing process ── */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-black text-stone-900 text-center mb-10">
-            One-Stop Resin Toy Manufacturing Service
+            {t("oem.processTitle", "One-Stop Resin Toy Manufacturing Service")}
           </h2>
           <div className="flex items-center justify-between gap-1 overflow-x-auto pb-2">
             {steps.map((step, i) => (
@@ -175,7 +185,7 @@ export default async function CustomServicePage() {
                       <span className="text-white font-black text-lg leading-none">{step.num}</span>
                     </div>
                   </div>
-                  <p className="text-stone-700 text-xs font-semibold text-center whitespace-pre-line leading-tight">{step.label}</p>
+                  <p className="text-stone-700 text-xs font-semibold text-center whitespace-pre-line leading-tight">{t(step.key, step.label)}</p>
                 </div>
                 {i < steps.length - 1 && (
                   <svg className="w-5 h-5 text-[#C9A55A] shrink-0 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +201,7 @@ export default async function CustomServicePage() {
       {/* ── Series highlights ── */}
       <section className="py-12 bg-[#F8F4ED]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl font-black text-stone-900 text-center mb-8">Resin Toy Series Highlights</h2>
+          <h2 className="text-2xl font-black text-stone-900 text-center mb-8">{t("oem.highlightsTitle", "Resin Toy Series Highlights")}</h2>
           <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
             {highlights.map((h) => (
               <Link key={h.id} href={`/products/${h.id}`} className="flex-none w-44 snap-start group">
@@ -210,12 +220,12 @@ export default async function CustomServicePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <h2 className="text-2xl font-black text-stone-900 mb-4">Customized Collectibles for Your Brand</h2>
+              <h2 className="text-2xl font-black text-stone-900 mb-4">{t("oem.section1.title", "Customized Collectibles for Your Brand")}</h2>
               <p className="text-stone-500 text-sm leading-relaxed mb-4">
-                Our resin toy collection is designed for businesses looking to create exciting, collectible products that engage consumers. These figurines are perfect for promotional campaigns, limited-edition products, or exclusive collections. With customized designs tailored to your brand's theme, you can offer consumers the thrill of surprise with every purchase.
+                {t("oem.section1.p1", "Our resin toy collection is designed for businesses looking to create exciting, collectible products that engage consumers. These figurines are perfect for promotional campaigns, limited-edition products, or exclusive collections. With customized designs tailored to your brand's theme, you can offer consumers the thrill of surprise with every purchase.")}
               </p>
               <p className="text-stone-500 text-sm leading-relaxed">
-                Whether you want cute animal figures, seasonal themes, or character-driven designs, our OEM/ODM services will ensure your product series is unique and aligned with your brand's identity.
+                {t("oem.section1.p2", "Whether you want cute animal figures, seasonal themes, or character-driven designs, our OEM/ODM services will ensure your product series is unique and aligned with your brand's identity.")}
               </p>
             </div>
             <div className="flex-1 w-full max-w-md">
@@ -232,12 +242,12 @@ export default async function CustomServicePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row-reverse gap-12 items-center">
             <div className="flex-1">
-              <h2 className="text-2xl font-black text-stone-900 mb-4">Handcrafted Excellence in Every Piece</h2>
+              <h2 className="text-2xl font-black text-stone-900 mb-4">{t("oem.section2.title", "Handcrafted Excellence in Every Piece")}</h2>
               <p className="text-stone-500 text-sm leading-relaxed mb-4">
-                Each figurine in our collection is handcrafted by skilled artisans, ensuring exceptional detail and quality in every piece. We specialize in hand-painted resin figurines, giving each one a distinct personality and charm. From the initial sculpting to the final hand-painted details, every figure is crafted with care to provide a high-quality, collectible product that will stand out on any shelf.
+                {t("oem.section2.p1", "Each figurine in our collection is handcrafted by skilled artisans, ensuring exceptional detail and quality in every piece. We specialize in hand-painted resin figurines, giving each one a distinct personality and charm. From the initial sculpting to the final hand-painted details, every figure is crafted with care to provide a high-quality, collectible product that will stand out on any shelf.")}
               </p>
               <p className="text-stone-500 text-sm leading-relaxed">
-                With our customization options, you can choose from a variety of designs, sizes, and themes to create a figurine series that appeals to your target market. Our artists work closely with you to ensure your vision is brought to life with accuracy and creativity.
+                {t("oem.section2.p2", "With our customization options, you can choose from a variety of designs, sizes, and themes to create a figurine series that appeals to your target market. Our artists work closely with you to ensure your vision is brought to life with accuracy and creativity.")}
               </p>
             </div>
             <div className="flex-1 w-full max-w-md">
@@ -259,12 +269,12 @@ export default async function CustomServicePage() {
               </div>
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-black text-stone-900 mb-4">AI-Driven Design and Innovative Concepts</h2>
+              <h2 className="text-2xl font-black text-stone-900 mb-4">{t("oem.section3.title", "AI-Driven Design and Innovative Concepts")}</h2>
               <p className="text-stone-500 text-sm leading-relaxed mb-4">
-                At Kelikuli, we combine traditional craftsmanship with the power of AI design to create innovative resin toy concepts. Our AI-driven design process allows us to explore multiple concepts quickly and efficiently, resulting in unique, original figurines that are both visually appealing and culturally relevant.
+                {t("oem.section3.p1", "At Kelikuli, we combine traditional craftsmanship with the power of AI design to create innovative resin toy concepts. Our AI-driven design process allows us to explore multiple concepts quickly and efficiently, resulting in unique, original figurines that are both visually appealing and culturally relevant.")}
               </p>
               <p className="text-stone-500 text-sm leading-relaxed">
-                By blending AI technology with manual craftsmanship, we ensure that our designs are not only creative but also precise and consistent. This combination of traditional and modern techniques guarantees that every figurine meets the highest standards of quality and artistry.
+                {t("oem.section3.p2", "By blending AI technology with manual craftsmanship, we ensure that our designs are not only creative but also precise and consistent. This combination of traditional and modern techniques guarantees that every figurine meets the highest standards of quality and artistry.")}
               </p>
             </div>
           </div>
@@ -276,12 +286,12 @@ export default async function CustomServicePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="flex-1">
-              <h2 className="text-2xl font-black text-stone-900 mb-4">Flexible Manufacturing Solutions for Your Project</h2>
+              <h2 className="text-2xl font-black text-stone-900 mb-4">{t("oem.section4.title", "Flexible Manufacturing Solutions for Your Project")}</h2>
               <p className="text-stone-500 text-sm leading-relaxed mb-4">
-                Looking for a reliable partner to manufacture your custom resin toy series? Kelikuli offers flexible custom manufacturing services to meet your production needs. From small batch production to large-scale runs, we can handle projects of any size and complexity. Our flexible lead times and global shipping solutions ensure that your series reaches customers on time and at competitive prices.
+                {t("oem.section4.p1", "Looking for a reliable partner to manufacture your custom resin toy series? Kelikuli offers flexible custom manufacturing services to meet your production needs. From small batch production to large-scale runs, we can handle projects of any size and complexity. Our flexible lead times and global shipping solutions ensure that your series reaches customers on time and at competitive prices.")}
               </p>
               <p className="text-stone-500 text-sm leading-relaxed">
-                We work with businesses of all sizes, from independent creators to large global brands, providing turnkey solutions for resin toy production. With our end-to-end services, you get everything from design to manufacturing to packaging and shipping — all under one roof.
+                {t("oem.section4.p2", "We work with businesses of all sizes, from independent creators to large global brands, providing turnkey solutions for resin toy production. With our end-to-end services, you get everything from design to manufacturing to packaging and shipping — all under one roof.")}
               </p>
             </div>
             <div className="flex-1 w-full max-w-md">
@@ -298,18 +308,18 @@ export default async function CustomServicePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row-reverse gap-12 items-center">
             <div className="flex-1">
-              <h2 className="text-2xl font-black text-stone-900 mb-4">Get Started with Kelikuli's Custom Resin Toy Service</h2>
+              <h2 className="text-2xl font-black text-stone-900 mb-4">{t("oem.section5.title", "Get Started with Kelikuli's Custom Resin Toy Service")}</h2>
               <p className="text-stone-500 text-sm leading-relaxed mb-4">
-                If you're ready to create your own custom resin toy series, Kelikuli is here to help. Our expert team will guide you through every step of the process, from initial design to final production. Whether you need help developing a unique concept, customizing figurines, or fulfilling large orders, we have the expertise and resources to make your project a success.
+                {t("oem.section5.p1", "If you're ready to create your own custom resin toy series, Kelikuli is here to help. Our expert team will guide you through every step of the process, from initial design to final production. Whether you need help developing a unique concept, customizing figurines, or fulfilling large orders, we have the expertise and resources to make your project a success.")}
               </p>
               <p className="text-stone-500 text-sm leading-relaxed mb-6">
-                Contact us today to learn more about our OEM/ODM services and start your custom resin toy project with Kelikuli.
+                {t("oem.section5.p2", "Contact us today to learn more about our OEM/ODM services and start your custom resin toy project with Kelikuli.")}
               </p>
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-6 py-3 rounded-full transition-colors"
               >
-                Contact Us Now
+                {t("about.ctaButton", "Contact Us Now")}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -333,12 +343,12 @@ export default async function CustomServicePage() {
           ))}
         </div>
         <div className="relative z-10 max-w-3xl mx-auto px-4">
-          <p className="text-[#C9A55A] text-xs font-bold uppercase tracking-widest mb-3">Partner with Kelikuli</p>
+          <p className="text-[#C9A55A] text-xs font-bold uppercase tracking-widest mb-3">{t("oem.ctaEyebrow", "Partner with Kelikuli")}</p>
           <h2 className="text-3xl md:text-4xl font-black text-white mb-3 leading-tight">
-            Let's Bring Your Custom Resin Toy Series to Life
+            {t("oem.ctaTitle", "Let's Bring Your Custom Resin Toy Series to Life")}
           </h2>
           <p className="text-stone-400 text-sm mb-8 leading-relaxed">
-            Partner with Kelikuli for high-quality, handcrafted resin toys that inspire joy, surprise, and brand loyalty.
+            {t("oem.ctaDesc", "Partner with Kelikuli for high-quality, handcrafted resin toys that inspire joy, surprise, and brand loyalty.")}
           </p>
           <InquiryButton />
         </div>

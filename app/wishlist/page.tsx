@@ -5,8 +5,10 @@ import Image from "next/image";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 import InquiryModal from "@/components/InquiryModal";
+import { useTranslation } from "@/components/I18nProvider";
 
 export default function WishlistPage() {
+  const { t } = useTranslation();
   const { items, remove } = useWishlist();
   const { toggle: toggleCart, isInCart } = useCart();
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -19,7 +21,7 @@ export default function WishlistPage() {
             <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
           <h1 className="text-2xl font-black text-stone-800">
-            My Wishlist
+            {t("wishlist.title", "My Wishlist")}
             <span className="ml-2 text-[#C9A55A]">({items.length})</span>
           </h1>
         </div>
@@ -29,9 +31,9 @@ export default function WishlistPage() {
             <svg className="w-16 h-16 text-stone-200 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </svg>
-            <p className="text-stone-400 text-sm mb-4">Your wishlist is empty.</p>
+            <p className="text-stone-400 text-sm mb-4">{t("wishlist.empty", "Your wishlist is empty.")}</p>
             <Link href="/products" className="inline-block bg-[#C9A55A] text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-[#B8935A] transition-colors">
-              Browse Products
+              {t("cart.browseProducts", "Browse Products")}
             </Link>
           </div>
         ) : (
@@ -69,7 +71,7 @@ export default function WishlistPage() {
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInquiryOpen(true); }}
                           className="flex-1 text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
                         >
-                          Inquiry Now
+                          {t("header.inquiryNow", "Inquiry Now")}
                         </button>
                       </div>
                     </div>
@@ -77,7 +79,7 @@ export default function WishlistPage() {
                   <button
                     onClick={() => remove(product.id)}
                     className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-orange-50 transition-colors z-10"
-                    title="Remove from wishlist"
+                    title={t("wishlist.removeTitle", "Remove from wishlist")}
                   >
                     <svg className="w-4 h-4 text-orange-500 fill-orange-500" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -88,7 +90,7 @@ export default function WishlistPage() {
             </div>
             <div className="mt-10 text-center">
               <Link href="/products" className="text-[#C9A55A] text-sm font-semibold hover:text-[#B8935A] transition-colors">
-                ← Continue Browsing
+                ← {t("cart.continueBrowsing", "Continue Browsing")}
               </Link>
             </div>
           </>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
+import { useTranslation } from "@/components/I18nProvider";
 
 interface Variant { name: string; image: string; }
 
@@ -16,49 +17,51 @@ interface Product {
   video?: string;
 }
 
-function getAttributes(name: string, category: string) {
+type Translator = (key: string, fallback: string) => string;
+
+function getAttributes(name: string, category: string, t: Translator) {
   const n = name.toLowerCase();
 
-  let application = "Home Decoration";
-  if (n.includes("garden") || n.includes("outdoor") || n.includes("solar")) application = "Garden / Outdoor";
-  if (n.includes("christmas") || n.includes("halloween")) application = "Holiday Decoration";
-  if (n.includes("kids") || n.includes("children")) application = "Kids Room Decor";
+  let application: [string, string] = ["product.attrValue.homeDecoration", "Home Decoration"];
+  if (n.includes("garden") || n.includes("outdoor") || n.includes("solar")) application = ["product.attrValue.gardenOutdoor", "Garden / Outdoor"];
+  if (n.includes("christmas") || n.includes("halloween")) application = ["product.attrValue.holidayDecoration", "Holiday Decoration"];
+  if (n.includes("kids") || n.includes("children")) application = ["product.attrValue.kidsRoomDecor", "Kids Room Decor"];
 
-  let productType = "Resin Figurine";
-  if (n.includes("vase")) productType = "Vase";
-  if (n.includes("snow globe") || n.includes("water ball")) productType = "Snow Globe";
-  if (n.includes("piggy bank") || n.includes("coin bank") || n.includes("money")) productType = "Piggy Bank";
-  if (n.includes("magnet")) productType = "Fridge Magnet";
-  if (n.includes("blind box") || n.includes("mystery")) productType = "Blind Box";
-  if (n.includes("phone stand") || n.includes("phone holder")) productType = "Phone Stand";
-  if (n.includes("light") || n.includes("solar") || n.includes("lamp")) productType = "LED Light";
-  if (n.includes("bobble")) productType = "Bobble Head";
-  if (n.includes("statue") || n.includes("sculpture")) productType = "Statue / Sculpture";
+  let productType: [string, string] = ["product.attrValue.resinFigurine", "Resin Figurine"];
+  if (n.includes("vase")) productType = ["product.attrValue.vase", "Vase"];
+  if (n.includes("snow globe") || n.includes("water ball")) productType = ["product.attrValue.snowGlobe", "Snow Globe"];
+  if (n.includes("piggy bank") || n.includes("coin bank") || n.includes("money")) productType = ["product.attrValue.piggyBank", "Piggy Bank"];
+  if (n.includes("magnet")) productType = ["product.attrValue.fridgeMagnet", "Fridge Magnet"];
+  if (n.includes("blind box") || n.includes("mystery")) productType = ["product.attrValue.blindBox", "Blind Box"];
+  if (n.includes("phone stand") || n.includes("phone holder")) productType = ["product.attrValue.phoneStand", "Phone Stand"];
+  if (n.includes("light") || n.includes("solar") || n.includes("lamp")) productType = ["product.attrValue.ledLight", "LED Light"];
+  if (n.includes("bobble")) productType = ["product.attrValue.bobbleHead", "Bobble Head"];
+  if (n.includes("statue") || n.includes("sculpture")) productType = ["product.attrValue.statueSculpture", "Statue / Sculpture"];
 
-  let style = "Cute / Cartoon";
-  if (n.includes("astronaut") || n.includes("space")) style = "Sci-Fi / Astronaut";
-  if (n.includes("prince") || n.includes("princess") || n.includes("fairy")) style = "Fairy Tale";
-  if (n.includes("animal") || n.includes("cat") || n.includes("rabbit") || n.includes("panda")) style = "Animal";
-  if (n.includes("religious") || n.includes("angel") || n.includes("buddha")) style = "Religious";
-  if (n.includes("halloween")) style = "Halloween";
-  if (n.includes("christmas") || n.includes("santa")) style = "Christmas";
+  let style: [string, string] = ["product.attrValue.cuteCartoon", "Cute / Cartoon"];
+  if (n.includes("astronaut") || n.includes("space")) style = ["product.attrValue.sciFiAstronaut", "Sci-Fi / Astronaut"];
+  if (n.includes("prince") || n.includes("princess") || n.includes("fairy")) style = ["product.attrValue.fairyTale", "Fairy Tale"];
+  if (n.includes("animal") || n.includes("cat") || n.includes("rabbit") || n.includes("panda")) style = ["product.attrValue.animal", "Animal"];
+  if (n.includes("religious") || n.includes("angel") || n.includes("buddha")) style = ["product.attrValue.religious", "Religious"];
+  if (n.includes("halloween")) style = ["product.attrValue.halloween", "Halloween"];
+  if (n.includes("christmas") || n.includes("santa")) style = ["product.attrValue.christmas", "Christmas"];
 
-  let moq = "50 pcs";
-  if (category === "Snow Globe" || category === "Blind Box Series") moq = "100 pcs";
+  const moqCount = category === "Snow Globe" || category === "Blind Box Series" ? 100 : 50;
+  const moqValue = `${moqCount} ${t("product.attrValue.pcs", "pcs")}`;
 
   return [
-    { key: "Application",     value: application },
-    { key: "Product Type",    value: productType },
-    { key: "Material",        value: "Resin" },
-    { key: "Technique",       value: "Handmade / Hand-Painted" },
-    { key: "Style",           value: style },
-    { key: "Feature",         value: "Custom Design Available" },
-    { key: "Brand Name",      value: "Kelikuli" },
-    { key: "Place of Origin", value: "Zhejiang, China" },
-    { key: "Size",            value: "Custom Size Accepted" },
-    { key: "MOQ",             value: moq },
-    { key: "OEM / ODM",       value: "Available" },
-    { key: "Lead Time",       value: "30 – 45 Days" },
+    { id: "application", key: t("product.attrLabel.application", "Application"),   value: t(application[0], application[1]) },
+    { id: "productType", key: t("product.attrLabel.productType", "Product Type"),  value: t(productType[0], productType[1]) },
+    { id: "material",    key: t("product.attrLabel.material", "Material"),         value: t("product.attrValue.resin", "Resin") },
+    { id: "technique",   key: t("product.attrLabel.technique", "Technique"),       value: t("product.attrValue.handmade", "Handmade / Hand-Painted") },
+    { id: "style",       key: t("product.attrLabel.style", "Style"),                value: t(style[0], style[1]) },
+    { id: "feature",     key: t("product.attrLabel.feature", "Feature"),            value: t("product.attrValue.customDesign", "Custom Design Available") },
+    { id: "brandName",   key: t("product.attrLabel.brandName", "Brand Name"),       value: "Kelikuli" },
+    { id: "placeOrigin", key: t("product.attrLabel.placeOrigin", "Place of Origin"), value: t("product.attrValue.zhejiang", "Zhejiang, China") },
+    { id: "size",        key: t("product.attrLabel.size", "Size"),                  value: t("product.attrValue.customSize", "Custom Size Accepted") },
+    { id: "moq",         key: "MOQ",                                                value: moqValue },
+    { id: "oemOdm",      key: "OEM / ODM",                                          value: t("product.attrValue.available", "Available") },
+    { id: "leadTime",    key: t("product.attrLabel.leadTime", "Lead Time"),          value: t("product.attrValue.leadTimeDefault", "30 – 45 Days") },
   ];
 }
 
@@ -69,6 +72,7 @@ export default function ProductDetailClient({
   product: Product | null;
   related: Product[];
 }) {
+  const { t } = useTranslation();
   const [activeImg, setActiveImg] = useState(0);
   const [activeVariant, setActiveVariant] = useState<number | null>(null);
   const [imgError, setImgError] = useState(false);
@@ -78,9 +82,9 @@ export default function ProductDetailClient({
   if (!product) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
-        <p className="text-stone-500 text-lg">Product not found.</p>
+        <p className="text-stone-500 text-lg">{t("product.notFound", "Product not found.")}</p>
         <Link href="/products" className="text-[#C9A55A] font-semibold hover:underline">
-          ← Back to Products
+          ← {t("product.backToProducts", "Back to Products")}
         </Link>
       </div>
     );
@@ -93,9 +97,9 @@ export default function ProductDetailClient({
   const mainImage = activeVariant !== null && variants[activeVariant]?.image
     ? variants[activeVariant].image
     : productImages[activeImg] ?? productImages[0] ?? "";
-  const attrs = getAttributes(product.name, product.category).map((a) => {
-    if (a.key === "MOQ") return { ...a, value: product.moq ? `${product.moq} pcs` : a.value };
-    if (a.key === "Lead Time") return { ...a, value: product.leadTime || a.value };
+  const attrs = getAttributes(product.name, product.category, t).map((a) => {
+    if (a.id === "moq") return { ...a, value: product.moq ? `${product.moq} ${t("product.attrValue.pcs", "pcs")}` : a.value };
+    if (a.id === "leadTime") return { ...a, value: product.leadTime || a.value };
     return a;
   });
 
@@ -125,7 +129,7 @@ export default function ProductDetailClient({
                           : "border-transparent text-stone-400 hover:text-stone-600"
                       }`}
                     >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      {tab === "photos" ? t("product.tab.photos", "Photos") : tab === "video" ? t("product.tab.video", "Video") : t("product.tab.attributes", "Attributes")}
                     </button>
                   ))}
                 </div>
@@ -145,7 +149,7 @@ export default function ProductDetailClient({
                           priority
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">No image</div>
+                        <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">{t("product.noImage", "No image")}</div>
                       )}
                       {productImages.length > 1 && (
                         <>
@@ -192,7 +196,7 @@ export default function ProductDetailClient({
                     {product.video ? (
                       <video src={product.video} controls className="w-full h-full" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm">No video available</div>
+                      <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm">{t("product.noVideo", "No video available")}</div>
                     )}
                   </div>
                 )}
@@ -211,7 +215,7 @@ export default function ProductDetailClient({
 
                 {variants.length > 0 && (
                   <div className="pt-2 border-t border-stone-100">
-                    <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">Available Options</p>
+                    <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">{t("product.availableOptions", "Available Options")}</p>
                     <div className="flex flex-wrap gap-2">
                       {variants.map((v, i) => (
                         <button
@@ -256,13 +260,13 @@ export default function ProductDetailClient({
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-stone-800">Yiwu Kelikuli Cultural &amp; Creative Co., Ltd.</p>
-                    <p className="text-xs text-stone-400">Zhejiang, China · Est. 2005</p>
+                    <p className="text-sm font-semibold text-stone-800">{t("product.companyName", "Yiwu Kelikuli Cultural & Creative Co., Ltd.")}</p>
+                    <p className="text-xs text-stone-400">{t("product.companyMeta", "Zhejiang, China · Est. 2005")}</p>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">Key Attributes</h2>
+                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.keyAttributes", "Key Attributes")}</h2>
                   <div className="rounded-xl border border-stone-100 overflow-hidden">
                     {attrs.map((attr, i) => (
                       <div key={attr.key} className={`flex text-sm ${i % 2 === 0 ? "bg-stone-50" : "bg-white"}`}>
@@ -277,7 +281,7 @@ export default function ProductDetailClient({
                   <svg className="w-4 h-4 text-[#C9A55A] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                   </svg>
-                  <span>Shipping negotiated per order. <strong>OEM/ODM custom orders welcome.</strong></span>
+                  <span>{t("product.shippingNotice", "Shipping negotiated per order.")} <strong>{t("product.oemWelcome", "OEM/ODM custom orders welcome.")}</strong></span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 mt-auto">
@@ -285,13 +289,13 @@ export default function ProductDetailClient({
                     onClick={() => setInquiryOpen(true)}
                     className="flex-1 bg-[#E8561C] hover:bg-[#D14D18] text-white font-bold py-3 rounded-full transition-colors text-sm shadow-sm"
                   >
-                    Send Inquiry
+                    {t("contact.sendInquiry", "Send Inquiry")}
                   </button>
                   <Link
                     href="/contact"
                     className="flex-1 lg:hidden border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white font-bold py-3 rounded-full transition-colors text-sm text-center"
                   >
-                    Chat Now
+                    {t("floatingContact.chatNow", "Chat Now")}
                   </Link>
                 </div>
               </div>
@@ -304,13 +308,13 @@ export default function ProductDetailClient({
             <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
               {product.description && (
                 <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">Product Description</h2>
+                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">{t("product.description", "Product Description")}</h2>
                   <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.description}</div>
                 </div>
               )}
               {product.specs && (
                 <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">Specifications</h2>
+                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">{t("product.specifications", "Specifications")}</h2>
                   <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.specs}</div>
                 </div>
               )}
@@ -322,7 +326,7 @@ export default function ProductDetailClient({
             <div className="mt-10">
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-[#C9A55A]">✦</span>
-                <h2 className="text-lg font-black text-stone-800 uppercase tracking-widest">Related Products</h2>
+                <h2 className="text-lg font-black text-stone-800 uppercase tracking-widest">{t("product.relatedProducts", "Related Products")}</h2>
                 <span className="text-[#C9A55A]">✦</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

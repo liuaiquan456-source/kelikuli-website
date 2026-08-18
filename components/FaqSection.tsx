@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useTranslation } from "@/components/I18nProvider";
 
 interface FAQ {
   id: number;
@@ -31,7 +32,8 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-export default function FaqSection({ page, title = "Frequently Asked Questions" }: { page: string; title?: string }) {
+export default function FaqSection({ page, title }: { page: string; title?: string }) {
+  const { t } = useTranslation();
   const [faqs, setFaqs] = useState<FAQ[]>([]);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function FaqSection({ page, title = "Frequently Asked Questions" 
   return (
     <section className="py-14 bg-stone-50 border-t border-stone-100">
       <div className="max-w-3xl mx-auto px-6">
-        <h2 className="text-2xl font-bold text-stone-900 mb-8 text-center">{title}</h2>
+        <h2 className="text-2xl font-bold text-stone-900 mb-8 text-center">{title ?? t("faqSection.defaultTitle", "Frequently Asked Questions")}</h2>
         <div className="bg-white rounded-2xl px-5 shadow-sm border border-stone-100">
           {faqs.map((faq) => (
             <FaqItem key={faq.id} q={faq.question} a={faq.answer} />

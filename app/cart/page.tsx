@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
 import InquiryModal from "@/components/InquiryModal";
+import { useTranslation } from "@/components/I18nProvider";
 
 export default function CartPage() {
+  const { t } = useTranslation();
   const { items, remove, clear } = useCart();
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
@@ -18,7 +20,7 @@ export default function CartPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
             </svg>
             <h1 className="text-2xl font-black text-stone-800">
-              Inquiry Cart
+              {t("cart.title", "Inquiry Cart")}
               <span className="ml-2 text-[#C9A55A]">({items.length})</span>
             </h1>
           </div>
@@ -27,7 +29,7 @@ export default function CartPage() {
               onClick={clear}
               className="text-xs text-stone-400 hover:text-red-500 transition-colors"
             >
-              Clear All
+              {t("cart.clearAll", "Clear All")}
             </button>
           )}
         </div>
@@ -37,9 +39,9 @@ export default function CartPage() {
             <svg className="w-16 h-16 text-stone-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
             </svg>
-            <p className="text-stone-400 text-sm mb-4">Your inquiry cart is empty.</p>
+            <p className="text-stone-400 text-sm mb-4">{t("cart.empty", "Your inquiry cart is empty.")}</p>
             <Link href="/products" className="inline-block bg-[#C9A55A] text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-[#B8935A] transition-colors">
-              Browse Products
+              {t("cart.browseProducts", "Browse Products")}
             </Link>
           </div>
         ) : (
@@ -66,14 +68,14 @@ export default function CartPage() {
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInquiryOpen(true); }}
                         className="mt-2 w-full text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
                       >
-                        Inquiry Now
+                        {t("header.inquiryNow", "Inquiry Now")}
                       </button>
                     </div>
                   </Link>
                   <button
                     onClick={() => remove(product.id)}
                     className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-red-50 transition-colors z-10"
-                    title="Remove from cart"
+                    title={t("cart.removeTitle", "Remove from cart")}
                   >
                     <svg className="w-3.5 h-3.5 text-stone-500 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -85,21 +87,25 @@ export default function CartPage() {
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl border border-stone-200 p-6">
               <div>
-                <p className="text-stone-700 font-semibold text-sm">{items.length} product{items.length > 1 ? "s" : ""} selected for inquiry</p>
-                <p className="text-stone-400 text-xs mt-0.5">Send an inquiry to get wholesale pricing</p>
+                <p className="text-stone-700 font-semibold text-sm">
+                  {items.length > 1
+                    ? t("cart.selectedPlural", "{n} products selected for inquiry").replace("{n}", String(items.length))
+                    : t("cart.selectedSingular", "{n} product selected for inquiry").replace("{n}", String(items.length))}
+                </p>
+                <p className="text-stone-400 text-xs mt-0.5">{t("cart.sendHint", "Send an inquiry to get wholesale pricing")}</p>
               </div>
               <button
                 onClick={() => setInquiryOpen(true)}
                 className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-8 py-3 rounded-full transition-colors shadow-sm whitespace-nowrap"
               >
-                Send Inquiry ({items.length})
+                {t("cart.sendInquiry", "Send Inquiry")} ({items.length})
               </button>
 
             </div>
 
             <div className="mt-6 text-center">
               <Link href="/products" className="text-[#C9A55A] text-sm font-semibold hover:text-[#B8935A] transition-colors">
-                ← Continue Browsing
+                ← {t("cart.continueBrowsing", "Continue Browsing")}
               </Link>
             </div>
           </>

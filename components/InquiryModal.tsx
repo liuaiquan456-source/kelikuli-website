@@ -1,5 +1,6 @@
 ﻿"use client";
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "@/components/I18nProvider";
 
 const countryCodes = [
   { code: "+1",   label: "US/CA +1" },
@@ -33,6 +34,17 @@ const productOptions = [
   "Other Resin Crafts",
 ];
 
+const productOptionKeys: Record<string, string> = {
+  "Brand Products": "inquiryModal.product.brand",
+  "Snow Globe": "inquiryModal.product.snowGlobe",
+  "Bobble Head": "inquiryModal.product.bobbleHead",
+  "Statue & Figurine & Sculpture": "inquiryModal.product.statue",
+  "Photo Frame": "inquiryModal.product.photoFrame",
+  "Fridge Magnet": "inquiryModal.product.fridgeMagnet",
+  "Piggy Bank": "inquiryModal.product.piggyBank",
+  "Other Resin Crafts": "inquiryModal.product.other",
+};
+
 interface CartItem {
   id: number;
   name: string;
@@ -60,6 +72,7 @@ function mapCategoryToOption(category: string): string | null {
 }
 
 export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     email: "",
     countryCode: "+1",
@@ -137,7 +150,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
       if (!res.ok) throw new Error("Submission failed");
       setSubmitted(true);
     } catch {
-      setError("Failed to submit. Please try again or contact us directly.");
+      setError(t("inquiryModal.submitError", "Failed to submit. Please try again or contact us directly."));
     } finally {
       setLoading(false);
     }
@@ -179,7 +192,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                   </svg>
                   <h3 className="text-xs font-black uppercase tracking-widest text-stone-600">
-                    Selected <span className="text-orange-500">({cartProducts.length})</span>
+                    {t("inquiryModal.selected", "Selected")} <span className="text-orange-500">({cartProducts.length})</span>
                   </h3>
                 </div>
               </div>
@@ -210,27 +223,27 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-stone-900 mb-2">Inquiry Submitted!</h3>
-              <p className="text-stone-500 text-sm mb-6">Our representative will contact you soon.</p>
+              <h3 className="text-xl font-bold text-stone-900 mb-2">{t("inquiryModal.submittedTitle", "Inquiry Submitted!")}</h3>
+              <p className="text-stone-500 text-sm mb-6">{t("inquiryModal.submittedDesc", "Our representative will contact you soon.")}</p>
               <button onClick={handleClose} className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm">
-                Close
+                {t("inquiryModal.close", "Close")}
               </button>
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-bold text-stone-900 text-center mb-1">Get a Free Quote</h2>
-              <p className="text-stone-500 text-sm text-center mb-7">Our representative will contact you soon.</p>
+              <h2 className="text-2xl font-bold text-stone-900 text-center mb-1">{t("inquiryModal.title", "Get a Free Quote")}</h2>
+              <p className="text-stone-500 text-sm text-center mb-7">{t("inquiryModal.submittedDesc", "Our representative will contact you soon.")}</p>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Email */}
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                    <span className="text-red-500 mr-0.5">*</span>Email
+                    <span className="text-red-500 mr-0.5">*</span>{t("inquiryModal.email", "Email")}
                   </label>
                   <div className="relative">
                     <input
                       required type="email" maxLength={100}
-                      placeholder="Please enter your email address"
+                      placeholder={t("inquiryModal.emailPlaceholder", "Please enter your email address")}
                       className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -242,7 +255,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                 {/* Mobile/WhatsApp */}
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                    <span className="text-red-500 mr-0.5">*</span>Mobile / WhatsApp
+                    <span className="text-red-500 mr-0.5">*</span>{t("inquiryModal.mobile", "Mobile / WhatsApp")}
                   </label>
                   <div className="flex gap-2">
                     <select
@@ -257,7 +270,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                     <div className="relative flex-1">
                       <input
                         required type="tel" maxLength={100}
-                        placeholder="Please enter your mobile phone"
+                        placeholder={t("inquiryModal.mobilePlaceholder", "Please enter your mobile phone")}
                         className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -270,12 +283,12 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                 {/* Name */}
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                    <span className="text-red-500 mr-0.5">*</span>Name
+                    <span className="text-red-500 mr-0.5">*</span>{t("inquiryModal.name", "Name")}
                   </label>
                   <div className="relative">
                     <input
                       required type="text" maxLength={100}
-                      placeholder="Please enter your name"
+                      placeholder={t("inquiryModal.namePlaceholder", "Please enter your name")}
                       className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -286,11 +299,11 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
 
                 {/* Company */}
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Company Name</label>
+                  <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("inquiryModal.company", "Company Name")}</label>
                   <div className="relative">
                     <input
                       type="text" maxLength={200}
-                      placeholder="Please enter your company name"
+                      placeholder={t("inquiryModal.companyPlaceholder", "Please enter your company name")}
                       className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm pr-16 focus:outline-none focus:border-orange-400 transition-colors"
                       value={form.company}
                       onChange={(e) => setForm({ ...form, company: e.target.value })}
@@ -302,7 +315,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                 {/* Products */}
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-2.5">
-                    <span className="text-red-500 mr-0.5">*</span>What products can I offer you
+                    <span className="text-red-500 mr-0.5">*</span>{t("inquiryModal.productsLabel", "What products can I offer you")}
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     {productOptions.map((p) => (
@@ -313,7 +326,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                           onChange={() => toggleProduct(p)}
                           className="w-4 h-4 rounded border-stone-300 accent-orange-500 cursor-pointer"
                         />
-                        <span className="text-sm text-stone-600 group-hover:text-stone-900">{p}</span>
+                        <span className="text-sm text-stone-600 group-hover:text-stone-900">{t(productOptionKeys[p], p)}</span>
                       </label>
                     ))}
                   </div>
@@ -322,7 +335,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                 {/* File upload */}
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                    Upload product images / files
+                    {t("inquiryModal.uploadLabel", "Upload product images / files")}
                   </label>
                   <div
                     className="border-2 border-dashed border-stone-200 rounded-xl p-5 text-center cursor-pointer hover:border-orange-300 transition-colors"
@@ -332,10 +345,10 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                     </svg>
                     {files.length > 0 ? (
-                      <p className="text-sm text-[#C9A55A] font-medium">{files.length} file(s) selected</p>
+                      <p className="text-sm text-[#C9A55A] font-medium">{files.length} {t("inquiryModal.filesSelected", "file(s) selected")}</p>
                     ) : (
                       <p className="text-stone-400 text-xs leading-relaxed">
-                        Up to 5 files, max 30MB each<br />
+                        {t("inquiryModal.uploadHint", "Up to 5 files, max 30MB each")}<br />
                         jpg, jpeg, png, pdf, doc, docx, xls, xlsx, csv, txt
                       </p>
                     )}
@@ -350,12 +363,12 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                 {/* Message */}
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                    <span className="text-red-500 mr-0.5">*</span>Message
+                    <span className="text-red-500 mr-0.5">*</span>{t("inquiryModal.message", "Message")}
                   </label>
                   <div className="relative">
                     <textarea
                       required rows={4} maxLength={1000}
-                      placeholder="Which products are you interested in? and what is the quantity?"
+                      placeholder={t("inquiryModal.messagePlaceholder", "Which products are you interested in? and what is the quantity?")}
                       className="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:border-orange-400 transition-colors"
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -372,7 +385,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
                   disabled={loading}
                   className="w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-colors text-sm tracking-wide"
                 >
-                  {loading ? "Submitting..." : "Submit"}
+                  {loading ? t("inquiryModal.submitting", "Submitting...") : t("inquiryModal.submit", "Submit")}
                 </button>
               </form>
             </>
