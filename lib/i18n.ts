@@ -4,6 +4,11 @@ import { prisma } from "./prisma";
 
 export const DEFAULT_LANGUAGE = "en";
 export const LANG_COOKIE = "lang";
+const RTL_LANGUAGES = new Set(["ar", "he", "fa", "ur"]);
+
+export function isRtl(languageCode: string): boolean {
+  return RTL_LANGUAGES.has(languageCode);
+}
 
 const FALLBACK_LANGUAGES = [
   { code: "en", name: "English", nativeName: "English", flag: "🇬🇧", isDefault: true, active: true, sortOrder: 0 },

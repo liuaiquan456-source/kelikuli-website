@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
 import I18nProvider from "@/components/I18nProvider";
 import { getSettings } from "@/lib/settings";
-import { getCurrentLanguage, getTranslationMap } from "@/lib/i18n";
+import { getCurrentLanguage, getTranslationMap, isRtl } from "@/lib/i18n";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -76,7 +76,7 @@ export default async function RootLayout({
   const lang = await getCurrentLanguage();
   const dict = await getTranslationMap(lang);
   return (
-    <html lang={lang} className={`${geist.variable} ${playfair.variable} h-full`}>
+    <html lang={lang} dir={isRtl(lang) ? "rtl" : "ltr"} className={`${geist.variable} ${playfair.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased bg-white">
         <script
           type="application/ld+json"
