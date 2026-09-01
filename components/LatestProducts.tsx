@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getTranslator } from "@/lib/i18n";
+import ProductThumb from "@/components/ProductThumb";
 
 export default async function LatestProducts() {
   const t = await getTranslator();
@@ -49,20 +50,11 @@ export default async function LatestProducts() {
               className="flex-none w-40 sm:w-48 snap-start group"
             >
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-stone-200 mb-3 bg-stone-100 group-hover:shadow-md transition-shadow">
-                {p.thumb ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={p.thumb}
-                    alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-stone-300">
-                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                )}
+                <ProductThumb
+                  src={p.thumb}
+                  alt={p.name}
+                  imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <p className="text-stone-700 text-sm font-medium leading-tight line-clamp-2 group-hover:text-[#C9A55A] transition-colors mb-1">
                 {p.name}

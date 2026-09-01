@@ -209,7 +209,7 @@ export default function Header() {
                         >
                           <div className="w-9 h-9 rounded-lg bg-stone-100 shrink-0 overflow-hidden">
                             {r.image
-                              ? <img src={r.image} alt={r.title} className="w-full h-full object-cover" />
+                              ? <img src={r.image} alt={r.title} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.currentTarget.style.display = "none"; }} />
                               : <div className="w-full h-full flex items-center justify-center text-stone-300 text-xs">{r.type === "product" ? "📦" : "📰"}</div>}
                           </div>
                           <div className="min-w-0">
