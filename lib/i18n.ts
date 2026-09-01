@@ -10,16 +10,22 @@ export function isRtl(languageCode: string): boolean {
   return RTL_LANGUAGES.has(languageCode);
 }
 
-const FALLBACK_LANGUAGES = [
-  { code: "en", name: "English", nativeName: "English", flag: "🇬🇧", isDefault: true, active: true, sortOrder: 0 },
-];
+const ENGLISH_LANGUAGE = {
+  code: "en", name: "English", nativeName: "English", flag: "🇬🇧", isDefault: true, active: true, sortOrder: 0,
+};
+
+// English is the base language and is never stored in the `language` table,
+// so always expose it first so users can switch back from a translated locale.
+function withEnglish<T extends { code: string }>(langs: T[]): (T | typeof ENGLISH_LANGUAGE)[] {
+  return langs.some((l) => l.code === DEFAULT_LANGUAGE) ? langs : [ENGLISH_LANGUAGE, ...langs];
+}
 
 export const getActiveLanguages = cache(async () => {
   try {
     const langs = await prisma.language.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } });
-    return langs.length ? langs : FALLBACK_LANGUAGES;
+    return withEnglish(langs);
   } catch {
-    return FALLBACK_LANGUAGES;
+    return [ENGLISH_LANGUAGE];
   }
 });
 
