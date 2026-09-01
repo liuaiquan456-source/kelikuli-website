@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
+import VisitTracker from "@/components/VisitTracker";
 import I18nProvider from "@/components/I18nProvider";
 import { getSettings } from "@/lib/settings";
 import { getCurrentLanguage, getTranslationMap, isRtl } from "@/lib/i18n";
@@ -87,6 +88,7 @@ export default async function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <FloatingContact whatsapp={settings.whatsapp} />
+          <VisitTracker />
         </I18nProvider>
       </body>
     </html>

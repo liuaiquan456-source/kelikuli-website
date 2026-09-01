@@ -138,3 +138,24 @@ model Inquiry {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Visit {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  ip          String   @default("unknown")
+  country     String   @default("")
+  countryCode String   @default("")
+  region      String   @default("")
+  city        String   @default("")
+  path        String   @default("")
+  referer     String   @default("")
+  source      String   @default("Direct")
+  keyword     String   @default("")
+  device      String   @default("Desktop")
+  userAgent   String   @default("")
+
+  @@index([createdAt])
+  @@index([ip])
+  @@index([source])
+  @@index([country])
+}

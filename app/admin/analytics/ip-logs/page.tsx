@@ -1,42 +1,82 @@
 "use client";
-import { useState } from "react";
-import { Search, Globe, Monitor, Smartphone, Tablet } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Search, Globe, Monitor, Smartphone, Tablet, RefreshCw } from "lucide-react";
 import { Card, Table, Th, Td, Tr } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
 
-type IPLog = {
-  id: number; time: string; ip: string; country: string;
-  source: string; keyword: string; landingPage: string;
-  device: string; pageViews: number; duration: string;
+type Visit = {
+  id: number;
+  createdAt: string;
+  ip: string;
+  country: string;
+  region: string;
+  city: string;
+  path: string;
+  referer: string;
+  source: string;
+  keyword: string;
+  device: string;
+  userAgent: string;
 };
 
 const DEVICE_ICONS: Record<string, React.ReactNode> = {
   Desktop: <Monitor className="w-3.5 h-3.5" />,
-  Mobile:  <Smartphone className="w-3.5 h-3.5" />,
-  Tablet:  <Tablet className="w-3.5 h-3.5" />,
+  Mobile: <Smartphone className="w-3.5 h-3.5" />,
+  Tablet: <Tablet className="w-3.5 h-3.5" />,
 };
 
-const ipLogs: IPLog[] = [];
+const fmtTime = (iso: string) => {
+  try {
+    return new Date(iso).toLocaleString("sv-SE"); // YYYY-MM-DD HH:MM:SS
+  } catch {
+    return iso;
+  }
+};
+const location = (v: Visit) => [v.country, v.region, v.city].filter(Boolean).join(" · ") || "Unknown";
 
 export default function IpLogsPage() {
-  const [filterIP,      setFilterIP]      = useState("");
+  const [rows, setRows] = useState<Visit[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [updatedAt, setUpdatedAt] = useState("");
+
+  const [filterIP, setFilterIP] = useState("");
   const [filterCountry, setFilterCountry] = useState("");
   const [filterKeyword, setFilterKeyword] = useState("");
-  const [filterSource,  setFilterSource]  = useState("");
-  const [filterDevice,  setFilterDevice]  = useState("All");
+  const [filterSource, setFilterSource] = useState("");
+  const [filterDevice, setFilterDevice] = useState("All");
 
-  const deviceCounts = { Desktop: 0, Mobile: 0, Tablet: 0 };
-  ipLogs.forEach((v) => {
-    if (v.device in deviceCounts) (deviceCounts as Record<string, number>)[v.device]++;
-  });
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ limit: "300" });
+      if (filterIP) params.set("ip", filterIP);
+      if (filterCountry) params.set("country", filterCountry);
+      if (filterKeyword) params.set("keyword", filterKeyword);
+      if (filterSource) params.set("source", filterSource);
+      if (filterDevice !== "All") params.set("device", filterDevice);
+      const data = await fetch(`/api/admin/analytics/visits?${params}`, { cache: "no-store" }).then((r) => r.json());
+      setRows(Array.isArray(data?.visits) ? data.visits : []);
+      setTotal(Number(data?.total ?? 0));
+      setUpdatedAt(new Date().toLocaleTimeString("sv-SE"));
+    } finally {
+      setLoading(false);
+    }
+  }, [filterIP, filterCountry, filterKeyword, filterSource, filterDevice]);
 
-  const filtered = ipLogs.filter((v) =>
-    v.ip.includes(filterIP) &&
-    v.country.toLowerCase().includes(filterCountry.toLowerCase()) &&
-    v.keyword.toLowerCase().includes(filterKeyword.toLowerCase()) &&
-    v.source.toLowerCase().includes(filterSource.toLowerCase()) &&
-    (filterDevice === "All" || v.device === filterDevice)
-  );
+  // Debounce filter changes.
+  useEffect(() => {
+    const t = setTimeout(load, 300);
+    return () => clearTimeout(t);
+  }, [load]);
+
+  const deviceCounts = useMemo(() => {
+    const c = { Desktop: 0, Mobile: 0, Tablet: 0 } as Record<string, number>;
+    rows.forEach((v) => {
+      if (v.device in c) c[v.device]++;
+    });
+    return c;
+  }, [rows]);
 
   return (
     <div className="space-y-5">
@@ -61,7 +101,7 @@ export default function IpLogsPage() {
               <Globe className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xl font-bold text-slate-800">{ipLogs.length}</p>
+              <p className="text-xl font-bold text-slate-800">{total}</p>
               <p className="text-xs text-slate-500">Total Logs</p>
             </div>
           </div>
@@ -71,10 +111,10 @@ export default function IpLogsPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2">
         {[
-          { placeholder: "Filter by IP...",      value: filterIP,      onChange: setFilterIP },
+          { placeholder: "Filter by IP...", value: filterIP, onChange: setFilterIP },
           { placeholder: "Filter by country...", value: filterCountry, onChange: setFilterCountry },
           { placeholder: "Filter by keyword...", value: filterKeyword, onChange: setFilterKeyword },
-          { placeholder: "Filter by source...",  value: filterSource,  onChange: setFilterSource },
+          { placeholder: "Filter by source...", value: filterSource, onChange: setFilterSource },
         ].map((f) => (
           <div key={f.placeholder} className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
@@ -94,59 +134,62 @@ export default function IpLogsPage() {
               onClick={() => setFilterDevice(d)}
               className={cn(
                 "px-2.5 py-1 text-xs font-medium rounded-md transition-colors",
-                filterDevice === d ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                filterDevice === d ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700",
               )}
             >
               {d}
             </button>
           ))}
         </div>
+        <button
+          onClick={load}
+          className="ml-auto flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors"
+        >
+          <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
+          {updatedAt ? `Updated ${updatedAt}` : "Refresh"}
+        </button>
       </div>
 
-      {/* IP logs table */}
+      {/* Visit log table */}
       <Card>
         <Table>
           <thead>
             <tr>
               <Th>Time</Th>
               <Th>IP</Th>
-              <Th>Country</Th>
+              <Th>Location</Th>
               <Th>Source</Th>
               <Th>Keyword</Th>
               <Th>Landing Page</Th>
               <Th>Device</Th>
-              <Th>Pages</Th>
-              <Th>Duration</Th>
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {rows.length === 0 ? (
               <tr>
-                <Td colSpan={9} className="text-center py-10 text-sm text-slate-400">
-                  No data yet
+                <Td colSpan={7} className="text-center py-10 text-sm text-slate-400">
+                  {loading ? "Loading…" : "No data yet"}
                 </Td>
               </tr>
             ) : (
-              filtered.map((v) => (
+              rows.map((v) => (
                 <Tr key={v.id}>
-                  <Td className="text-xs text-slate-400 whitespace-nowrap">{v.time}</Td>
+                  <Td className="text-xs font-mono text-slate-600 whitespace-nowrap">{fmtTime(v.createdAt)}</Td>
                   <Td className="font-mono text-xs text-slate-700">{v.ip}</Td>
-                  <Td className="text-xs">{v.country}</Td>
+                  <Td className="text-xs text-slate-700 max-w-[200px] truncate" >{location(v)}</Td>
                   <Td>
                     <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
                       {v.source}
                     </span>
                   </Td>
                   <Td className="text-xs text-slate-500 max-w-[140px] truncate">{v.keyword || "—"}</Td>
-                  <Td className="text-xs text-blue-600 font-mono max-w-[120px] truncate">{v.landingPage}</Td>
+                  <Td className="text-xs text-blue-600 font-mono max-w-[160px] truncate">{v.path}</Td>
                   <Td>
                     <span className="flex items-center gap-1.5 text-xs text-slate-600">
                       {DEVICE_ICONS[v.device] ?? <Monitor className="w-3.5 h-3.5" />}
                       {v.device}
                     </span>
                   </Td>
-                  <Td className="text-xs text-center font-semibold">{v.pageViews}</Td>
-                  <Td className="text-xs text-slate-600">{v.duration}</Td>
                 </Tr>
               ))
             )}
