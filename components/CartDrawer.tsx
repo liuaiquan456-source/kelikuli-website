@@ -94,9 +94,9 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
                   <Link
                     href={`/products/${p.id}`}
                     onClick={onClose}
-                    className="shrink-0 relative self-stretch aspect-square rounded-lg overflow-hidden bg-stone-50"
+                    className="shrink-0 relative w-20 h-20 rounded-lg overflow-hidden bg-stone-50"
                   >
-                    <ProductImage src={p.image} alt={p.name} sizes="96px" className="object-cover" />
+                    <ProductImage src={p.image} alt={p.name} sizes="80px" className="object-cover" />
                   </Link>
                   <div className="min-w-0 flex-1 flex flex-col">
                     <Link href={`/products/${p.id}`} onClick={onClose}>
