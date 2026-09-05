@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "@/components/I18nProvider";
-import ProductThumb from "@/components/ProductThumb";
+import ProductImage from "@/components/ProductImage";
 
 const countryCodes = [
   { code: "+1",   label: "US/CA +1" },
@@ -209,8 +209,8 @@ export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEma
               <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
                 {cartProducts.map((p) => (
                   <div key={p.id} className="flex gap-2.5 p-2 bg-white rounded-xl border border-stone-100">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-stone-50">
-                      <ProductThumb src={p.image} alt={p.name} className="w-12 h-12" imgClassName="w-12 h-12 object-cover" />
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-stone-50">
+                      <ProductImage src={p.image} alt={p.name} sizes="48px" className="object-cover" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-stone-700 line-clamp-2 leading-snug">{p.name}</p>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "@/components/I18nProvider";
 import { useCart } from "@/hooks/useCart";
 import InquiryModal from "@/components/InquiryModal";
-import ProductThumb from "@/components/ProductThumb";
+import ProductImage from "@/components/ProductImage";
 
 interface Props {
   isOpen: boolean;
@@ -91,17 +91,21 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
             <div className="space-y-3">
               {items.map((p) => (
                 <div key={p.id} className="flex gap-3 p-2.5 bg-white border border-stone-100 rounded-xl">
-                  <Link href={`/products/${p.id}`} onClick={onClose} className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-stone-50">
-                    <ProductThumb src={p.image} alt={p.name} className="w-14 h-14" imgClassName="w-14 h-14 object-cover" />
+                  <Link
+                    href={`/products/${p.id}`}
+                    onClick={onClose}
+                    className="shrink-0 relative self-stretch aspect-square rounded-lg overflow-hidden bg-stone-50"
+                  >
+                    <ProductImage src={p.image} alt={p.name} sizes="96px" className="object-cover" />
                   </Link>
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 flex flex-col">
                     <Link href={`/products/${p.id}`} onClick={onClose}>
                       <p className="text-xs font-medium text-stone-700 line-clamp-2 leading-snug hover:text-[#C9A55A] transition-colors">
                         {p.name}
                       </p>
                     </Link>
                     <p className="text-[10px] text-[#C9A55A] font-semibold mt-1">{p.category}</p>
-                    <div className="flex items-center gap-1.5 mt-1.5">
+                    <div className="flex items-center gap-1.5 mt-auto pt-1.5">
                       <span className="text-[10px] text-stone-400">{t("cartDrawer.qty", "Qty")}</span>
                       <input
                         type="number"
