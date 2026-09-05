@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Plain <img> with a clean placeholder fallback for missing / broken URLs.
 // Used where product images are external (Alibaba CDN etc.) and next/image
@@ -16,6 +16,12 @@ export default function ProductThumb({
   imgClassName?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const img = ref.current;
+    if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+  }, []);
 
   if (!src || failed) {
     return (
@@ -35,6 +41,7 @@ export default function ProductThumb({
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
+      ref={ref}
       src={src}
       alt={alt}
       loading="lazy"
