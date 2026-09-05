@@ -7,6 +7,7 @@ import ProductImage from "@/components/ProductImage";
 import { useTranslation } from "@/components/I18nProvider";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
+import { useCartGate } from "@/components/CartGateProvider";
 
 interface Product {
   id: number; name: string; category: string; image: string;
@@ -180,7 +181,8 @@ export default function ProductsClient() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const { isWished, toggle: toggleWish } = useWishlist();
-  const { isInCart, toggle: toggleCart } = useCart();
+  const { isInCart } = useCart();
+  const { addToCart } = useCartGate();
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -421,7 +423,7 @@ export default function ProductsClient() {
                         <p className="text-[#C9A55A] text-xs mt-1.5 font-semibold tracking-wide">{product.category}</p>
                         <div className="mt-2 flex gap-1.5">
                           <button
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCart({ id: product.id, name: product.name, category: product.category, image: product.image }); }}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart({ id: product.id, name: product.name, category: product.category, image: product.image }); }}
                             className={`w-9 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all border ${
                               isInCart(product.id)
                                 ? "bg-orange-500 border-orange-500"

@@ -95,8 +95,12 @@ export function useCart() {
 
   const isInCart = (id: number) => items.some((p) => p.id === id);
 
-  /** Attach this browser to an email "account", merging in whatever's saved server-side. */
-  const linkAccount = useCallback(async (rawEmail: string): Promise<CartProduct[]> => {
+  /**
+   * Attach this browser to an email "account", merging in whatever's saved
+   * server-side. Optionally adds one more product atomically in the same
+   * write, so a gated "add to cart" doesn't race the email/items state.
+   */
+  const linkAccount = useCallback(async (rawEmail: string, pendingProduct?: CartProduct): Promise<CartProduct[]> => {
     const normalized = rawEmail.trim().toLowerCase();
     let serverItems: CartProduct[] = [];
     try {
@@ -107,6 +111,7 @@ export function useCart() {
     const local = readItems();
     const merged = [...serverItems];
     for (const it of local) if (!merged.some((m) => m.id === it.id)) merged.push(it);
+    if (pendingProduct && !merged.some((m) => m.id === pendingProduct.id)) merged.push(pendingProduct);
 
     try {
       localStorage.setItem(EMAIL_KEY, normalized);

@@ -5,10 +5,8 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import InquiryModal from "@/components/InquiryModal";
-import CartEmailGate from "@/components/CartEmailGate";
-import CartDrawer from "@/components/CartDrawer";
 import { useWishlist } from "@/hooks/useWishlist";
-import { useCart } from "@/hooks/useCart";
+import { useCartGate } from "@/components/CartGateProvider";
 import { useTranslation } from "@/components/I18nProvider";
 
 const navLinks = [
@@ -36,8 +34,6 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [cartGateOpen, setCartGateOpen] = useState(false);
-  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -47,18 +43,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { count: wishCount } = useWishlist();
-  const { count: cartCount, email: cartEmail, linkAccount } = useCart();
-
-  const openCart = useCallback(() => {
-    if (cartEmail) setCartDrawerOpen(true);
-    else setCartGateOpen(true);
-  }, [cartEmail]);
-
-  const handleCartEmailSubmit = useCallback(async (email: string) => {
-    await linkAccount(email);
-    setCartGateOpen(false);
-    setCartDrawerOpen(true);
-  }, [linkAccount]);
+  const { count: cartCount, openCart } = useCartGate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -369,8 +354,6 @@ export default function Header() {
       )}
 
       <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
-      <CartEmailGate isOpen={cartGateOpen} onClose={() => setCartGateOpen(false)} onSubmit={handleCartEmailSubmit} />
-      <CartDrawer isOpen={cartDrawerOpen} onClose={() => setCartDrawerOpen(false)} />
     </>
   );
 }
