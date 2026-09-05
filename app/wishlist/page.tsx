@@ -60,7 +60,7 @@ export default function WishlistPage() {
                       <p className="text-[#C9A55A] text-xs mt-1.5 font-semibold tracking-wide">{product.category}</p>
                       <div className="mt-2 flex gap-1.5">
                         <button
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart({ id: product.id, name: product.name, category: product.category, image: product.image }); }}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart({ id: product.id, name: product.name, category: product.category, image: product.image, moq: product.moq }); }}
                           className={`w-9 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all border ${
                             isInCart(product.id) ? "bg-orange-500 border-orange-500" : "bg-white border-stone-200 hover:border-orange-400"
                           }`}

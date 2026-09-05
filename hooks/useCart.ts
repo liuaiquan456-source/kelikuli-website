@@ -6,6 +6,12 @@ export interface CartProduct {
   name: string;
   category: string;
   image: string;
+  moq?: number;
+  quantity?: number;
+}
+
+function withDefaultQuantity(product: CartProduct): CartProduct {
+  return { ...product, quantity: product.quantity ?? product.moq ?? 1 };
 }
 
 const ITEMS_KEY = "kelikuli-cart";
@@ -74,7 +80,7 @@ export function useCart() {
   const toggle = (product: CartProduct) => {
     setItems((prev) => {
       const exists = prev.some((p) => p.id === product.id);
-      const next = exists ? prev.filter((p) => p.id !== product.id) : [...prev, product];
+      const next = exists ? prev.filter((p) => p.id !== product.id) : [...prev, withDefaultQuantity(product)];
       persist(next, email);
       return next;
     });
@@ -91,6 +97,15 @@ export function useCart() {
   const clear = () => {
     setItems([]);
     persist([], email);
+  };
+
+  const setQuantity = (id: number, quantity: number) => {
+    const q = Math.max(1, Math.floor(quantity) || 1);
+    setItems((prev) => {
+      const next = prev.map((p) => (p.id === id ? { ...p, quantity: q } : p));
+      persist(next, email);
+      return next;
+    });
   };
 
   const isInCart = (id: number) => items.some((p) => p.id === id);
@@ -111,7 +126,7 @@ export function useCart() {
     const local = readItems();
     const merged = [...serverItems];
     for (const it of local) if (!merged.some((m) => m.id === it.id)) merged.push(it);
-    if (pendingProduct && !merged.some((m) => m.id === pendingProduct.id)) merged.push(pendingProduct);
+    if (pendingProduct && !merged.some((m) => m.id === pendingProduct.id)) merged.push(withDefaultQuantity(pendingProduct));
 
     try {
       localStorage.setItem(EMAIL_KEY, normalized);
@@ -139,5 +154,5 @@ export function useCart() {
     notify();
   }, []);
 
-  return { items, toggle, remove, clear, isInCart, count: items.length, email, linkAccount, switchAccount };
+  return { items, toggle, remove, clear, setQuantity, isInCart, count: items.length, email, linkAccount, switchAccount };
 }

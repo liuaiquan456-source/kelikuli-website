@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "@/components/I18nProvider";
 import { useCart } from "@/hooks/useCart";
 import InquiryModal from "@/components/InquiryModal";
+import ProductThumb from "@/components/ProductThumb";
 
 interface Props {
   isOpen: boolean;
@@ -14,7 +15,7 @@ interface Props {
 // (top-14) on purpose so it never covers the site nav.
 export default function CartDrawer({ isOpen, onClose }: Props) {
   const { t } = useTranslation();
-  const { items, remove, clear, email, switchAccount } = useCart();
+  const { items, remove, clear, setQuantity, email, switchAccount } = useCart();
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   useEffect(() => {
@@ -90,9 +91,8 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
             <div className="space-y-3">
               {items.map((p) => (
                 <div key={p.id} className="flex gap-3 p-2.5 bg-white border border-stone-100 rounded-xl">
-                  <Link href={`/products/${p.id}`} onClick={onClose} className="shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.image} alt={p.name} className="w-14 h-14 rounded-lg object-cover bg-stone-50" />
+                  <Link href={`/products/${p.id}`} onClick={onClose} className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-stone-50">
+                    <ProductThumb src={p.image} alt={p.name} className="w-14 h-14" imgClassName="w-14 h-14 object-cover" />
                   </Link>
                   <div className="min-w-0 flex-1">
                     <Link href={`/products/${p.id}`} onClick={onClose}>
@@ -101,6 +101,17 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
                       </p>
                     </Link>
                     <p className="text-[10px] text-[#C9A55A] font-semibold mt-1">{p.category}</p>
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <span className="text-[10px] text-stone-400">{t("cartDrawer.qty", "Qty")}</span>
+                      <input
+                        type="number"
+                        min={1}
+                        value={p.quantity ?? p.moq ?? 1}
+                        onChange={(e) => setQuantity(p.id, Number(e.target.value))}
+                        className="w-16 border border-stone-200 rounded-md px-1.5 py-0.5 text-xs text-stone-700 focus:outline-none focus:border-[#C9A55A]"
+                      />
+                      <span className="text-[10px] text-stone-400">{t("cartDrawer.pcs", "pcs")}</span>
+                    </div>
                   </div>
                   <button
                     onClick={() => remove(p.id)}

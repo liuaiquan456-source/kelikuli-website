@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "@/components/I18nProvider";
+import ProductThumb from "@/components/ProductThumb";
 
 const countryCodes = [
   { code: "+1",   label: "US/CA +1" },
@@ -50,6 +51,8 @@ interface CartItem {
   name: string;
   category: string;
   image?: string;
+  quantity?: number;
+  moq?: number;
 }
 
 interface Props {
@@ -94,7 +97,7 @@ export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEma
   useEffect(() => {
     if (!isOpen || !cartProducts || cartProducts.length === 0) return;
     const productList = cartProducts
-      .map((p, i) => `${i + 1}. ${p.name} (${p.category})`)
+      .map((p, i) => `${i + 1}. ${p.name} (${p.category}) — Qty: ${p.quantity ?? p.moq ?? "N/A"}`)
       .join("\n");
     const autoMessage = `I'm interested in the following products:\n${productList}\n\nPlease provide pricing and MOQ information.`;
     const autoCategories = [...new Set(cartProducts.map((p) => mapCategoryToOption(p.category)).filter(Boolean) as string[])];
@@ -206,13 +209,13 @@ export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEma
               <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
                 {cartProducts.map((p) => (
                   <div key={p.id} className="flex gap-2.5 p-2 bg-white rounded-xl border border-stone-100">
-                    {p.image && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.image} alt={p.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
-                    )}
+                    <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-stone-50">
+                      <ProductThumb src={p.image} alt={p.name} className="w-12 h-12" imgClassName="w-12 h-12 object-cover" />
+                    </div>
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-stone-700 line-clamp-2 leading-snug">{p.name}</p>
                       <p className="text-[10px] text-orange-500 font-semibold mt-0.5">{p.category}</p>
+                      <p className="text-[10px] text-stone-400 mt-0.5">{t("inquiryModal.qty", "Qty")}: {p.quantity ?? p.moq ?? "—"}</p>
                     </div>
                   </div>
                 ))}

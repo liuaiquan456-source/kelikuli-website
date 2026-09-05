@@ -6,6 +6,7 @@ export interface WishlistProduct {
   name: string;
   category: string;
   image: string;
+  moq?: number;
 }
 
 const KEY = "kelikuli-wishlist";

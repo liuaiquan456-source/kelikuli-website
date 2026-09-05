@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
 import InquiryModal from "@/components/InquiryModal";
+import ProductImage from "@/components/ProductImage";
 import { useTranslation } from "@/components/I18nProvider";
 
 export default function CartPage() {
   const { t } = useTranslation();
-  const { items, remove, clear } = useCart();
+  const { items, remove, clear, setQuantity, email } = useCart();
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
@@ -51,27 +51,37 @@ export default function CartPage() {
                 <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-400 hover:shadow-lg transition-all duration-200 relative">
                   <Link href={`/products/${product.id}`} className="block">
                     <div className="relative aspect-square bg-stone-50 overflow-hidden">
-                      {product.image && (
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      )}
+                      <ProductImage
+                        src={product.image}
+                        alt={product.name}
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
                     <div className="p-3 pb-2">
                       <p className="text-stone-700 text-sm font-medium line-clamp-2 leading-snug">{product.name}</p>
                       <p className="text-[#C9A55A] text-xs mt-1.5 font-semibold tracking-wide">{product.category}</p>
-                      <button
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInquiryOpen(true); }}
-                        className="mt-2 w-full text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
-                      >
-                        {t("header.inquiryNow", "Inquiry Now")}
-                      </button>
                     </div>
                   </Link>
+                  <div className="px-3 pb-2 flex items-center gap-1.5">
+                    <span className="text-[10px] text-stone-400">{t("cartDrawer.qty", "Qty")}</span>
+                    <input
+                      type="number"
+                      min={1}
+                      value={product.quantity ?? product.moq ?? 1}
+                      onChange={(e) => setQuantity(product.id, Number(e.target.value))}
+                      className="w-16 border border-stone-200 rounded-md px-1.5 py-0.5 text-xs text-stone-700 focus:outline-none focus:border-[#C9A55A]"
+                    />
+                    <span className="text-[10px] text-stone-400">{t("cartDrawer.pcs", "pcs")}</span>
+                  </div>
+                  <div className="px-3 pb-3">
+                    <button
+                      onClick={() => setInquiryOpen(true)}
+                      className="w-full text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
+                    >
+                      {t("header.inquiryNow", "Inquiry Now")}
+                    </button>
+                  </div>
                   <button
                     onClick={() => remove(product.id)}
                     className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-red-50 transition-colors z-10"
@@ -111,7 +121,7 @@ export default function CartPage() {
           </>
         )}
       </div>
-      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} cartProducts={items} />
+      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} cartProducts={items} defaultEmail={email ?? undefined} />
     </div>
   );
 }
