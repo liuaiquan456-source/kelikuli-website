@@ -5,6 +5,8 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import InquiryModal from "@/components/InquiryModal";
+import CartEmailGate from "@/components/CartEmailGate";
+import CartDrawer from "@/components/CartDrawer";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 import { useTranslation } from "@/components/I18nProvider";
@@ -34,6 +36,8 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [cartGateOpen, setCartGateOpen] = useState(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -43,7 +47,18 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { count: wishCount } = useWishlist();
-  const { count: cartCount } = useCart();
+  const { count: cartCount, email: cartEmail, linkAccount } = useCart();
+
+  const openCart = useCallback(() => {
+    if (cartEmail) setCartDrawerOpen(true);
+    else setCartGateOpen(true);
+  }, [cartEmail]);
+
+  const handleCartEmailSubmit = useCallback(async (email: string) => {
+    await linkAccount(email);
+    setCartGateOpen(false);
+    setCartDrawerOpen(true);
+  }, [linkAccount]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -150,7 +165,11 @@ export default function Header() {
                 </span>
               )}
             </Link>
-            <Link href="/cart" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-[#C9A55A] transition-colors">
+            <button
+              onClick={openCart}
+              aria-label="Cart"
+              className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-[#C9A55A] transition-colors"
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
               </svg>
@@ -159,7 +178,7 @@ export default function Header() {
                   {cartCount > 9 ? "9+" : cartCount}
                 </span>
               )}
-            </Link>
+            </button>
           </nav>
 
           {/* Desktop right */}
@@ -327,9 +346,8 @@ export default function Header() {
                   {t("header.wishlist", "Wishlist")}
                   {wishCount > 0 && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center">{wishCount > 9 ? "9+" : wishCount}</span>}
                 </Link>
-                <Link
-                  href="/cart"
-                  onClick={() => setMobileOpen(false)}
+                <button
+                  onClick={() => { setMobileOpen(false); openCart(); }}
                   className="relative flex-1 flex items-center justify-center gap-2 border border-stone-600 text-stone-300 text-sm font-semibold py-2.5 rounded-xl hover:border-[#C9A55A] hover:text-[#C9A55A] transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,7 +355,7 @@ export default function Header() {
                   </svg>
                   {t("header.cart", "Cart")}
                   {cartCount > 0 && <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#C9A55A] text-white text-[9px] font-bold flex items-center justify-center">{cartCount > 9 ? "9+" : cartCount}</span>}
-                </Link>
+                </button>
               </div>
               <button
                 onClick={() => { setInquiryOpen(true); setMobileOpen(false); }}
@@ -351,6 +369,8 @@ export default function Header() {
       )}
 
       <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
+      <CartEmailGate isOpen={cartGateOpen} onClose={() => setCartGateOpen(false)} onSubmit={handleCartEmailSubmit} />
+      <CartDrawer isOpen={cartDrawerOpen} onClose={() => setCartDrawerOpen(false)} />
     </>
   );
 }

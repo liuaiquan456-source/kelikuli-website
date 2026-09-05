@@ -139,6 +139,13 @@ model Inquiry {
   updatedAt DateTime @updatedAt
 }
 
+model CartAccount {
+  email     String   @id
+  items     String   @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Visit {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())

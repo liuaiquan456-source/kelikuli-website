@@ -56,6 +56,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   cartProducts?: CartItem[];
+  defaultEmail?: string;
 }
 
 // Map product category strings to productOptions checkboxes
@@ -71,7 +72,7 @@ function mapCategoryToOption(category: string): string | null {
   return "Other Resin Crafts";
 }
 
-export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
+export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEmail }: Props) {
   const { t } = useTranslation();
   const [form, setForm] = useState({
     email: "",
@@ -99,6 +100,12 @@ export default function InquiryModal({ isOpen, onClose, cartProducts }: Props) {
     const autoCategories = [...new Set(cartProducts.map((p) => mapCategoryToOption(p.category)).filter(Boolean) as string[])];
     setForm((f) => ({ ...f, message: autoMessage, products: autoCategories }));
   }, [isOpen, cartProducts]);
+
+  // Pre-fill the email from the linked cart account, if any.
+  useEffect(() => {
+    if (!isOpen || !defaultEmail) return;
+    setForm((f) => (f.email ? f : { ...f, email: defaultEmail }));
+  }, [isOpen, defaultEmail]);
 
   // Close on Escape key
   useEffect(() => {
