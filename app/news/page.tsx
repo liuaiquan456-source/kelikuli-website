@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import ProductImage from "@/components/ProductImage";
 
 export const metadata: Metadata = {
   title: "Resin Toy Industry News & Factory Updates",
@@ -84,17 +84,12 @@ export default async function NewsPage() {
                   className="group bg-white rounded-2xl overflow-hidden border border-stone-100 hover:shadow-lg transition-shadow"
                 >
                   <div className="relative aspect-[16/9] bg-stone-100">
-                    {post.image ? (
-                      <Image
-                        src={post.image}
-                        alt={post.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-stone-400 text-sm">No image</div>
-                    )}
+                    <ProductImage
+                      src={post.image}
+                      alt={post.title}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                     <span className="absolute top-3 left-3 bg-[#C9A55A] text-white text-xs font-semibold px-3 py-1 rounded-full">
                       {post.category}
                     </span>

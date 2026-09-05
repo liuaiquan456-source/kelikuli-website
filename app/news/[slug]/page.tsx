@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Breadcrumb from "@/components/Breadcrumb";
+import ProductImage from "@/components/ProductImage";
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +125,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       />
       {/* Hero image */}
       <div className="relative w-full aspect-[3/1] bg-stone-200">
-        {post.image && <Image src={post.image} alt={post.title} fill className="object-cover" priority sizes="100vw" />}
+        <ProductImage src={post.image} alt={post.title} className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-4xl mx-auto">
           <span className="inline-block bg-[#C9A55A] text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
@@ -213,7 +213,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 {related.map((r) => (
                   <Link key={r.slug} href={`/news/${r.slug}`} className="group bg-white rounded-xl overflow-hidden border border-stone-100 hover:shadow-md transition-shadow">
                     <div className="relative aspect-video bg-stone-100">
-                      {r.image && <Image src={r.image} alt={r.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" />}
+                      <ProductImage src={r.image} alt={r.title} className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="300px" />
                     </div>
                     <div className="p-3">
                       <p className="text-stone-400 text-xs mb-1">{r.publishedAt ? new Date(r.publishedAt).toISOString().slice(0, 10) : ""}</p>
