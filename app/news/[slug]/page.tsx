@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Breadcrumb from "@/components/Breadcrumb";
 import ProductImage from "@/components/ProductImage";
+import ArticleImage from "@/components/ArticleImage";
 
 export const dynamic = "force-dynamic";
 
@@ -47,14 +48,11 @@ function renderContent(content: string) {
       elements.push(<hr key={key++} className="border-stone-200 my-6" />);
     } else if (/^!\[([^\]]*)\]\(([^)]+)\)$/.test(trimmed)) {
       const m = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-      if (m) elements.push(
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={key++} src={m[2]} alt={m[1]} className="max-w-full rounded-xl my-4 mx-auto block" />
-      );
+      if (m) elements.push(<ArticleImage key={key++} src={m[2]} alt={m[1]} />);
     } else {
       const withLinks = trimmed
         .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) =>
-          `<img src="${src}" alt="${alt}" class="max-w-full rounded-xl my-4 mx-auto block" />`
+          `<img src="${src}" alt="${alt}" class="max-w-full rounded-xl my-4 mx-auto block" onerror="this.style.display='none'" />`
         )
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
         .replace(/(?<!<img[^>]*)(?<!!)\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) =>
@@ -160,10 +158,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     className="group flex items-center gap-3 hover:bg-[#F5EDD8] rounded-xl p-2 transition-colors"
                   >
                     <div className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-stone-100">
-                      {p.image
-                        ? <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        : <div className="w-full h-full flex items-center justify-center text-stone-300 text-xs">No img</div>
-                      }
+                      <ProductImage src={p.image} alt={p.name} sizes="56px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-stone-700 group-hover:text-[#C9A55A] transition-colors line-clamp-2 leading-snug">{p.name}</p>
