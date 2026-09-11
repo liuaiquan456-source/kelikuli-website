@@ -103,7 +103,7 @@ export default function ProductDetailClient({
           {/* Main content */}
           <div className="w-full">
           {/* Main Card */}
-          <div className="bg-white rounded-none sm:rounded-2xl shadow-sm border-0 sm:border border-stone-100 overflow-hidden">
+          <div className="bg-white rounded-none sm:rounded-2xl shadow-sm border-0 sm:border border-stone-100">
             <div className="flex flex-col lg:flex-row">
 
               {/* Image Gallery with tabs */}
@@ -319,7 +319,7 @@ export default function ProductDetailClient({
                 {product.description && (
                   <div className="mb-6">
                     <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.description", "Product Description")}</h2>
-                    <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.description}</div>
+                    <div className="text-base text-stone-600 leading-relaxed whitespace-pre-line">{product.description}</div>
                   </div>
                 )}
 
