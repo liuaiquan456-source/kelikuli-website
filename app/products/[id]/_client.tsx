@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
-import ArticleImage from "@/components/ArticleImage";
 import { useTranslation } from "@/components/I18nProvider";
 
 interface Variant { name: string; image: string; }
@@ -58,9 +57,11 @@ function getAttributes(name: string, category: string, t: Translator) {
 export default function ProductDetailClient({
   product,
   related,
+  whatsappLink,
 }: {
   product: Product | null;
   related: Product[];
+  whatsappLink: string;
 }) {
   const { t } = useTranslation();
   const [activeImg, setActiveImg] = useState(0);
@@ -209,19 +210,21 @@ export default function ProductDetailClient({
                 {productImages.length > 1 && (
                   <div className="flex flex-col gap-3 pt-2 border-t border-stone-100">
                     {productImages.map((src, i) => (
-                      <ArticleImage
-                        key={i}
-                        src={src}
-                        alt={`${product.name} — image ${i + 1}`}
-                        className="w-full h-auto rounded-xl block"
-                      />
+                      <div key={i} className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-stone-50">
+                        <ProductImage
+                          src={src}
+                          alt={`${product.name} — image ${i + 1}`}
+                          sizes="(max-width: 1024px) 100vw, 45vw"
+                          className="object-contain"
+                        />
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
 
               {/* Product Info */}
-              <div className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100">
+              <div className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100 lg:self-start lg:sticky lg:top-20">
                 <span className="inline-flex items-center gap-1.5 w-fit bg-orange-50 text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
@@ -230,32 +233,32 @@ export default function ProductDetailClient({
                   {product.name}
                 </h1>
 
-                <div className="flex items-center gap-2 mb-5 pb-5 border-b border-stone-100">
-                  <div className="w-7 h-7 rounded-full bg-[#C9A55A]/15 flex items-center justify-center shrink-0">
-                    <svg className="w-4 h-4 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
-                    </svg>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 pb-5 border-b border-stone-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-[#C9A55A]/15 flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 text-[#C9A55A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-stone-800">{t("product.companyName", "Yiwu Kelikuli Cultural & Creative Co., Ltd.")}</p>
+                      <p className="text-xs text-stone-400">{t("product.companyMeta", "Zhejiang, China · Est. 2005")}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-stone-800">{t("product.companyName", "Yiwu Kelikuli Cultural & Creative Co., Ltd.")}</p>
-                    <p className="text-xs text-stone-400">{t("product.companyMeta", "Zhejiang, China · Est. 2005")}</p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 mb-6">
                   <button
                     onClick={() => setInquiryOpen(true)}
-                    className="flex-1 bg-[#E8561C] hover:bg-[#D14D18] text-white font-bold py-3 rounded-full transition-colors text-sm shadow-sm"
+                    className="shrink-0 bg-[#E8561C] hover:bg-[#D14D18] text-white font-bold py-2.5 px-6 rounded-full transition-colors text-sm shadow-sm"
                   >
                     {t("contact.sendInquiry", "Send Inquiry")}
                   </button>
-                  <Link
-                    href="/contact"
-                    className="flex-1 lg:hidden border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white font-bold py-3 rounded-full transition-colors text-sm text-center"
-                  >
-                    {t("floatingContact.chatNow", "Chat Now")}
-                  </Link>
                 </div>
+
+                <Link
+                  href="/contact"
+                  className="lg:hidden block text-center mb-6 border-2 border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white font-bold py-3 rounded-full transition-colors text-sm"
+                >
+                  {t("floatingContact.chatNow", "Chat Now")}
+                </Link>
 
                 {productImages.length > 1 && (
                   <div className="mb-6">
@@ -345,6 +348,36 @@ export default function ProductDetailClient({
               </div>
             </div>
           )}
+
+          {/* Bottom CTA */}
+          <div className="mt-10 bg-gradient-to-br from-stone-900 to-stone-700 rounded-2xl p-8 sm:p-10 text-center">
+            <h2 className="text-white text-lg sm:text-xl font-black uppercase tracking-widest mb-2">
+              {t("product.ctaTitle", "Ready to Order or Need a Custom Quote?")}
+            </h2>
+            <p className="text-stone-300 text-sm mb-6 max-w-xl mx-auto">
+              {t("product.ctaSubtitle", "Get in touch with our team for pricing, samples, and OEM/ODM options.")}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                onClick={() => setInquiryOpen(true)}
+                className="w-full sm:w-auto bg-[#E8561C] hover:bg-[#D14D18] text-white font-bold py-3 px-8 rounded-full transition-colors text-sm shadow-sm"
+              >
+                {t("contact.sendInquiry", "Send Inquiry")}
+              </button>
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-8 rounded-full transition-colors text-sm shadow-sm"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                  <path d="M12.001 2C6.478 2 2 6.477 2 12c0 1.876.51 3.633 1.396 5.144L2 22l4.978-1.36A9.955 9.955 0 0012.001 22C17.523 22 22 17.523 22 12S17.523 2 12.001 2zm0 18.2a8.174 8.174 0 01-4.418-1.294l-.317-.19-3.005.82.812-2.937-.207-.303A8.173 8.173 0 013.8 12c0-4.522 3.679-8.2 8.2-8.2 4.522 0 8.2 3.678 8.2 8.2 0 4.522-3.678 8.2-8.199 8.2z" />
+                </svg>
+                {t("product.chatOnWhatsapp", "Chat on WhatsApp")}
+              </a>
+            </div>
+          </div>
           </div>{/* end main content */}
         </div>
       </div>

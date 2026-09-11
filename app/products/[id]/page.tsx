@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getSettings, waMe } from "@/lib/settings";
 import ProductDetailClient from "./_client";
 import Breadcrumb from "@/components/Breadcrumb";
 
@@ -77,7 +78,11 @@ export default async function ProductDetailPage({
   const id = parseInt(idStr, 10);
   const product = await getProduct(id);
   if (!product) notFound();
-  const related = await getRelated(product.category, id);
+  const [related, settings] = await Promise.all([
+    getRelated(product.category, id),
+    getSettings(),
+  ]);
+  const whatsappLink = waMe(settings.whatsapp);
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -105,10 +110,10 @@ export default async function ProductDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-3">
         <Breadcrumb items={breadcrumbItems} />
       </div>
-      <ProductDetailClient product={product} related={related} />
+      <ProductDetailClient product={product} related={related} whatsappLink={whatsappLink} />
     </>
   );
 }
