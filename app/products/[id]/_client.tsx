@@ -115,7 +115,7 @@ export default function ProductDetailClient({
             <div className="flex flex-col lg:flex-row">
 
               {/* Image Gallery with tabs */}
-              <div className="lg:w-[55%] p-4 sm:p-5 flex flex-col gap-4">
+              <div className="lg:w-[45%] p-4 sm:p-5 flex flex-col gap-4">
 
                 {/* Tab bar */}
                 <div className="flex border-b border-stone-200">
@@ -173,18 +173,21 @@ export default function ProductDetailClient({
                       )}
                     </div>
                     {productImages.length > 1 && (
-                      <div className="flex gap-2 overflow-x-auto pb-1">
-                        {productImages.map((src, i) => (
-                          <button
-                            key={i}
-                            onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
-                            className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
-                              activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
-                            }`}
-                          >
-                            <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="64px" className="object-cover" />
-                          </button>
-                        ))}
+                      <div>
+                        <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">{t("product.moreImages", "More Photos")}</p>
+                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                          {productImages.map((src, i) => (
+                            <button
+                              key={i}
+                              onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
+                              className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
+                                activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
+                              }`}
+                            >
+                              <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="120px" className="object-cover" />
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </>
@@ -232,7 +235,7 @@ export default function ProductDetailClient({
               </div>
 
               {/* Product Info */}
-              <div className="lg:w-[45%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100">
+              <div className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100">
                 <span className="inline-flex items-center gap-1.5 w-fit bg-orange-50 text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
