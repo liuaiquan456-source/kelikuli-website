@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getTranslator } from "@/lib/i18n";
-import ProductThumb from "@/components/ProductThumb";
+import ProductImage from "@/components/ProductImage";
 
 export default async function LatestProducts() {
   const t = await getTranslator();
@@ -50,10 +50,11 @@ export default async function LatestProducts() {
               className="flex-none w-40 sm:w-48 snap-start group"
             >
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-stone-200 mb-3 bg-stone-100 group-hover:shadow-md transition-shadow">
-                <ProductThumb
+                <ProductImage
                   src={p.thumb}
                   alt={p.name}
-                  imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 640px) 40vw, 192px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <p className="text-stone-700 text-sm font-medium leading-tight line-clamp-2 group-hover:text-[#C9A55A] transition-colors mb-1">
