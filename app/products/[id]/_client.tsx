@@ -106,7 +106,7 @@ export default function ProductDetailClient({
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-0 sm:px-6 py-0 sm:py-8">
+        <div className="max-w-[1600px] mx-auto px-0 sm:px-6 py-0 sm:py-8">
 
           {/* Main content */}
           <div className="w-full">
@@ -253,26 +253,7 @@ export default function ProductDetailClient({
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.keyAttributes", "Key Attributes")}</h2>
-                  <div className="rounded-xl border border-stone-100 overflow-hidden">
-                    {attrs.map((attr, i) => (
-                      <div key={attr.key} className={`flex text-sm ${i % 2 === 0 ? "bg-stone-50" : "bg-white"}`}>
-                        <div className="w-[42%] px-4 py-2.5 text-stone-500 font-medium shrink-0">{attr.key}</div>
-                        <div className="flex-1 px-4 py-2.5 text-stone-800 font-semibold border-l border-stone-100">{attr.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-orange-50 rounded-xl px-4 py-3 mb-6 text-xs text-stone-600 flex items-start gap-2">
-                  <svg className="w-4 h-4 text-[#C9A55A] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                  </svg>
-                  <span>{t("product.shippingNotice", "Shipping negotiated per order.")} <strong>{t("product.oemWelcome", "OEM/ODM custom orders welcome.")}</strong></span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 mt-auto">
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
                   <button
                     onClick={() => setInquiryOpen(true)}
                     className="flex-1 bg-[#E8561C] hover:bg-[#D14D18] text-white font-bold py-3 rounded-full transition-colors text-sm shadow-sm"
@@ -286,26 +267,42 @@ export default function ProductDetailClient({
                     {t("floatingContact.chatNow", "Chat Now")}
                   </Link>
                 </div>
+
+                <div className="mb-6">
+                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.keyAttributes", "Key Attributes")}</h2>
+                  <div className="rounded-xl border border-stone-100 overflow-hidden">
+                    {attrs.map((attr, i) => (
+                      <div key={attr.key} className={`flex text-sm ${i % 2 === 0 ? "bg-stone-50" : "bg-white"}`}>
+                        <div className="w-[42%] px-4 py-2.5 text-stone-500 font-medium shrink-0">{attr.key}</div>
+                        <div className="flex-1 px-4 py-2.5 text-stone-800 font-semibold border-l border-stone-100">{attr.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {product.description && (
+                  <div className="mb-6">
+                    <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.description", "Product Description")}</h2>
+                    <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.description}</div>
+                  </div>
+                )}
+
+                <div className="bg-orange-50 rounded-xl px-4 py-3 mt-auto text-xs text-stone-600 flex items-start gap-2">
+                  <svg className="w-4 h-4 text-[#C9A55A] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                  </svg>
+                  <span>{t("product.shippingNotice", "Shipping negotiated per order.")} <strong>{t("product.oemWelcome", "OEM/ODM custom orders welcome.")}</strong></span>
+                </div>
               </div>
 
             </div>
           </div>
 
-          {/* Description & Specs */}
-          {(product.description || product.specs) && (
-            <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {product.description && (
-                <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">{t("product.description", "Product Description")}</h2>
-                  <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.description}</div>
-                </div>
-              )}
-              {product.specs && (
-                <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                  <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">{t("product.specifications", "Specifications")}</h2>
-                  <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.specs}</div>
-                </div>
-              )}
+          {/* Specifications */}
+          {product.specs && (
+            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+              <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-4">{t("product.specifications", "Specifications")}</h2>
+              <div className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{product.specs}</div>
             </div>
           )}
 
