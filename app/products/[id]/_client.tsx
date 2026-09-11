@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
@@ -70,6 +70,47 @@ export default function ProductDetailClient({
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"photos" | "video">("photos");
   const thumbScrollRef = useRef<HTMLDivElement>(null);
+  const galleryRowRef = useRef<HTMLDivElement>(null);
+  const infoColRef = useRef<HTMLDivElement>(null);
+
+  // Let the info column scroll normally (fully readable) alongside the photo
+  // gallery, then hold it pinned near the bottom of the screen once it would
+  // otherwise scroll out of view, so it stays visible while the (much taller)
+  // photo stack keeps scrolling past. Plain CSS `position: sticky` (with a
+  // top offset, a bottom offset, or both) doesn't reproduce this reliably
+  // inside this flex layout, so it's computed by hand on scroll/resize.
+  useEffect(() => {
+    const BOTTOM_GAP = 16;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const row = galleryRowRef.current;
+      const info = infoColRef.current;
+      if (!row || !info) return;
+      if (window.innerWidth < 1024) {
+        info.style.transform = "";
+        return;
+      }
+      const rowRect = row.getBoundingClientRect();
+      const infoHeight = info.offsetHeight;
+      const posBottom = window.innerHeight - BOTTOM_GAP - infoHeight;
+      const rowBottomCap = rowRect.bottom - infoHeight - BOTTOM_GAP;
+      const targetTop = Math.max(rowRect.top, Math.min(posBottom, rowBottomCap));
+      const translateY = targetTop - rowRect.top;
+      info.style.transform = translateY > 0.5 ? `translateY(${translateY}px)` : "";
+    };
+    const onScrollOrResize = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [product?.id]);
 
   if (!product) {
     return (
@@ -104,7 +145,7 @@ export default function ProductDetailClient({
           <div className="w-full">
           {/* Main Card */}
           <div className="bg-white rounded-none sm:rounded-2xl shadow-sm border-0 sm:border border-stone-100">
-            <div className="flex flex-col lg:flex-row">
+            <div ref={galleryRowRef} className="flex flex-col lg:flex-row">
 
               {/* Image Gallery with tabs */}
               <div className="lg:w-[45%] p-4 sm:p-5 flex flex-col gap-4">
@@ -268,7 +309,7 @@ export default function ProductDetailClient({
               </div>
 
               {/* Product Info */}
-              <div className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100 lg:self-start lg:sticky lg:bottom-4">
+              <div ref={infoColRef} className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100 lg:self-start">
                 <span className="inline-flex items-center gap-1.5 w-fit bg-orange-50 text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
