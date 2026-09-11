@@ -147,9 +147,12 @@ export default function ProductDetailClient({
           <div className="bg-white rounded-none sm:rounded-2xl shadow-sm border-0 sm:border border-stone-100">
             <div ref={galleryRowRef} className="flex flex-col lg:flex-row">
 
-              {/* Image Gallery with tabs */}
-              <div className="lg:w-[45%] p-4 sm:p-5 flex flex-col gap-4">
+              {/* Image Gallery with tabs — `contents` on mobile lets its children
+                  reorder freely among all the row's siblings (see order-* below);
+                  a real flex column again from lg up, matching the original layout. */}
+              <div className="contents lg:flex lg:flex-col lg:w-[45%] lg:gap-4 lg:p-5">
 
+              <div className="order-1 lg:order-none p-4 sm:p-5 lg:p-0 flex flex-col gap-4">
                 {/* Tab bar */}
                 <div className="flex border-b border-stone-200">
                   {(["photos", ...(product.video ? (["video"] as const) : [])] as const).map((tab) => (
@@ -261,9 +264,10 @@ export default function ProductDetailClient({
                     )}
                   </div>
                 )}
+              </div>
 
                 {variants.length > 0 && (
-                  <div className="pt-2 border-t border-stone-100">
+                  <div className="order-3 lg:order-none px-4 sm:px-5 lg:px-0 pt-2 border-t border-stone-100">
                     <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">{t("product.availableOptions", "Available Options")}</p>
                     <div className="flex flex-wrap gap-2">
                       {variants.map((v, i) => (
@@ -293,7 +297,7 @@ export default function ProductDetailClient({
 
                 {/* Other product photos, shown full-width one after another like a detail page */}
                 {productImages.length > 1 && (
-                  <div className="flex flex-col gap-3 pt-2 border-t border-stone-100">
+                  <div className="order-4 lg:order-none px-4 sm:px-5 lg:px-0 pb-4 sm:pb-5 lg:pb-0 flex flex-col gap-3 pt-2 border-t border-stone-100">
                     {productImages.map((src, i) => (
                       <div key={i} className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-stone-50">
                         <ProductImage
@@ -308,8 +312,14 @@ export default function ProductDetailClient({
                 )}
               </div>
 
-              {/* Product Info */}
-              <div ref={infoColRef} className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100 lg:self-start">
+              {/* Product Info — same `contents`-on-mobile / real-column-on-desktop
+                  pattern, split into a "top" group (title/inquiry/attributes,
+                  shown right under the main image on mobile) and a "bottom"
+                  group (description/shipping) that comes after the rest of
+                  the gallery. */}
+              <div ref={infoColRef} className="contents lg:flex lg:flex-col lg:w-[55%] lg:p-8 lg:border-l lg:border-stone-100 lg:self-start">
+
+              <div className="order-2 lg:order-none p-6 lg:p-0 border-t lg:border-t-0 border-stone-100 flex flex-col">
                 <span className="inline-flex items-center gap-1.5 w-fit bg-orange-50 text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
@@ -356,7 +366,9 @@ export default function ProductDetailClient({
                     ))}
                   </div>
                 </div>
+              </div>
 
+              <div className="order-5 lg:order-none p-6 lg:p-0 flex flex-col">
                 {product.description && (
                   <div className="mb-6">
                     <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.description", "Product Description")}</h2>
@@ -370,6 +382,8 @@ export default function ProductDetailClient({
                   </svg>
                   <span>{t("product.shippingNotice", "Shipping negotiated per order.")} <strong>{t("product.oemWelcome", "OEM/ODM custom orders welcome.")}</strong></span>
                 </div>
+              </div>
+
               </div>
 
             </div>
