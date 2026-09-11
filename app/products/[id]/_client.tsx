@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
@@ -69,6 +69,7 @@ export default function ProductDetailClient({
   const [imgError, setImgError] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"photos" | "video">("photos");
+  const thumbScrollRef = useRef<HTMLDivElement>(null);
 
   if (!product) {
     return (
@@ -163,6 +164,49 @@ export default function ProductDetailClient({
                         </>
                       )}
                     </div>
+
+                    {productImages.length > 1 && (
+                      <div className="relative">
+                        <div
+                          ref={thumbScrollRef}
+                          className="flex gap-2 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        >
+                          {productImages.map((src, i) => (
+                            <button
+                              key={i}
+                              onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
+                              className={`relative shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-colors ${
+                                activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
+                              }`}
+                            >
+                              <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="64px" className="object-cover" />
+                            </button>
+                          ))}
+                        </div>
+                        {productImages.length > 7 && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => thumbScrollRef.current?.scrollBy({ left: -220, behavior: "smooth" })}
+                              className="absolute -left-2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-white shadow border border-stone-200 flex items-center justify-center text-stone-600 hover:bg-stone-50"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => thumbScrollRef.current?.scrollBy({ left: 220, behavior: "smooth" })}
+                              className="absolute -right-2 top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-7 rounded-full bg-white shadow border border-stone-200 flex items-center justify-center text-stone-600 hover:bg-stone-50"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -259,25 +303,6 @@ export default function ProductDetailClient({
                 >
                   {t("floatingContact.chatNow", "Chat Now")}
                 </Link>
-
-                {productImages.length > 1 && (
-                  <div className="mb-6">
-                    <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">{t("product.moreImages", "More Photos")}</p>
-                    <div className="grid grid-cols-6 sm:grid-cols-8 gap-1.5">
-                      {productImages.map((src, i) => (
-                        <button
-                          key={i}
-                          onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
-                          className={`relative aspect-square rounded-md overflow-hidden border-2 transition-colors ${
-                            activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
-                          }`}
-                        >
-                          <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="60px" className="object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 <div className="mb-6">
                   <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.keyAttributes", "Key Attributes")}</h2>
