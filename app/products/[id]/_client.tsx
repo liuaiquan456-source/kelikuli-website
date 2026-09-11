@@ -268,7 +268,7 @@ export default function ProductDetailClient({
               </div>
 
               {/* Product Info */}
-              <div className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100 lg:self-start lg:sticky lg:top-20">
+              <div className="lg:w-[55%] p-6 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-stone-100 lg:self-start lg:sticky lg:top-20 lg:bottom-4">
                 <span className="inline-flex items-center gap-1.5 w-fit bg-orange-50 text-[#C9A55A] text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {product.category}
                 </span>
