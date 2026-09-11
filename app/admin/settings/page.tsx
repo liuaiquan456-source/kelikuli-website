@@ -1,10 +1,19 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Save, Globe, Phone, MessageSquare, Shield, Bell, Building2, Share2, Upload, X } from "lucide-react";
+import { Save, Globe, Phone, MessageSquare, Shield, Bell, Building2, Share2, Upload, X, Image as ImageIcon, Plus, ChevronUp, ChevronDown, Trash2 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardBody, Input, Textarea, Switch } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
 
-type Tab = "general" | "contact" | "seo" | "notifications" | "security";
+type Tab = "general" | "contact" | "seo" | "banners" | "notifications" | "security";
+
+interface Banner {
+  id: number;
+  image: string;
+  link: string;
+  alt: string;
+  sortOrder: number;
+  active: boolean;
+}
 
 interface SiteSettings {
   siteName: string; siteTagline: string; siteEmail: string; logoUrl: string | null;
@@ -48,6 +57,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "general",       label: "General",       icon: <Globe className="w-4 h-4" /> },
   { id: "contact",       label: "Contact",        icon: <Phone className="w-4 h-4" /> },
   { id: "seo",           label: "SEO",            icon: <MessageSquare className="w-4 h-4" /> },
+  { id: "banners",       label: "Banners",        icon: <ImageIcon className="w-4 h-4" /> },
   { id: "notifications", label: "Notifications",  icon: <Bell className="w-4 h-4" /> },
   { id: "security",      label: "Security",       icon: <Shield className="w-4 h-4" /> },
 ];
@@ -59,14 +69,66 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const [banners, setBanners] = useState<Banner[]>([]);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/admin/settings")
       .then((r) => r.json())
       .then((data) => setSite((x) => ({ ...x, ...data })))
       .catch(() => {});
+    fetch("/api/banners")
+      .then((r) => r.json())
+      .then((data) => setBanners(Array.isArray(data) ? data : []))
+      .catch(() => {});
   }, []);
+
+  const patchBanner = async (id: number, fields: Partial<Banner>) => {
+    setBanners((prev) => prev.map((b) => (b.id === id ? { ...b, ...fields } : b)));
+    await fetch(`/api/banners/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+    }).catch(() => {});
+  };
+
+  const moveBanner = (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= banners.length) return;
+    const a = banners[index];
+    const b = banners[target];
+    const next = [...banners];
+    next[index] = { ...b, sortOrder: a.sortOrder };
+    next[target] = { ...a, sortOrder: b.sortOrder };
+    setBanners(next);
+    patchBanner(a.id, { sortOrder: b.sortOrder });
+    patchBanner(b.id, { sortOrder: a.sortOrder });
+  };
+
+  const deleteBanner = async (id: number) => {
+    if (!confirm("Remove this banner from the homepage carousel?")) return;
+    setBanners((prev) => prev.filter((b) => b.id !== id));
+    await fetch(`/api/banners/${id}`, { method: "DELETE" }).catch(() => {});
+  };
+
+  const handleAddBanner = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("file", file);
+    const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+    const uploadData = await uploadRes.json();
+    if (!uploadData.url) return;
+    const res = await fetch("/api/banners", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: uploadData.url, link: "", alt: "" }),
+    });
+    const banner = await res.json();
+    if (banner?.id) setBanners((prev) => [...prev, banner]);
+  };
 
   const s = (k: keyof SiteSettings, v: string | null) => setSite((x) => ({ ...x, [k]: v }));
   const n = (k: keyof NotifSettings, v: boolean) => setNotif((x) => ({ ...x, [k]: v }));
@@ -256,6 +318,70 @@ export default function SettingsPage() {
                 </div>
               )}
               <SaveBtn id="seo" fields={{ metaTitle: site.metaTitle, metaDesc: site.metaDesc, metaKeywords: site.metaKeywords, googleAnalyticsId: site.googleAnalyticsId }} />
+            </CardBody>
+          </Card>
+        )}
+
+        {/* ── Banners ── */}
+        {tab === "banners" && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2"><ImageIcon className="w-4 h-4 text-slate-500" /><CardTitle>Homepage Carousel Banners</CardTitle></div>
+                <Button size="sm" onClick={() => bannerInputRef.current?.click()}>
+                  <Plus className="w-3.5 h-3.5" />Add Banner
+                </Button>
+              </div>
+            </CardHeader>
+            <CardBody className="space-y-3">
+              <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleAddBanner} />
+              <p className="text-xs text-slate-400">
+                These appear after the two fixed hero slides. Set a link to send visitors somewhere on click; leave it blank to open the quote form instead.
+              </p>
+              {banners.length === 0 ? (
+                <p className="text-sm text-slate-400 text-center py-6">No banners yet — click "Add Banner" to upload one.</p>
+              ) : (
+                banners.map((b, i) => (
+                  <div key={b.id} className="flex items-center gap-3 border border-slate-200 rounded-xl p-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={b.image} alt="" className="w-20 h-14 object-cover rounded-lg bg-slate-100 shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Link URL (optional), e.g. /products?category=Prince Series"
+                      value={b.link}
+                      onChange={(e) => setBanners((prev) => prev.map((x) => (x.id === b.id ? { ...x, link: e.target.value } : x)))}
+                      onBlur={(e) => patchBanner(b.id, { link: e.target.value })}
+                      className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400"
+                    />
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => moveBanner(i, -1)}
+                        disabled={i === 0}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveBanner(i, 1)}
+                        disabled={i === banners.length - 1}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <Switch checked={b.active} onChange={(v) => patchBanner(b.id, { active: v })} />
+                    <button
+                      type="button"
+                      onClick={() => deleteBanner(b.id)}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))
+              )}
             </CardBody>
           </Card>
         )}

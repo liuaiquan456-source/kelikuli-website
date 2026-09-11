@@ -81,7 +81,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
     const files = Array.from(e.target.files ?? []);
     e.target.value = "";
     if (!files.length) return;
-    const slots = files.slice(0, 8 - form.images.length);
+    const slots = files;
     const previews = slots.map((f) => URL.createObjectURL(f));
     setForm((f) => ({ ...f, images: [...f.images, ...previews] }));
     for (let i = 0; i < slots.length; i++) {
@@ -274,7 +274,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
         <Card>
           <CardHeader>
             <CardTitle>Product Images</CardTitle>
-            <span className="text-xs text-slate-400">{form.images.length} / 8</span>
+            <span className="text-xs text-slate-400">{form.images.length} photo{form.images.length !== 1 ? "s" : ""}</span>
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-4 gap-3">
@@ -296,15 +296,13 @@ export default function AddProductForm({ product }: { product?: Product }) {
                   </button>
                 </div>
               ))}
-              {form.images.length < 8 && (
-                <div
-                  onClick={() => mainImgRef.current?.click()}
-                  className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-slate-50 cursor-pointer flex flex-col items-center justify-center gap-1.5 transition-colors"
-                >
-                  <Upload className="w-6 h-6 text-slate-300" />
-                  <span className="text-xs text-slate-400">Add Photo</span>
-                </div>
-              )}
+              <div
+                onClick={() => mainImgRef.current?.click()}
+                className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-slate-50 cursor-pointer flex flex-col items-center justify-center gap-1.5 transition-colors"
+              >
+                <Upload className="w-6 h-6 text-slate-300" />
+                <span className="text-xs text-slate-400">Add Photo</span>
+              </div>
             </div>
             <input ref={mainImgRef} type="file" accept="image/*" multiple className="hidden" onChange={handleAddImages} />
             {form.images.length > 1 && (

@@ -1,38 +1,32 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import InquiryModal from "@/components/InquiryModal";
 import { useTranslation } from "@/components/I18nProvider";
 
+interface AdminBanner {
+  id: number;
+  image: string;
+  link: string;
+  alt: string;
+}
 
-const slides = [
+// The first two slides carry bespoke, translated hero copy and stay
+// code-controlled. Everything after them is a plain admin-managed poster
+// (see Settings → Banners) fetched at runtime.
+const baseSlides = [
   {
     src: "/images/banner-6.png",
     alt: "Kelikuli Resin Toy Showroom — custom resin figurines and collectibles display",
-    contentType: "main",
+    contentType: "main" as const,
+    link: "",
   },
   {
     src: "/images/banner-lamp.png",
     alt: "Resin Decoration Light — artistically crafted resin lamps and figurines by Kelikuli",
-    contentType: "lamp",
-  },
-  {
-    src: "/images/王子海报2026626.png",
-    alt: "Prince Collection — storybook-inspired collectible resin figurines by Kelikuli",
-    contentType: "button",
-    btnPos: "center",
-  },
-  {
-    src: "/images/banner-2.png",
-    alt: "Custom Blind Box Toys — OEM ODM services for collectible figurines and blind box series",
-    contentType: "button",
-    btnPos: "right",
-  },
-  {
-    src: "/images/banner-3.png",
-    alt: "Custom Halloween and Christmas Decor — seasonal resin crafts wholesale manufacturer",
-    contentType: "button",
-    btnPos: "center",
+    contentType: "lamp" as const,
+    link: "",
   },
 ];
 
@@ -92,14 +86,35 @@ export default function HeroCarousel() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const [banners, setBanners] = useState<AdminBanner[]>([]);
+
+  useEffect(() => {
+    fetch("/api/banners?active=true")
+      .then((r) => r.json())
+      .then((data) => setBanners(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
+
+  const slides = useMemo(
+    () => [
+      ...baseSlides,
+      ...banners.map((b) => ({
+        src: b.image,
+        alt: b.alt || "Kelikuli — custom resin toys and figurines",
+        contentType: "button" as const,
+        link: b.link,
+      })),
+    ],
+    [banners],
+  );
 
   const next = useCallback(() => {
     setCurrent((c) => (c + 1) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   const prev = useCallback(() => {
     setCurrent((c) => (c - 1 + slides.length) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   useEffect(() => {
     if (isPaused) return;
@@ -143,16 +158,31 @@ export default function HeroCarousel() {
               }`}
               aria-hidden={i !== current}
             >
-              <Image
-                src={slide.src}
-                alt={slide.alt}
-                fill
-                sizes="100vw"
-                className="object-cover object-center"
-                priority={i === 0}
-                loading="eager"
-                draggable={false}
-              />
+              {slide.link ? (
+                <Link href={slide.link} className="absolute inset-0 block" aria-label={slide.alt}>
+                  <Image
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    sizes="100vw"
+                    className="object-cover object-center"
+                    priority={i === 0}
+                    loading="eager"
+                    draggable={false}
+                  />
+                </Link>
+              ) : (
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  sizes="100vw"
+                  className="object-cover object-center"
+                  priority={i === 0}
+                  loading="eager"
+                  draggable={false}
+                />
+              )}
 
               {/* Slide 1: main */}
               {slide.contentType === "main" && (
@@ -263,13 +293,9 @@ export default function HeroCarousel() {
             </div>
           ))}
 
-          {/* Other slides: simple button */}
-          {slides[current].contentType === "button" && (
-            <div className={`absolute bottom-8 z-20 flex items-center left-1/2 -translate-x-1/2 ${
-              slides[current].btnPos === "right"
-                ? "lg:left-auto lg:translate-x-0 lg:right-[20%]"
-                : ""
-            }`}>
+          {/* Poster slides with no click-through link: fall back to the inquiry modal */}
+          {slides[current].contentType === "button" && !slides[current].link && (
+            <div className="absolute bottom-8 z-20 flex items-center left-1/2 -translate-x-1/2">
               <button
                 onClick={() => setInquiryOpen(true)}
                 className="bg-[#C9A55A]/60 hover:bg-[#C9A55A]/80 backdrop-blur-sm border border-[#C4A97A]/50 text-white font-bold px-5 py-2 rounded-full text-sm tracking-wide transition-colors shadow-lg"

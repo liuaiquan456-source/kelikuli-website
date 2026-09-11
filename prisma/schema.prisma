@@ -139,6 +139,19 @@ model Inquiry {
   updatedAt DateTime @updatedAt
 }
 
+model Banner {
+  id        Int      @id @default(autoincrement())
+  image     String
+  link      String   @default("")
+  alt       String   @default("")
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
 model CartAccount {
   email     String   @id
   items     String   @default("[]")
