@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await req.json();
-  const { image, link, alt } = body;
+  const { image, link, alt, title, subtitle } = body;
   if (!image?.trim()) {
     return NextResponse.json({ error: "image is required" }, { status: 400 });
   }
@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
       image: image.trim(),
       link: link?.trim() ?? "",
       alt: alt?.trim() ?? "",
+      title: title?.trim() ?? "",
+      subtitle: subtitle?.trim() ?? "",
       sortOrder: (last?.sortOrder ?? -1) + 1,
     },
   });

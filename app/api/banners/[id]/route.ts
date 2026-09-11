@@ -12,6 +12,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (typeof body.image === "string") data.image = body.image.trim();
   if (typeof body.link === "string") data.link = body.link.trim();
   if (typeof body.alt === "string") data.alt = body.alt.trim();
+  if (typeof body.title === "string") data.title = body.title.trim();
+  if (typeof body.subtitle === "string") data.subtitle = body.subtitle.trim();
   if (typeof body.sortOrder === "number") data.sortOrder = body.sortOrder;
   if (typeof body.active === "boolean") data.active = body.active;
 

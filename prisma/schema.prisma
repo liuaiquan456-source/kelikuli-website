@@ -144,6 +144,8 @@ model Banner {
   image     String
   link      String   @default("")
   alt       String   @default("")
+  title     String   @default("")
+  subtitle  String   @default("")
   sortOrder Int      @default(0)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())

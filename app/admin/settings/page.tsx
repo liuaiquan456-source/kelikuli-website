@@ -11,6 +11,8 @@ interface Banner {
   image: string;
   link: string;
   alt: string;
+  title: string;
+  subtitle: string;
   sortOrder: number;
   active: boolean;
 }
@@ -342,17 +344,35 @@ export default function SettingsPage() {
                 <p className="text-sm text-slate-400 text-center py-6">No banners yet — click "Add Banner" to upload one.</p>
               ) : (
                 banners.map((b, i) => (
-                  <div key={b.id} className="flex items-center gap-3 border border-slate-200 rounded-xl p-3">
+                  <div key={b.id} className="flex items-start gap-3 border border-slate-200 rounded-xl p-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={b.image} alt="" className="w-20 h-14 object-cover rounded-lg bg-slate-100 shrink-0" />
-                    <input
-                      type="text"
-                      placeholder="Link URL (optional), e.g. /products?category=Prince Series"
-                      value={b.link}
-                      onChange={(e) => setBanners((prev) => prev.map((x) => (x.id === b.id ? { ...x, link: e.target.value } : x)))}
-                      onBlur={(e) => patchBanner(b.id, { link: e.target.value })}
-                      className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400"
-                    />
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <input
+                        type="text"
+                        placeholder="Headline (optional), e.g. Artistic Comfort for Pet Loss"
+                        value={b.title}
+                        onChange={(e) => setBanners((prev) => prev.map((x) => (x.id === b.id ? { ...x, title: e.target.value } : x)))}
+                        onBlur={(e) => patchBanner(b.id, { title: e.target.value })}
+                        className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Subtitle (optional)"
+                        value={b.subtitle}
+                        onChange={(e) => setBanners((prev) => prev.map((x) => (x.id === b.id ? { ...x, subtitle: e.target.value } : x)))}
+                        onBlur={(e) => patchBanner(b.id, { subtitle: e.target.value })}
+                        className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Link URL (optional), e.g. /products?category=Prince Series"
+                        value={b.link}
+                        onChange={(e) => setBanners((prev) => prev.map((x) => (x.id === b.id ? { ...x, link: e.target.value } : x)))}
+                        onBlur={(e) => patchBanner(b.id, { link: e.target.value })}
+                        className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400"
+                      />
+                    </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         type="button"

@@ -10,6 +10,8 @@ interface AdminBanner {
   image: string;
   link: string;
   alt: string;
+  title: string;
+  subtitle: string;
 }
 
 // The first two slides carry bespoke, translated hero copy and stay
@@ -103,6 +105,8 @@ export default function HeroCarousel() {
         alt: b.alt || "Kelikuli — custom resin toys and figurines",
         contentType: "button" as const,
         link: b.link,
+        title: b.title,
+        subtitle: b.subtitle,
       })),
     ],
     [banners],
@@ -290,11 +294,37 @@ export default function HeroCarousel() {
                   </div>
                 </div>
               )}
+
+              {/* Admin poster slides with a caption */}
+              {slide.contentType === "button" && slide.title && (
+                <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black/55 via-black/25 to-transparent pointer-events-none">
+                  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-[58%] lg:max-w-[42%]">
+                      <h2 className="font-black leading-tight drop-shadow-lg mb-2 text-white text-base sm:text-xl lg:text-2xl xl:text-[1.9rem]">
+                        {slide.title}
+                      </h2>
+                      {slide.subtitle && (
+                        <p className="hidden sm:block text-white/85 text-[10px] sm:text-xs lg:text-sm mb-4 font-medium drop-shadow">
+                          {slide.subtitle}
+                        </p>
+                      )}
+                      {!slide.link && (
+                        <button
+                          onClick={() => setInquiryOpen(true)}
+                          className="pointer-events-auto bg-[#C9A55A] hover:bg-[#B8935A] text-white font-bold px-5 py-2 rounded-full text-xs lg:text-sm tracking-wide transition-colors shadow-lg"
+                        >
+                          {t("home.hero.getQuote", "Get a Quote")}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 
-          {/* Poster slides with no click-through link: fall back to the inquiry modal */}
-          {slides[current].contentType === "button" && !slides[current].link && (
+          {/* Poster slides with no title and no click-through link: fall back to the inquiry modal */}
+          {slides[current].contentType === "button" && !slides[current].title && !slides[current].link && (
             <div className="absolute bottom-8 z-20 flex items-center left-1/2 -translate-x-1/2">
               <button
                 onClick={() => setInquiryOpen(true)}
