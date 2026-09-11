@@ -77,7 +77,7 @@ export default function ProductDetailClient({
   const [activeVariant, setActiveVariant] = useState<number | null>(null);
   const [imgError, setImgError] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"photos" | "video" | "attributes">("photos");
+  const [activeTab, setActiveTab] = useState<"photos" | "video">("photos");
 
   if (!product) {
     return (
@@ -119,17 +119,17 @@ export default function ProductDetailClient({
 
                 {/* Tab bar */}
                 <div className="flex border-b border-stone-200">
-                  {(["photos", ...(product.video ? ["video"] : []), "attributes"]).map((tab) => (
+                  {(["photos", ...(product.video ? (["video"] as const) : [])] as const).map((tab) => (
                     <button
                       key={tab}
-                      onClick={() => setActiveTab(tab as "photos" | "video" | "attributes")}
+                      onClick={() => setActiveTab(tab)}
                       className={`px-4 py-2 text-sm font-semibold capitalize transition-colors border-b-2 -mb-px ${
                         activeTab === tab
                           ? "border-stone-800 text-stone-800"
                           : "border-transparent text-stone-400 hover:text-stone-600"
                       }`}
                     >
-                      {tab === "photos" ? t("product.tab.photos", "Photos") : tab === "video" ? t("product.tab.video", "Video") : t("product.tab.attributes", "Attributes")}
+                      {tab === "photos" ? t("product.tab.photos", "Photos") : t("product.tab.video", "Video")}
                     </button>
                   ))}
                 </div>
@@ -198,18 +198,6 @@ export default function ProductDetailClient({
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm">{t("product.noVideo", "No video available")}</div>
                     )}
-                  </div>
-                )}
-
-                {/* Attributes tab */}
-                {activeTab === "attributes" && (
-                  <div className="rounded-xl border border-stone-100 overflow-hidden">
-                    {attrs.map((attr, i) => (
-                      <div key={attr.key} className={`flex text-sm ${i % 2 === 0 ? "bg-stone-50" : "bg-white"}`}>
-                        <div className="w-[42%] px-4 py-2.5 text-stone-500 font-medium shrink-0">{attr.key}</div>
-                        <div className="flex-1 px-4 py-2.5 text-stone-800 font-semibold border-l border-stone-100">{attr.value}</div>
-                      </div>
-                    ))}
                   </div>
                 )}
 

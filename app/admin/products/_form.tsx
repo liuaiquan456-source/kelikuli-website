@@ -334,11 +334,13 @@ export default function AddProductForm({ product }: { product?: Product }) {
             ) : (
               <div
                 onClick={() => videoRef.current?.click()}
-                className="aspect-video rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-slate-50 cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors"
+                className="h-24 rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-slate-50 cursor-pointer flex items-center justify-center gap-3 transition-colors"
               >
-                <Upload className="w-8 h-8 text-slate-300" />
-                <span className="text-sm text-slate-400">Click to upload video</span>
-                <span className="text-xs text-slate-300">MP4, MOV, WebM — max 100MB</span>
+                <Upload className="w-5 h-5 text-slate-300 shrink-0" />
+                <div className="text-left">
+                  <p className="text-sm text-slate-400 leading-tight">Click to upload video</p>
+                  <p className="text-xs text-slate-300 leading-tight">MP4, MOV, WebM — max 100MB</p>
+                </div>
               </div>
             )}
             <input ref={videoRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
