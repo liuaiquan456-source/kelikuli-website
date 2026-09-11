@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
+import ArticleImage from "@/components/ArticleImage";
 import { useTranslation } from "@/components/I18nProvider";
 
 interface Variant { name: string; image: string; }
@@ -38,14 +39,6 @@ function getAttributes(name: string, category: string, t: Translator) {
   if (n.includes("bobble")) productType = ["product.attrValue.bobbleHead", "Bobble Head"];
   if (n.includes("statue") || n.includes("sculpture")) productType = ["product.attrValue.statueSculpture", "Statue / Sculpture"];
 
-  let style: [string, string] = ["product.attrValue.cuteCartoon", "Cute / Cartoon"];
-  if (n.includes("astronaut") || n.includes("space")) style = ["product.attrValue.sciFiAstronaut", "Sci-Fi / Astronaut"];
-  if (n.includes("prince") || n.includes("princess") || n.includes("fairy")) style = ["product.attrValue.fairyTale", "Fairy Tale"];
-  if (n.includes("animal") || n.includes("cat") || n.includes("rabbit") || n.includes("panda")) style = ["product.attrValue.animal", "Animal"];
-  if (n.includes("religious") || n.includes("angel") || n.includes("buddha")) style = ["product.attrValue.religious", "Religious"];
-  if (n.includes("halloween")) style = ["product.attrValue.halloween", "Halloween"];
-  if (n.includes("christmas") || n.includes("santa")) style = ["product.attrValue.christmas", "Christmas"];
-
   const moqCount = category === "Snow Globe" || category === "Blind Box Series" ? 100 : 50;
   const moqValue = `${moqCount} ${t("product.attrValue.pcs", "pcs")}`;
 
@@ -53,9 +46,6 @@ function getAttributes(name: string, category: string, t: Translator) {
     { id: "application", key: t("product.attrLabel.application", "Application"),   value: t(application[0], application[1]) },
     { id: "productType", key: t("product.attrLabel.productType", "Product Type"),  value: t(productType[0], productType[1]) },
     { id: "material",    key: t("product.attrLabel.material", "Material"),         value: t("product.attrValue.resin", "Resin") },
-    { id: "technique",   key: t("product.attrLabel.technique", "Technique"),       value: t("product.attrValue.handmade", "Handmade / Hand-Painted") },
-    { id: "style",       key: t("product.attrLabel.style", "Style"),                value: t(style[0], style[1]) },
-    { id: "feature",     key: t("product.attrLabel.feature", "Feature"),            value: t("product.attrValue.customDesign", "Custom Design Available") },
     { id: "brandName",   key: t("product.attrLabel.brandName", "Brand Name"),       value: "Kelikuli" },
     { id: "placeOrigin", key: t("product.attrLabel.placeOrigin", "Place of Origin"), value: t("product.attrValue.zhejiang", "Zhejiang, China") },
     { id: "size",        key: t("product.attrLabel.size", "Size"),                  value: t("product.attrValue.customSize", "Custom Size Accepted") },
@@ -172,24 +162,6 @@ export default function ProductDetailClient({
                         </>
                       )}
                     </div>
-                    {productImages.length > 1 && (
-                      <div>
-                        <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">{t("product.moreImages", "More Photos")}</p>
-                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                          {productImages.map((src, i) => (
-                            <button
-                              key={i}
-                              onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
-                              className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
-                                activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
-                              }`}
-                            >
-                              <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="120px" className="object-cover" />
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </>
                 )}
 
@@ -232,6 +204,20 @@ export default function ProductDetailClient({
                     </div>
                   </div>
                 )}
+
+                {/* Other product photos, shown full-width one after another like a detail page */}
+                {productImages.length > 1 && (
+                  <div className="flex flex-col gap-3 pt-2 border-t border-stone-100">
+                    {productImages.map((src, i) => (
+                      <ArticleImage
+                        key={i}
+                        src={src}
+                        alt={`${product.name} — image ${i + 1}`}
+                        className="w-full h-auto rounded-xl block"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}
@@ -270,6 +256,25 @@ export default function ProductDetailClient({
                     {t("floatingContact.chatNow", "Chat Now")}
                   </Link>
                 </div>
+
+                {productImages.length > 1 && (
+                  <div className="mb-6">
+                    <p className="text-xs font-black text-stone-500 uppercase tracking-wider mb-2">{t("product.moreImages", "More Photos")}</p>
+                    <div className="grid grid-cols-6 sm:grid-cols-8 gap-1.5">
+                      {productImages.map((src, i) => (
+                        <button
+                          key={i}
+                          onClick={() => { setActiveImg(i); setActiveVariant(null); setImgError(false); }}
+                          className={`relative aspect-square rounded-md overflow-hidden border-2 transition-colors ${
+                            activeVariant === null && i === activeImg ? "border-[#C9A55A]" : "border-stone-200 hover:border-stone-300"
+                          }`}
+                        >
+                          <ProductImage src={src} alt={`${product.name} — image ${i + 1}`} sizes="60px" className="object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="mb-6">
                   <h2 className="text-sm font-black text-stone-800 uppercase tracking-wider mb-3">{t("product.keyAttributes", "Key Attributes")}</h2>

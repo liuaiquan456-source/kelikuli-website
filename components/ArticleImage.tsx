@@ -5,7 +5,15 @@ import { useEffect, useRef, useState } from "react";
 // /images/uploads/* files that were lost in a host migration and can't be
 // recovered from the image cache (they were never optimized). Hide a broken
 // one instead of showing the browser's broken-image glyph + alt text.
-export default function ArticleImage({ src, alt }: { src: string; alt: string }) {
+export default function ArticleImage({
+  src,
+  alt,
+  className = "max-w-full rounded-xl my-4 mx-auto block",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
   const [broken, setBroken] = useState(false);
   const ref = useRef<HTMLImageElement>(null);
 
@@ -23,7 +31,7 @@ export default function ArticleImage({ src, alt }: { src: string; alt: string })
       src={src}
       alt={alt}
       loading="lazy"
-      className="max-w-full rounded-xl my-4 mx-auto block"
+      className={className}
       onError={() => setBroken(true)}
     />
   );
