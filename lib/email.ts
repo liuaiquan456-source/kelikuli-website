@@ -18,10 +18,17 @@ export async function sendInquiryEmail(data: {
   phone: string;
   product: string;
   message: string;
+  attachments?: { url: string; name: string }[];
 }) {
   const siteEmail = await prisma.setting.findUnique({ where: { key: "siteEmail" } });
   const to = siteEmail?.value || process.env.INQUIRY_EMAIL || "681682@qq.com";
   const from = process.env.SMTP_USER ?? "";
+
+  const attachmentsHtml = data.attachments?.length
+    ? `<tr><td style="padding:8px 0;color:#6b7280;vertical-align:top;border-top:1px solid #f3f4f6">Attachments</td><td style="padding:8px 0;color:#111;border-top:1px solid #f3f4f6">${data.attachments
+        .map((a) => `<a href="https://kelikuli.com${a.url}" style="color:#C9A55A;display:block;margin-bottom:4px" target="_blank" rel="noopener noreferrer">${a.name}</a>`)
+        .join("")}</td></tr>`
+    : "";
 
   await transporter.sendMail({
     from: `"Kelikuli Inquiry" <${from}>`,
@@ -40,6 +47,7 @@ export async function sendInquiryEmail(data: {
             <tr><td style="padding:8px 0;color:#6b7280;vertical-align:top">Phone/WhatsApp</td><td style="padding:8px 0;color:#111">${data.phone || "—"}</td></tr>
             <tr><td style="padding:8px 0;color:#6b7280;vertical-align:top">Products</td><td style="padding:8px 0;color:#111">${data.product || "—"}</td></tr>
             <tr><td style="padding:8px 0;color:#6b7280;vertical-align:top;border-top:1px solid #f3f4f6">Message</td><td style="padding:8px 0;color:#111;border-top:1px solid #f3f4f6;white-space:pre-line">${data.message}</td></tr>
+            ${attachmentsHtml}
           </table>
         </div>
         <div style="padding:12px 24px;background:#f9fafb;font-size:12px;color:#9ca3af">

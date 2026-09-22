@@ -144,6 +144,24 @@ export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEma
     setLoading(true);
     setError("");
     try {
+      // Upload any attached files first. Best-effort: a single failed file
+      // shouldn't block the whole inquiry from going through — the customer
+      // still gets through with whatever succeeded.
+      const uploaded = await Promise.allSettled(
+        files.map(async (file) => {
+          const fd = new FormData();
+          fd.append("file", file);
+          const res = await fetch("/api/inquiries/upload", { method: "POST", body: fd });
+          if (!res.ok) throw new Error("upload failed");
+          const data = await res.json();
+          return { url: data.url as string, name: data.name as string };
+        })
+      );
+      const attachments = uploaded
+        .filter((r): r is PromiseFulfilledResult<{ url: string; name: string }> => r.status === "fulfilled")
+        .map((r) => r.value);
+      const failedCount = uploaded.length - attachments.length;
+
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -155,9 +173,13 @@ export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEma
           product:   form.products.join(", "),
           message:   form.message,
           cartItems: cartProducts ?? [],
+          attachments,
         }),
       });
       if (!res.ok) throw new Error("Submission failed");
+      if (failedCount > 0) {
+        setError(t("inquiryModal.someFilesFailed", `Inquiry sent, but ${failedCount} file(s) failed to upload. Please email them directly if needed.`));
+      }
       setSubmitted(true);
     } catch {
       setError(t("inquiryModal.submitError", "Failed to submit. Please try again or contact us directly."));
@@ -234,7 +256,8 @@ export default function InquiryModal({ isOpen, onClose, cartProducts, defaultEma
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-stone-900 mb-2">{t("inquiryModal.submittedTitle", "Inquiry Submitted!")}</h3>
-              <p className="text-stone-500 text-sm mb-6">{t("inquiryModal.submittedDesc", "Our representative will contact you soon.")}</p>
+              <p className={`text-stone-500 text-sm ${error ? "mb-2" : "mb-6"}`}>{t("inquiryModal.submittedDesc", "Our representative will contact you soon.")}</p>
+              {error && <p className="text-amber-600 text-xs mb-4">{error}</p>}
               <button onClick={handleClose} className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm">
                 {t("inquiryModal.close", "Close")}
               </button>

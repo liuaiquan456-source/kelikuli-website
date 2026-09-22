@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import {
   Inbox, Mail, MailOpen, CheckCheck, Trash2, RefreshCw, ChevronDown, ChevronUp,
-  User, Building2, Phone, Tag, Calendar, MessageSquare,
+  User, Building2, Phone, Tag, Calendar, MessageSquare, Paperclip, Download,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, Badge, Button } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
@@ -16,6 +16,7 @@ interface Inquiry {
   product: string;
   message: string;
   cartItems: string;
+  attachments: string;
   status: "unread" | "read" | "replied";
   notes: string;
   createdAt: string;
@@ -257,6 +258,34 @@ export default function InquiriesPage() {
                           </div>
                         );
                       } catch { return null; }
+                    })()}
+
+                    {(() => {
+                      let items: { url: string; name: string }[] = [];
+                      try { items = inq.attachments ? JSON.parse(inq.attachments) : []; } catch { /* ignore */ }
+                      if (items.length === 0) return null;
+                      return (
+                        <div className="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-100">
+                          <p className="text-[10px] text-blue-400 font-medium uppercase tracking-wide mb-3 flex items-center gap-1.5">
+                            <Paperclip className="w-3 h-3" /> Attachments ({items.length})
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {items.map((a, i) => (
+                              <a
+                                key={i}
+                                href={a.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                                className="inline-flex items-center gap-1.5 bg-white rounded-lg px-3 py-1.5 border border-blue-100 text-xs text-blue-700 hover:bg-blue-100 transition-colors"
+                              >
+                                <Download className="w-3 h-3" />
+                                <span className="truncate max-w-[180px]">{a.name || `File ${i + 1}`}</span>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      );
                     })()}
 
                     <div className="bg-slate-50 rounded-xl p-4 mb-4">

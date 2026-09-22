@@ -12,13 +12,18 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { name, company, email, phone, product, message, cartItems } = body;
+  const { name, company, email, phone, product, message, cartItems, attachments } = body;
 
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
     return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
   }
 
   const cartItemsStr = cartItems ? JSON.stringify(cartItems) : "";
+  // attachments: [{ url, name }] — uploaded via /api/inquiries/upload before this call.
+  const attachmentList: { url: string; name: string }[] = Array.isArray(attachments)
+    ? attachments.filter((a) => a && typeof a.url === "string" && a.url.startsWith("/uploads/inquiries/"))
+    : [];
+  const attachmentsStr = JSON.stringify(attachmentList);
 
   const inquiry = await prisma.inquiry.create({
     data: {
@@ -29,6 +34,7 @@ export async function POST(req: NextRequest) {
       product: product?.trim() ?? "",
       message: message.trim(),
       cartItems: cartItemsStr,
+      attachments: attachmentsStr,
     },
   });
 
@@ -40,6 +46,7 @@ export async function POST(req: NextRequest) {
     phone: phone?.trim() ?? "",
     product: product?.trim() ?? "",
     message: message.trim(),
+    attachments: attachmentList,
   }).catch((err) => console.error("[email] inquiry notification failed:", err));
 
   return NextResponse.json({ inquiry }, { status: 201 });
