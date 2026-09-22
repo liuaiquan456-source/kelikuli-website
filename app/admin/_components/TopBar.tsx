@@ -11,8 +11,6 @@ const titles: Record<string, string> = {
   "/admin/news/new":            "New Article",
   "/admin/inquiries":           "Customer Inquiries",
   "/admin/analytics/sources":   "Traffic Sources",
-  "/admin/analytics/keywords":  "Keyword Analysis",
-  "/admin/analytics/pages":     "Page Views",
   "/admin/analytics/ip-logs":   "IP Access Logs",
   "/admin/users":               "User Management",
   "/admin/settings":            "System Settings",
