@@ -19,6 +19,8 @@ const navLinks = [
   { key: "header.nav.contact",  label: "Contact", href: "/contact" },
 ];
 
+const CUSTOM_LAB_URL = "https://custom.kelikuli.com";
+
 interface SearchResult {
   type: "product" | "news";
   id: string;
@@ -134,6 +136,12 @@ export default function Header() {
                 {t(link.key, link.label)}
               </Link>
             ))}
+            <a
+              href={CUSTOM_LAB_URL}
+              className="text-sm font-medium transition-colors pb-0.5 text-stone-300 hover:text-[#C9A55A]"
+            >
+              {t("header.nav.customLab", "Custom Lab")}
+            </a>
             <button
               onClick={() => setInquiryOpen(true)}
               className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-5 py-1.5 rounded-full transition-colors shadow-sm"
@@ -311,6 +319,13 @@ export default function Header() {
                   {t(link.key, link.label)}
                 </Link>
               ))}
+              <a
+                href={CUSTOM_LAB_URL}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 px-3 py-3.5 rounded-xl text-sm font-medium transition-colors mb-1 text-stone-300 hover:bg-white/5 hover:text-[#C9A55A]"
+              >
+                {t("header.nav.customLab", "Custom Lab")}
+              </a>
             </nav>
 
             {/* Bottom actions */}

@@ -17,6 +17,7 @@ export const TRANSLATION_KEYS: TranslationKeyEntry[] = [
   { key: "header.nav.faq", section: "Header", en: "FAQ" },
   { key: "header.nav.about", section: "Header", en: "About Us" },
   { key: "header.nav.contact", section: "Header", en: "Contact" },
+  { key: "header.nav.customLab", section: "Header", en: "Custom Lab" },
   { key: "header.inquiryNow", section: "Header", en: "Inquiry Now" },
   { key: "header.search", section: "Header", en: "Search" },
   { key: "header.searchPlaceholder", section: "Header", en: "Search products, news..." },
