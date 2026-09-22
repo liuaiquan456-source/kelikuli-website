@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CUSTOM_LAB_TAG } from "@/lib/custom-lab";
+import { CATEGORIES } from "@/app/admin/_data/mock";
 
 // Server-to-server intake for the KELIKULI Custom Lab (custom.kelikuli.com).
 // Every submission is created as an inactive (= draft) product — nothing
@@ -29,10 +30,18 @@ export async function POST(req: NextRequest) {
   }
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  const category = typeof body.category === "string" ? body.category.trim() : "";
-  if (!name || !category) {
+  const submittedCategory = typeof body.category === "string" ? body.category.trim() : "";
+  if (!name || !submittedCategory) {
     return NextResponse.json({ error: "`name` and `category` are required" }, { status: 400 });
   }
+
+  // Only the site's existing categories show up in category filters/dropdowns
+  // and on the product card's visible category label. A category the Custom
+  // Lab invents wouldn't match any filter and would look wrong shown to a
+  // customer, so unrecognized ones are stored as "Uncategorized" — the
+  // original text is kept in specs so the reviewing admin knows what to pick.
+  const categoryMatches = CATEGORIES.includes(submittedCategory);
+  const category = categoryMatches ? submittedCategory : "Uncategorized";
 
   const images = Array.isArray(body.images)
     ? body.images.filter((x): x is string => typeof x === "string")
@@ -44,9 +53,10 @@ export async function POST(req: NextRequest) {
 
   const customerNote = typeof body.customerNote === "string" ? body.customerNote.trim() : "";
   const specsInput = typeof body.specs === "string" ? body.specs : "";
-  const specs = customerNote
-    ? `Customer request note (via Custom Lab):\n${customerNote}\n\n---\n${specsInput}`
-    : specsInput;
+  const categoryNote = categoryMatches
+    ? ""
+    : `Submitted category "${submittedCategory}" isn't one of the site's categories — stored as Uncategorized. Pick the closest match before publishing.\n\n---\n`;
+  const specs = `${categoryNote}${customerNote ? `Customer request note (via Custom Lab):\n${customerNote}\n\n---\n` : ""}${specsInput}`;
 
   const product = await prisma.product.create({
     data: {
