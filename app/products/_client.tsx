@@ -12,6 +12,7 @@ import { useCartGate } from "@/components/CartGateProvider";
 interface Product {
   id: number; name: string; category: string; image: string;
   price: number; status: string; moq: number;
+  description?: string; tags?: string[];
 }
 
 const categories = [
@@ -322,6 +323,144 @@ export default function ProductsClient() {
 
         <div className="flex gap-6 items-start">
 
+          {/* Product Grid */}
+          <div className="flex-1 min-w-0">
+            <h2 className="sr-only">Resin Figurine Products — Browse &amp; Inquire</h2>
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-stone-200 overflow-hidden animate-pulse">
+                    <div className="aspect-[4/3] bg-stone-100" />
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-stone-100 rounded w-3/4" />
+                      <div className="h-3 bg-stone-100 rounded w-full" />
+                      <div className="h-3 bg-stone-100 rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : paged.length === 0 ? (
+              <div className="text-center py-20 text-stone-400 text-sm">{t("products.noResults", "No products found.")}</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paged.map((product) => {
+                  const catMeta = categories.find((c) => c.label === product.category);
+                  return (
+                  <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-400 hover:shadow-lg transition-all duration-200 relative flex flex-col">
+                    <Link href={`/products/${product.id}`} className="block">
+                      <div className="relative aspect-[4/3] bg-stone-50 overflow-hidden">
+                        <ProductImage
+                          src={product.image}
+                          alt={product.name}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {product.category && (
+                          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-stone-700 text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-sm">
+                            {catMeta && <span className="text-[#C9A55A]">{catMeta.icon}</span>}
+                            {product.category}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                    <button
+                      onClick={() => toggleWish({ id: product.id, name: product.name, category: product.category, image: product.image, moq: product.moq })}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors z-10"
+                    >
+                      <svg
+                        className={`w-4 h-4 transition-colors ${isWished(product.id) ? "text-orange-500 fill-orange-500" : "text-stone-400"}`}
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                      </svg>
+                    </button>
+
+                    <div className="p-4 flex-1 flex flex-col">
+                      <Link href={`/products/${product.id}`} className="block flex-1">
+                        <h3 className="text-stone-800 text-base font-bold leading-snug line-clamp-2">
+                          {product.name}
+                        </h3>
+                        {product.description && (
+                          <p className="text-stone-500 text-xs mt-1.5 leading-relaxed line-clamp-2">
+                            {product.description}
+                          </p>
+                        )}
+                        {product.tags && product.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-3">
+                            {product.tags.slice(0, 3).map((tag) => (
+                              <span key={tag} className="text-[10px] font-medium uppercase tracking-wide text-stone-500 bg-stone-100 px-2 py-1 rounded-full">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </Link>
+
+                      <div className="mt-4 pt-3 border-t border-stone-100 flex gap-2">
+                        <button
+                          onClick={() => addToCart({ id: product.id, name: product.name, category: product.category, image: product.image, moq: product.moq })}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all border ${
+                            isInCart(product.id)
+                              ? "bg-orange-500 border-orange-500"
+                              : "bg-white border-stone-200 hover:border-orange-400"
+                          }`}
+                        >
+                          <svg className={`w-4 h-4 ${isInCart(product.id) ? "text-white" : "text-stone-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => setInquiryOpen(true)}
+                          className="flex-1 text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-xl py-2.5 transition-colors"
+                        >
+                          + {t("header.inquiryNow", "Inquiry Now")}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1.5 mt-8">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:border-[#C9A55A] hover:text-[#C9A55A] disabled:opacity-30 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setPage(n)}
+                    className={`w-8 h-8 rounded-full text-sm font-semibold transition-colors ${
+                      page === n
+                        ? "bg-[#C9A55A] text-white"
+                        : "border border-stone-200 text-stone-600 hover:border-[#C9A55A] hover:text-[#C9A55A]"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:border-[#C9A55A] hover:text-[#C9A55A] disabled:opacity-30 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Sidebar */}
           <aside className="hidden lg:flex flex-col gap-4 w-56 shrink-0">
             {/* Search */}
@@ -385,117 +524,6 @@ export default function ProductsClient() {
               </Link>
             </div>
           </aside>
-
-          {/* Product Grid */}
-          <div className="flex-1 min-w-0">
-            <h2 className="sr-only">Resin Figurine Products — Browse &amp; Inquire</h2>
-            {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-stone-200 overflow-hidden animate-pulse">
-                    <div className="aspect-square bg-stone-100" />
-                    <div className="p-3 space-y-2">
-                      <div className="h-3 bg-stone-100 rounded w-3/4" />
-                      <div className="h-2 bg-stone-100 rounded w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : paged.length === 0 ? (
-              <div className="text-center py-20 text-stone-400 text-sm">{t("products.noResults", "No products found.")}</div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {paged.map((product) => (
-                  <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-400 hover:shadow-lg transition-all duration-200 relative">
-                    <Link href={`/products/${product.id}`} className="block">
-                      <div className="relative aspect-square bg-stone-50 overflow-hidden">
-                        <ProductImage
-                          src={product.image}
-                          alt={product.name}
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="p-3 pb-2">
-                        <p className="text-stone-700 text-sm font-medium line-clamp-2 leading-snug">
-                          {product.name}
-                        </p>
-                        <p className="text-[#C9A55A] text-xs mt-1.5 font-semibold tracking-wide">{product.category}</p>
-                        <div className="mt-2 flex gap-1.5">
-                          <button
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart({ id: product.id, name: product.name, category: product.category, image: product.image, moq: product.moq }); }}
-                            className={`w-9 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all border ${
-                              isInCart(product.id)
-                                ? "bg-orange-500 border-orange-500"
-                                : "bg-white border-stone-200 hover:border-orange-400"
-                            }`}
-                          >
-                            <svg className={`w-4 h-4 ${isInCart(product.id) ? "text-white" : "text-stone-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInquiryOpen(true); }}
-                            className="flex-1 text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg py-1 transition-colors"
-                          >
-                            {t("header.inquiryNow", "Inquiry Now")}
-                          </button>
-                        </div>
-                      </div>
-                    </Link>
-                    <button
-                      onClick={() => toggleWish({ id: product.id, name: product.name, category: product.category, image: product.image, moq: product.moq })}
-                      className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white transition-colors z-10"
-                    >
-                      <svg
-                        className={`w-4 h-4 transition-colors ${isWished(product.id) ? "text-orange-500 fill-orange-500" : "text-stone-400"}`}
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-8">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:border-[#C9A55A] hover:text-[#C9A55A] disabled:opacity-30 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    className={`w-8 h-8 rounded-full text-sm font-semibold transition-colors ${
-                      page === n
-                        ? "bg-[#C9A55A] text-white"
-                        : "border border-stone-200 text-stone-600 hover:border-[#C9A55A] hover:text-[#C9A55A]"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:border-[#C9A55A] hover:text-[#C9A55A] disabled:opacity-30 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
         </div>
         </div>
       </section>
