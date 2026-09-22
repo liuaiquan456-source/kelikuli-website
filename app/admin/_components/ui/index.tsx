@@ -48,8 +48,8 @@ export function Badge({ label, variant="gray" }: BadgeProps) {
 }
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
-export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("bg-white rounded-xl border border-slate-200 shadow-sm", className)}>{children}</div>;
+export function Card({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) {
+  return <div className={cn("bg-white rounded-xl border border-slate-200 shadow-sm", className)} onClick={onClick}>{children}</div>;
 }
 export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
   return <div className={cn("px-5 py-4 border-b border-slate-100 flex items-center justify-between", className)}>{children}</div>;

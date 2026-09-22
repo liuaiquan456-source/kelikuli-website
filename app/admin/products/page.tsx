@@ -1,10 +1,11 @@
 "use client";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Search, Pencil, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown, Download, Package, CheckSquare, RefreshCw } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown, Download, Package, CheckSquare, RefreshCw, Sparkles } from "lucide-react";
 import { Button, Badge, Card, Modal, Table, Th, Td, Tr } from "@/app/admin/_components/ui";
 import { CATEGORIES } from "@/app/admin/_data/mock";
 import { cn } from "@/app/admin/_lib/utils";
+import { CUSTOM_LAB_TAG } from "@/lib/custom-lab";
 
 interface Product {
   id: number; name: string; category: string; price: number;
@@ -46,7 +47,8 @@ export default function ProductList() {
 
   const filtered = useMemo(() => {
     const list = products.filter((p) => {
-      const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
+      const q = search.toLowerCase();
+      const matchSearch = p.name.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q));
       const matchCat    = catFilter    === "All" || p.category === catFilter;
       const matchStatus = statusFilter === "All" || p.status   === statusFilter;
       return matchSearch && matchCat && matchStatus;
@@ -102,12 +104,19 @@ export default function ProductList() {
   return (
     <div className="space-y-4">
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Total Products", value: products.length, color: "bg-blue-100 text-blue-600",     icon: <Package className="w-5 h-5" /> },
           { label: "Active",         value: products.filter(p=>p.status==="active").length, color: "bg-emerald-100 text-emerald-600", icon: <CheckSquare className="w-5 h-5" /> },
-        ].map(({ label, value, color, icon }) => (
-          <Card key={label}>
+          {
+            label: "Custom Lab (Pending Review)",
+            value: products.filter(p => p.status !== "active" && p.tags.includes(CUSTOM_LAB_TAG)).length,
+            color: "bg-amber-100 text-amber-600",
+            icon: <Sparkles className="w-5 h-5" />,
+            onClick: () => { setStatusFilter("inactive"); setSearch(CUSTOM_LAB_TAG); },
+          },
+        ].map(({ label, value, color, icon, onClick }) => (
+          <Card key={label} className={onClick ? "cursor-pointer hover:ring-2 hover:ring-amber-300 transition-shadow" : undefined} onClick={onClick}>
             <div className="flex items-center gap-3 p-4">
               <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", color)}>{icon}</div>
               <div>
