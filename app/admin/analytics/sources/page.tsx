@@ -179,19 +179,19 @@ export default function TrafficSourcesPage() {
       </div>
 
       {/* Top source stat cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-5">
         {topCards.map((s, i) => (
           <Card key={`${s.source}-${i}`}>
-            <CardBody className="flex items-center gap-3">
+            <CardBody className="flex items-center gap-4 py-7">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0"
                 style={{ background: color(s.source) + "20", color: color(s.source) }}
               >
-                <Globe className="w-5 h-5" />
+                <Globe className="w-8 h-8" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-slate-500 truncate">{s.source}</p>
-                <p className="text-2xl font-bold text-slate-800">{s.visits.toLocaleString()}</p>
+                <p className="text-sm text-slate-500 truncate">{s.source}</p>
+                <p className="text-4xl font-bold text-slate-800">{s.visits.toLocaleString()}</p>
                 <p className="text-xs text-slate-400">
                   {s.visits ? `${((s.visits / totalForShare) * 100).toFixed(1)}% of traffic` : "No data"}
                 </p>
