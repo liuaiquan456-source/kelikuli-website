@@ -201,94 +201,78 @@ export default function TrafficSourcesPage() {
         ))}
       </div>
 
-      {/* Traffic share breakdown */}
-      <Card>
-        <CardHeader><CardTitle>Traffic Share Breakdown</CardTitle></CardHeader>
-        <CardBody className="space-y-4">
-          {sources.length === 0 ? (
-            <p className="text-sm text-slate-400 text-center py-8">No traffic data yet</p>
-          ) : (
-            sources.map((s) => {
-              const pct = (s.visits / totalForShare) * 100;
-              return (
-                <div key={s.source}>
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-medium text-slate-700">{s.source}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-500">{s.visits.toLocaleString()} visits</span>
-                      <span className="text-slate-400 w-12 text-right">{pct.toFixed(1)}%</span>
-                    </div>
+      {/* Traffic share / Top countries / Top IPs — compact, side by side */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* Traffic share breakdown */}
+        <Card>
+          <CardHeader><CardTitle>Traffic Share</CardTitle></CardHeader>
+          <CardBody className="space-y-1.5 max-h-64 overflow-y-auto">
+            {sources.length === 0 ? (
+              <p className="text-xs text-slate-400 text-center py-4">No traffic data yet</p>
+            ) : (
+              sources.map((s) => {
+                const pct = (s.visits / totalForShare) * 100;
+                return (
+                  <div key={s.source} className="flex items-center gap-2 py-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color(s.source) }} />
+                    <span className="text-xs text-slate-700 truncate flex-1 min-w-0">{s.source}</span>
+                    <span className="text-xs text-slate-500 shrink-0">{s.visits.toLocaleString()}</span>
+                    <span className="text-[10px] text-slate-400 w-9 text-right shrink-0">{pct.toFixed(1)}%</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full">
-                    <div className="h-2 rounded-full transition-all" style={{ width: `${pct}%`, background: color(s.source) }} />
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </CardBody>
-      </Card>
+                );
+              })
+            )}
+          </CardBody>
+        </Card>
 
-      {/* Country breakdown */}
-      <Card>
-        <CardHeader><CardTitle>Top Countries / Regions</CardTitle></CardHeader>
-        <CardBody className="space-y-3">
-          {!summary?.byCountry?.length ? (
-            <p className="text-sm text-slate-400 text-center py-6">No location data yet</p>
-          ) : (
-            summary.byCountry.map((c) => {
-              const pct = (c.visits / (summary.totalVisits || 1)) * 100;
-              return (
-                <div key={c.country} className="flex items-center gap-3">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="text-xs font-medium text-slate-700 w-40 truncate">{c.country}</span>
-                  <div className="flex-1 h-1.5 bg-slate-100 rounded-full">
-                    <div className="h-1.5 rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="text-xs text-slate-500 w-16 text-right">{c.visits.toLocaleString()}</span>
+        {/* Country breakdown */}
+        <Card>
+          <CardHeader><CardTitle>Top Countries / Regions</CardTitle></CardHeader>
+          <CardBody className="space-y-1.5 max-h-64 overflow-y-auto">
+            {!summary?.byCountry?.length ? (
+              <p className="text-xs text-slate-400 text-center py-4">No location data yet</p>
+            ) : (
+              summary.byCountry.map((c) => (
+                <div key={c.country} className="flex items-center gap-2 py-0.5">
+                  <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                  <span className="text-xs text-slate-700 truncate flex-1 min-w-0">{c.country}</span>
+                  <span className="text-xs text-slate-500 shrink-0">{c.visits.toLocaleString()}</span>
                 </div>
-              );
-            })
-          )}
-        </CardBody>
-      </Card>
+              ))
+            )}
+          </CardBody>
+        </Card>
 
-      {/* Top IPs by visit count — click one to filter Recent Visitors below */}
-      <Card>
-        <CardHeader><CardTitle>Top IP Addresses</CardTitle></CardHeader>
-        <CardBody className="space-y-3">
-          {!summary?.byIp?.length ? (
-            <p className="text-sm text-slate-400 text-center py-6">No visit data yet</p>
-          ) : (
-            (() => {
-              const maxIpVisits = Math.max(...summary.byIp.map((r) => r.visits), 1);
-              return summary.byIp.map((r) => {
-                const pct = (r.visits / maxIpVisits) * 100;
+        {/* Top IPs by visit count — click one to filter Recent Visitors below */}
+        <Card>
+          <CardHeader><CardTitle>Top IP Addresses</CardTitle></CardHeader>
+          <CardBody className="space-y-1.5 max-h-64 overflow-y-auto">
+            {!summary?.byIp?.length ? (
+              <p className="text-xs text-slate-400 text-center py-4">No visit data yet</p>
+            ) : (
+              summary.byIp.map((r) => {
                 const active = ipFilter === r.ip;
                 return (
                   <button
                     key={r.ip}
                     onClick={() => setIpFilter(active ? "" : r.ip)}
                     className={cn(
-                      "w-full flex items-center gap-3 text-left rounded-lg px-1 py-0.5 transition-colors",
+                      "w-full flex items-center gap-2 text-left rounded-md py-0.5 px-1 -mx-1 transition-colors",
                       active ? "bg-blue-50" : "hover:bg-slate-50",
                     )}
                   >
-                    <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className={cn("text-xs font-mono w-36 truncate", active ? "text-blue-700 font-semibold" : "text-slate-700")}>
+                    <Globe className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span className={cn("text-xs font-mono truncate flex-1 min-w-0", active ? "text-blue-700 font-semibold" : "text-slate-700")}>
                       {r.ip}
                     </span>
-                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full">
-                      <div className="h-1.5 rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
-                    </div>
-                    <span className="text-xs text-slate-500 w-16 text-right">{r.visits.toLocaleString()}</span>
+                    <span className="text-xs text-slate-500 shrink-0">{r.visits.toLocaleString()}</span>
                   </button>
                 );
-              });
-            })()
-          )}
-        </CardBody>
-      </Card>
+              })
+            )}
+          </CardBody>
+        </Card>
+      </div>
 
       {/* Recent visitors — country/region, IP and visit time to the second */}
       <Card>
