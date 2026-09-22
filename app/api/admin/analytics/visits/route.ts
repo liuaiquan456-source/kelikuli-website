@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
   const source = sp.get("source")?.trim() ?? "";
   const device = sp.get("device")?.trim() ?? "";
   const keyword = sp.get("keyword")?.trim() ?? "";
+  const hasKeyword = sp.get("hasKeyword") === "true";
   const q = sp.get("q")?.trim() ?? "";
   const sinceParam = sp.get("since");
 
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
   if (source && source !== "All") where.source = source;
   if (device && device !== "All") where.device = device;
   if (keyword) where.keyword = { contains: keyword, mode: "insensitive" };
+  if (hasKeyword) where.keyword = { not: "" };
   if (q) where.path = { contains: q, mode: "insensitive" };
   if (sinceParam) {
     const since = new Date(sinceParam);

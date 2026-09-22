@@ -1,19 +1,79 @@
 "use client";
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Search, Info } from "lucide-react";
 import { Card, Table, Th, Td, Tr } from "@/app/admin/_components/ui";
 import { cn } from "@/app/admin/_lib/utils";
+
+type Visit = {
+  keyword: string;
+  source: string;
+  path: string;
+  country: string;
+  createdAt: string;
+};
 
 type Keyword = {
   keyword: string; engine: string; visits: number;
   landingPage: string; country: string; lastSeen: string;
 };
 
-const keywords: Keyword[] = [];
+const fmtDate = (iso: string) => {
+  try {
+    return new Date(iso).toLocaleDateString("sv-SE");
+  } catch {
+    return iso;
+  }
+};
+
+// Visit.source values are e.g. "Google Search" / "Bing Search" — reduce to
+// the engine name for the All/Google/Bing filter buttons.
+function engineOf(source: string): string {
+  if (source.startsWith("Google")) return "Google";
+  if (source.startsWith("Bing")) return "Bing";
+  return source;
+}
 
 export default function KeywordsPage() {
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [engine, setEngine] = useState("All");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await fetch("/api/admin/analytics/visits?hasKeyword=true&limit=500", { cache: "no-store" }).then((r) => r.json());
+      setVisits(Array.isArray(data?.visits) ? data.visits : []);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Group raw visits with the same keyword+engine into one row.
+  const keywords: Keyword[] = useMemo(() => {
+    const byKey = new Map<string, Keyword>();
+    for (const v of visits) {
+      const eng = engineOf(v.source);
+      const key = `${v.keyword.toLowerCase()}::${eng}`;
+      const existing = byKey.get(key);
+      if (existing) {
+        existing.visits += 1;
+        if (v.createdAt > existing.lastSeen) {
+          existing.lastSeen = v.createdAt;
+          existing.landingPage = v.path;
+          existing.country = v.country || existing.country;
+        }
+      } else {
+        byKey.set(key, {
+          keyword: v.keyword, engine: eng, visits: 1,
+          landingPage: v.path, country: v.country || "Unknown", lastSeen: v.createdAt,
+        });
+      }
+    }
+    return [...byKey.values()].sort((a, b) => b.visits - a.visits);
+  }, [visits]);
 
   const filtered = keywords.filter((k) => {
     const matchSearch = k.keyword.toLowerCase().includes(search.toLowerCase());
@@ -45,6 +105,20 @@ export default function KeywordsPage() {
             <p className="text-sm text-slate-500 mt-1">Google Keywords</p>
           </div>
         </Card>
+      </div>
+
+      {/* Why this is usually empty */}
+      <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100 text-blue-900 text-xs leading-relaxed">
+        <Info className="w-4 h-4 shrink-0 mt-0.5" />
+        <p>
+          Google and Bing stop the search terms visitors typed from reaching this site — this is a browser/search-engine
+          privacy restriction that affects every website, not something this site&apos;s code controls, so this table
+          will usually stay empty even with real search traffic. For real search-query data, connect{" "}
+          <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline font-medium">
+            Google Search Console
+          </a>{" "}
+          for kelikuli.com — it shows exactly which queries brought people to the site (with a 2–3 day delay).
+        </p>
       </div>
 
       {/* Filters */}
@@ -94,12 +168,12 @@ export default function KeywordsPage() {
             {filtered.length === 0 ? (
               <tr>
                 <Td colSpan={8} className="text-center py-10 text-sm text-slate-400">
-                  No data yet
+                  {loading ? "Loading…" : "No keyword data captured yet"}
                 </Td>
               </tr>
             ) : (
               filtered.map((k, i) => (
-                <Tr key={k.keyword}>
+                <Tr key={`${k.keyword}::${k.engine}`}>
                   <Td className="text-xs text-slate-400 w-8">{i + 1}</Td>
                   <Td><p className="text-sm font-medium text-slate-800">{k.keyword}</p></Td>
                   <Td>
@@ -122,7 +196,7 @@ export default function KeywordsPage() {
                     </a>
                   </Td>
                   <Td className="text-xs text-slate-500">{k.country}</Td>
-                  <Td className="text-xs text-slate-400 whitespace-nowrap">{k.lastSeen}</Td>
+                  <Td className="text-xs text-slate-400 whitespace-nowrap">{fmtDate(k.lastSeen)}</Td>
                 </Tr>
               ))
             )}
