@@ -35,7 +35,16 @@ export default function Sidebar() {
   }, []);
 
   const navItems: NavItem[] = [
-    { label: "Dashboard",   href: "/admin/dashboard",   icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: "Inquiries",  href: "/admin/inquiries",   icon: <Inbox className="w-4 h-4" />, badge: unread },
+    {
+      label: "Analytics", icon: <BarChart2 className="w-4 h-4" />,
+      children: [
+        { label: "Traffic Sources", href: "/admin/analytics/sources",  icon: <Globe className="w-3.5 h-3.5" /> },
+        { label: "Keywords",        href: "/admin/analytics/keywords", icon: <Search className="w-3.5 h-3.5" /> },
+        { label: "Page Views",      href: "/admin/analytics/pages",    icon: <FileText className="w-3.5 h-3.5" /> },
+        { label: "IP Logs",         href: "/admin/analytics/ip-logs",  icon: <Wifi className="w-3.5 h-3.5" /> },
+      ],
+    },
     {
       label: "Products", icon: <Package className="w-4 h-4" />,
       children: [
@@ -57,16 +66,7 @@ export default function Sidebar() {
         { label: "Add FAQ",  href: "/admin/faqs/new", icon: <PlusCircle className="w-3.5 h-3.5" /> },
       ],
     },
-    { label: "Inquiries",  href: "/admin/inquiries",   icon: <Inbox className="w-4 h-4" />, badge: unread },
-    {
-      label: "Analytics", icon: <BarChart2 className="w-4 h-4" />,
-      children: [
-        { label: "Traffic Sources", href: "/admin/analytics/sources",  icon: <Globe className="w-3.5 h-3.5" /> },
-        { label: "Keywords",        href: "/admin/analytics/keywords", icon: <Search className="w-3.5 h-3.5" /> },
-        { label: "Page Views",      href: "/admin/analytics/pages",    icon: <FileText className="w-3.5 h-3.5" /> },
-        { label: "IP Logs",         href: "/admin/analytics/ip-logs",  icon: <Wifi className="w-3.5 h-3.5" /> },
-      ],
-    },
+    { label: "Dashboard",   href: "/admin/dashboard",   icon: <LayoutDashboard className="w-4 h-4" /> },
     {
       label: "语言管理", icon: <Languages className="w-4 h-4" />,
       children: [
