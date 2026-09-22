@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   const device = sp.get("device")?.trim() ?? "";
   const keyword = sp.get("keyword")?.trim() ?? "";
   const q = sp.get("q")?.trim() ?? "";
+  const sinceParam = sp.get("since");
 
   const where: Prisma.VisitWhereInput = {};
   if (ip) where.ip = { contains: ip, mode: "insensitive" };
@@ -27,6 +28,10 @@ export async function GET(req: NextRequest) {
   if (device && device !== "All") where.device = device;
   if (keyword) where.keyword = { contains: keyword, mode: "insensitive" };
   if (q) where.path = { contains: q, mode: "insensitive" };
+  if (sinceParam) {
+    const since = new Date(sinceParam);
+    if (!Number.isNaN(since.getTime())) where.createdAt = { gte: since };
+  }
 
   const [total, visits] = await Promise.all([
     prisma.visit.count({ where }),

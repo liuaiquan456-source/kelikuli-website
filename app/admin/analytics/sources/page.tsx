@@ -1,18 +1,42 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { Globe, RefreshCw, Monitor, Smartphone, Tablet, MapPin } from "lucide-react";
+import { Globe, RefreshCw, Monitor, Smartphone, Tablet, MapPin, X } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardBody, Table, Th, Td, Tr } from "@/app/admin/_components/ui";
+import { cn } from "@/app/admin/_lib/utils";
 import { SOURCE_COLORS } from "@/lib/analytics";
 
 type Summary = {
   totalVisits: number;
   todayVisits: number;
   last30Visits: number;
+  filteredTotal: number;
   uniqueVisitors: number;
   bySource: { source: string; visits: number }[];
   byCountry: { country: string; visits: number }[];
+  byIp: { ip: string; visits: number }[];
   byDevice: Record<string, number>;
 };
+
+type TimeRange = "today" | "7d" | "30d" | "all";
+
+const TIME_RANGE_LABEL: Record<TimeRange, string> = {
+  today: "Today",
+  "7d": "Last 7 Days",
+  "30d": "Last 30 Days",
+  all: "All Time",
+};
+
+function sinceFor(range: TimeRange): string | null {
+  const now = Date.now();
+  if (range === "today") {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString();
+  }
+  if (range === "7d") return new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+  if (range === "30d") return new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
+  return null;
+}
 
 type Visit = {
   id: number;
@@ -50,12 +74,27 @@ export default function TrafficSourcesPage() {
   const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState<string>("");
 
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
+  const [sourceFilter, setSourceFilter] = useState("All");
+  const [ipFilter, setIpFilter] = useState("");
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
+      const since = sinceFor(timeRange);
+      const summaryParams = new URLSearchParams();
+      if (since) summaryParams.set("since", since);
+      if (sourceFilter !== "All") summaryParams.set("source", sourceFilter);
+      if (ipFilter) summaryParams.set("ip", ipFilter);
+
+      const visitParams = new URLSearchParams({ limit: "50" });
+      if (since) visitParams.set("since", since);
+      if (sourceFilter !== "All") visitParams.set("source", sourceFilter);
+      if (ipFilter) visitParams.set("ip", ipFilter);
+
       const [s, v] = await Promise.all([
-        fetch("/api/admin/analytics/summary", { cache: "no-store" }).then((r) => r.json()),
-        fetch("/api/admin/analytics/visits?limit=50", { cache: "no-store" }).then((r) => r.json()),
+        fetch(`/api/admin/analytics/summary?${summaryParams}`, { cache: "no-store" }).then((r) => r.json()),
+        fetch(`/api/admin/analytics/visits?${visitParams}`, { cache: "no-store" }).then((r) => r.json()),
       ]);
       setSummary(s && !s.error ? s : null);
       setVisits(Array.isArray(v?.visits) ? v.visits : []);
@@ -63,7 +102,7 @@ export default function TrafficSourcesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [timeRange, sourceFilter, ipFilter]);
 
   useEffect(() => {
     load();
@@ -95,6 +134,48 @@ export default function TrafficSourcesPage() {
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           {updatedAt ? `Updated ${updatedAt}` : "Refresh"}
         </button>
+      </div>
+
+      {/* Filters — time range, source, and (via Top IPs below) IP */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+          {(Object.keys(TIME_RANGE_LABEL) as TimeRange[]).map((r) => (
+            <button
+              key={r}
+              onClick={() => setTimeRange(r)}
+              className={cn(
+                "px-2.5 py-1 text-xs font-medium rounded-md transition-colors",
+                timeRange === r ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700",
+              )}
+            >
+              {TIME_RANGE_LABEL[r]}
+            </button>
+          ))}
+        </div>
+        <select
+          value={sourceFilter}
+          onChange={(e) => setSourceFilter(e.target.value)}
+          className="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white focus:outline-none focus:border-blue-400 text-slate-700"
+        >
+          <option value="All">All Sources</option>
+          {sources.map((s) => (
+            <option key={s.source} value={s.source}>{s.source}</option>
+          ))}
+        </select>
+        {ipFilter && (
+          <button
+            onClick={() => setIpFilter("")}
+            className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+          >
+            IP: {ipFilter}
+            <X className="w-3 h-3" />
+          </button>
+        )}
+        {(timeRange !== "all" || sourceFilter !== "All" || ipFilter) && (
+          <span className="text-xs text-slate-400">
+            {(summary?.filteredTotal ?? 0).toLocaleString()} visits match this filter
+          </span>
+        )}
       </div>
 
       {/* Top source stat cards */}
@@ -168,6 +249,43 @@ export default function TrafficSourcesPage() {
                 </div>
               );
             })
+          )}
+        </CardBody>
+      </Card>
+
+      {/* Top IPs by visit count — click one to filter Recent Visitors below */}
+      <Card>
+        <CardHeader><CardTitle>Top IP Addresses</CardTitle></CardHeader>
+        <CardBody className="space-y-3">
+          {!summary?.byIp?.length ? (
+            <p className="text-sm text-slate-400 text-center py-6">No visit data yet</p>
+          ) : (
+            (() => {
+              const maxIpVisits = Math.max(...summary.byIp.map((r) => r.visits), 1);
+              return summary.byIp.map((r) => {
+                const pct = (r.visits / maxIpVisits) * 100;
+                const active = ipFilter === r.ip;
+                return (
+                  <button
+                    key={r.ip}
+                    onClick={() => setIpFilter(active ? "" : r.ip)}
+                    className={cn(
+                      "w-full flex items-center gap-3 text-left rounded-lg px-1 py-0.5 transition-colors",
+                      active ? "bg-blue-50" : "hover:bg-slate-50",
+                    )}
+                  >
+                    <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className={cn("text-xs font-mono w-36 truncate", active ? "text-blue-700 font-semibold" : "text-slate-700")}>
+                      {r.ip}
+                    </span>
+                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full">
+                      <div className="h-1.5 rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="text-xs text-slate-500 w-16 text-right">{r.visits.toLocaleString()}</span>
+                  </button>
+                );
+              });
+            })()
           )}
         </CardBody>
       </Card>
