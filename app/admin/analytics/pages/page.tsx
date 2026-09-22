@@ -70,7 +70,7 @@ export default function PageViewsPage() {
                   <Td className="text-xs text-slate-400 w-8">{i + 1}</Td>
                   <Td>
                     <p className="text-sm font-medium text-slate-800">{p.title}</p>
-                    <p className="text-xs text-blue-600 font-mono mt-0.5">{p.url}</p>
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 font-mono mt-0.5 hover:underline block">{p.url}</a>
                   </Td>
                   <Td className="font-semibold text-sm">{p.visits.toLocaleString()}</Td>
                   <Td>

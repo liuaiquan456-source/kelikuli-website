@@ -207,7 +207,11 @@ export default function TrafficSourcesPage() {
                       {v.source}
                     </span>
                   </Td>
-                  <Td className="text-xs text-blue-600 font-mono max-w-[180px] truncate">{v.path}</Td>
+                  <Td className="text-xs max-w-[180px] truncate">
+                    <a href={v.path} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-mono hover:underline">
+                      {v.path}
+                    </a>
+                  </Td>
                   <Td>
                     <span className="flex items-center gap-1.5 text-xs text-slate-600">
                       {DEVICE_ICON[v.device] ?? <Monitor className="w-3.5 h-3.5" />}

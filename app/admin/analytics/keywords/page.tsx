@@ -116,7 +116,11 @@ export default function KeywordsPage() {
                       <div className="h-1.5 rounded-full bg-blue-500" style={{ width: `${(k.visits / maxVisits) * 100}%` }} />
                     </div>
                   </Td>
-                  <Td className="text-xs text-blue-600 font-mono">{k.landingPage}</Td>
+                  <Td className="text-xs">
+                    <a href={k.landingPage} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-mono hover:underline">
+                      {k.landingPage}
+                    </a>
+                  </Td>
                   <Td className="text-xs text-slate-500">{k.country}</Td>
                   <Td className="text-xs text-slate-400 whitespace-nowrap">{k.lastSeen}</Td>
                 </Tr>
