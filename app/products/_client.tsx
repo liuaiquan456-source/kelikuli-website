@@ -330,7 +330,7 @@ export default function ProductsClient() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-stone-200 overflow-hidden animate-pulse">
-                    <div className="aspect-[4/3] bg-stone-100" />
+                    <div className="aspect-square bg-stone-100" />
                     <div className="p-4 space-y-2">
                       <div className="h-4 bg-stone-100 rounded w-3/4" />
                       <div className="h-3 bg-stone-100 rounded w-full" />
@@ -348,12 +348,12 @@ export default function ProductsClient() {
                   return (
                   <div key={product.id} className="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-400 hover:shadow-lg transition-all duration-200 relative flex flex-col">
                     <Link href={`/products/${product.id}`} className="block">
-                      <div className="relative aspect-[4/3] bg-stone-50 overflow-hidden">
+                      <div className="relative aspect-square bg-white overflow-hidden">
                         <ProductImage
                           src={product.image}
                           alt={product.name}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="object-contain"
                         />
                         {product.category && (
                           <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-stone-700 text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-sm">
