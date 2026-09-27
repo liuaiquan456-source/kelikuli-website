@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { shouldLoadImageDirectly } from "@/lib/product-images";
 
 export default function ProductImage({
   src,
@@ -28,12 +29,13 @@ export default function ProductImage({
   return (
     <Image
       src={src}
+      unoptimized={shouldLoadImageDirectly(src)}
       alt={alt}
       fill
       sizes={sizes}
       className={className}
       onError={() => setError(true)}
-      priority={priority}
+      preload={priority}
     />
   );
 }

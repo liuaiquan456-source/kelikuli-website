@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { shouldLoadImageDirectly } from "@/lib/product-images";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
 import { useTranslation } from "@/components/I18nProvider";
@@ -177,12 +178,13 @@ export default function ProductDetailClient({
                       {mainImage && !imgError ? (
                         <Image
                           src={mainImage}
+                          unoptimized={shouldLoadImageDirectly(mainImage)}
                           alt={product.name}
                           fill
                           sizes="(max-width: 1024px) 100vw, 55vw"
                           className="object-contain transition-transform duration-300 group-hover:scale-105"
                           onError={() => setImgError(true)}
-                          priority
+                          preload
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm">{t("product.noImage", "No image")}</div>
