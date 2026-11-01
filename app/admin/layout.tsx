@@ -1,14 +1,15 @@
 import { cookies } from "next/headers";
 import Sidebar from "./_components/Sidebar";
 import TopBar from "./_components/TopBar";
+import { readAdminSession } from "@/lib/admin-session";
 
 export const metadata = { title: "Kelikuli Admin" };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const session = cookieStore.get("admin_session");
+  const session = await readAdminSession(cookieStore.get("admin_session")?.value);
 
-  if (!session?.value) {
+  if (!session) {
     return <>{children}</>;
   }
 

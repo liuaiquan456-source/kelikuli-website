@@ -94,7 +94,7 @@ export default function NewsForm({ postId, initial }: Props) {
   }, [form.title, slugManual]);
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch("/api/admin/products")
       .then((r) => r.json())
       .then((data: ProductOption[]) => setAllProducts(data));
   }, []);

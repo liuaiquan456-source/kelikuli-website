@@ -1,8 +1,13 @@
 import { NextRequest } from "next/server";
+import { readAdminSession } from "./admin-session";
+import { prisma } from "./prisma";
 
-// Lightweight gate for /api/admin/* route handlers. The admin_session cookie is
-// set by /api/admin/login and is also what middleware.ts checks for admin pages.
-export function hasAdminSession(req: NextRequest): boolean {
-  const v = req.cookies.get("admin_session")?.value;
-  return !!v && v.includes(":");
+export async function hasAdminSession(req: NextRequest): Promise<boolean> {
+  const session = await readAdminSession(req.cookies.get("admin_session")?.value);
+  if (!session) return false;
+  const user = await prisma.adminUser.findUnique({
+    where: { id: session.userId },
+    select: { status: true },
+  });
+  return user?.status === "active";
 }

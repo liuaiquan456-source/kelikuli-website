@@ -11,7 +11,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/products/${id}`)
+    fetch(`/api/admin/products/${id}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) setProduct(data);

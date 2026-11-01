@@ -29,7 +29,7 @@ export default function Dashboard() {
 
   const fetchData = useCallback(async () => {
     const [pRes, oRes, iRes] = await Promise.all([
-      fetch("/api/products"),
+      fetch("/api/admin/products"),
       fetch("/api/orders"),
       fetch("/api/inquiries"),
     ]);

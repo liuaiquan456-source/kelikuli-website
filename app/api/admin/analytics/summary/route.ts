@@ -9,7 +9,7 @@ import type { Prisma } from "@prisma/client";
 // traffic source. totalVisits/todayVisits/last30Visits stay fixed reference
 // numbers regardless of the filter, since their labels promise a fixed window.
 export async function GET(req: NextRequest) {
-  if (!hasAdminSession(req)) {
+  if (!(await hasAdminSession(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

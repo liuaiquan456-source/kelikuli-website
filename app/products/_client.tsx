@@ -8,12 +8,7 @@ import { useTranslation } from "@/components/I18nProvider";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 import { useCartGate } from "@/components/CartGateProvider";
-
-interface Product {
-  id: number; name: string; category: string; image: string;
-  price: number; status: string; moq: number;
-  description?: string; tags?: string[];
-}
+import type { PublicProduct } from "@/lib/public-products";
 
 const categories = [
   {
@@ -186,7 +181,7 @@ export default function ProductsClient() {
   const { addToCart } = useCartGate();
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<PublicProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -384,15 +379,6 @@ export default function ProductsClient() {
                           <p className="text-stone-500 text-xs mt-1.5 leading-relaxed line-clamp-2">
                             {product.description}
                           </p>
-                        )}
-                        {product.tags && product.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-3">
-                            {product.tags.slice(0, 3).map((tag) => (
-                              <span key={tag} className="text-[10px] font-medium uppercase tracking-wide text-stone-500 bg-stone-100 px-2 py-1 rounded-full">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
                         )}
                       </Link>
 

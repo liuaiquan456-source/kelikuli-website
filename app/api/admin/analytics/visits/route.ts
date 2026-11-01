@@ -5,7 +5,7 @@ import type { Prisma } from "@prisma/client";
 
 // Paginated raw visit log for the "IP Logs" and "Traffic Sources" admin views.
 export async function GET(req: NextRequest) {
-  if (!hasAdminSession(req)) {
+  if (!(await hasAdminSession(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

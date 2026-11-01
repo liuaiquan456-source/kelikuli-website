@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/admin/"],
+      disallow: ["/api/", "/admin", "/cart", "/wishlist"],
     },
     sitemap: "https://kelikuli.com/sitemap.xml",
   };

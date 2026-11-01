@@ -37,7 +37,7 @@ export default function ProductList() {
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
-    const res = await fetch("/api/products");
+    const res = await fetch("/api/admin/products");
     const data = await res.json();
     setProducts(data);
     setLoading(false);
@@ -73,14 +73,14 @@ export default function ProductList() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-    await fetch(`/api/products/${deleteTarget.id}`, { method: "DELETE" });
+    await fetch(`/api/admin/products/${deleteTarget.id}`, { method: "DELETE" });
     setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
     setSelected((prev) => { const next = new Set(prev); next.delete(deleteTarget.id); return next; });
     setDeleteTarget(null);
   };
 
   const handleBulkDelete = async () => {
-    await Promise.all([...selected].map((id) => fetch(`/api/products/${id}`, { method: "DELETE" })));
+    await Promise.all([...selected].map((id) => fetch(`/api/admin/products/${id}`, { method: "DELETE" })));
     setProducts((prev) => prev.filter((p) => !selected.has(p.id)));
     setSelected(new Set());
     setBulkDeleteOpen(false);
@@ -88,7 +88,7 @@ export default function ProductList() {
 
   const handleBulkStatus = async (status: "active" | "inactive") => {
     await Promise.all([...selected].map((id) =>
-      fetch(`/api/products/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) })
+      fetch(`/api/admin/products/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) })
     ));
     setProducts((prev) => prev.map((p) => selected.has(p.id) ? { ...p, status } : p));
     setSelected(new Set());
@@ -96,7 +96,7 @@ export default function ProductList() {
 
   const toggleStatus = async (p: Product) => {
     const status = p.status === "active" ? "inactive" : "active";
-    await fetch(`/api/products/${p.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) });
+    await fetch(`/api/admin/products/${p.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) });
     setProducts((prev) => prev.map((x) => x.id === p.id ? { ...x, status } : x));
   };
 

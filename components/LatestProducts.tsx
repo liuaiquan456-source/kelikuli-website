@@ -9,7 +9,7 @@ export default async function LatestProducts() {
     where: { status: "active" },
     orderBy: { createdAt: "desc" },
     take: 10,
-    select: { id: true, name: true, category: true, price: true, image: true, images: true },
+    select: { id: true, name: true, category: true, image: true, images: true },
   });
 
   const products = raw.map((p) => {

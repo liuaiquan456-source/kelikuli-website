@@ -6,17 +6,7 @@ import { shouldLoadImageDirectly } from "@/lib/product-images";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
 import { useTranslation } from "@/components/I18nProvider";
-
-interface Variant { name: string; image: string; }
-
-interface Product {
-  id: number; name: string; category: string; image: string;
-  price: number; moq: number; leadTime: string; status: string;
-  description: string; specs: string; tags: string[];
-  variants?: Variant[];
-  images?: string[];
-  video?: string;
-}
+import type { PublicProduct } from "@/lib/public-products";
 
 type Translator = (key: string, fallback: string) => string;
 
@@ -60,8 +50,8 @@ export default function ProductDetailClient({
   related,
   whatsappLink,
 }: {
-  product: Product | null;
-  related: Product[];
+  product: PublicProduct | null;
+  related: PublicProduct[];
   whatsappLink: string;
 }) {
   const { t } = useTranslation();

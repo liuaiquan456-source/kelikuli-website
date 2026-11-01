@@ -4,43 +4,38 @@ import { prisma } from "@/lib/prisma";
 import { getSettings, waMe } from "@/lib/settings";
 import ProductDetailClient from "./_client";
 import Breadcrumb from "@/components/Breadcrumb";
+import { parseProductId, publicProductSelect, toPublicProduct } from "@/lib/public-products";
 
-interface Variant { name: string; image: string; }
-
-async function getProduct(id: number) {
+async function getProduct(id: number | null) {
+  if (id === null) return null;
   try {
-    const p = await prisma.product.findUnique({ where: { id } });
+    const p = await prisma.product.findFirst({
+      where: { id, status: "active" },
+      select: publicProductSelect,
+    });
     if (!p) return null;
-    return parseProduct(p);
+    return toPublicProduct(p);
   } catch {
     return null;
   }
-}
-
-function parseProduct<T extends { tags: string; variants: string; images: string }>(p: T) {
-  const { variants: variantsRaw, tags: tagsRaw, images: imagesRaw, ...rest } = p;
-  return {
-    ...rest,
-    tags: JSON.parse(tagsRaw) as string[],
-    images: JSON.parse(imagesRaw ?? "[]") as string[],
-    variants: JSON.parse(variantsRaw ?? "[]") as Variant[],
-  };
 }
 
 async function getRelated(category: string, excludeId: number) {
   try {
     const same = await prisma.product.findMany({
       where: { category, status: "active", NOT: { id: excludeId } },
+      select: publicProductSelect,
       take: 8,
     });
-    if (same.length > 0) return same.map(parseProduct);
+    if (same.length > 0) return same.map(toPublicProduct);
 
     const other = await prisma.product.findMany({
       where: { status: "active", NOT: { id: excludeId } },
+      select: publicProductSelect,
       orderBy: { createdAt: "desc" },
       take: 8,
     });
-    return other.map(parseProduct);
+    return other.map(toPublicProduct);
   } catch {
     return [];
   }
@@ -52,7 +47,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id: idStr } = await params;
-  const product = await getProduct(parseInt(idStr, 10));
+  const product = await getProduct(parseProductId(idStr));
   if (!product) return { title: "Product Not Found" };
   const url = `https://kelikuli.com/products/${idStr}`;
   return {
@@ -75,11 +70,11 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: idStr } = await params;
-  const id = parseInt(idStr, 10);
+  const id = parseProductId(idStr);
   const product = await getProduct(id);
   if (!product) notFound();
   const [related, settings] = await Promise.all([
-    getRelated(product.category, id),
+    getRelated(product.category, product.id),
     getSettings(),
   ]);
   const whatsappLink = waMe(settings.whatsapp);
@@ -108,7 +103,7 @@ export default async function ProductDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema).replace(/</g, "\\u003c") }}
       />
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-3">
         <Breadcrumb items={breadcrumbItems} />

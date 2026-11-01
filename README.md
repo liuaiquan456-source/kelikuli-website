@@ -1,5 +1,33 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Product privacy and deployment
+
+Public product APIs (`/api/products` and `/api/products/:id`) are read-only and
+return approved public fields for active products. Internal tags, prices, stock,
+workflow state, SEO editing fields, and customer-note blocks are not returned.
+Only explicitly labelled public specifications outside customer-note blocks are
+shown. Original database records remain available to authenticated staff through
+`/api/admin/products` and `/api/admin/products/:id`.
+
+Set `ADMIN_SESSION_SECRET` to a cryptographically random secret of at least 32
+bytes in the server environment before deploying. Use the same secret on all
+instances; never expose it through a `NEXT_PUBLIC_` variable. Generate a secret
+with `openssl rand -hex 32` and store it in your deployment's secret manager (or
+an ignored `.env.local` for development). Admin login fails closed without it.
+This release invalidates the old unsigned cookies; administrators must sign in
+again. Product integrations that used the old public write endpoints must use
+the authenticated admin endpoints or the existing Custom Lab integration.
+
+`/robots.txt` is independent of the database. `/sitemap.xml` reads active products
+and published news at request time and includes all seven public top-level
+pages. A database failure is reported as an error instead of returning and
+caching an incomplete successful sitemap. Check both URLs after deployment,
+and purge any reverse-proxy/CDN caches of product pages and API responses that
+may still contain the previous public data.
+
+Run the privacy, authentication and sitemap regression tests with `npm test`
+(Node.js 24 or later). The tests use synthetic data and do not modify a database.
+
 ## Getting Started
 
 First, run the development server:
