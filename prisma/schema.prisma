@@ -134,6 +134,7 @@ model Inquiry {
   message     String
   cartItems   String   @default("")
   attachments String   @default("[]")
+  attribution String   @default("{}")
   status      String   @default("unread")
   notes       String   @default("")
   createdAt   DateTime @default(now())

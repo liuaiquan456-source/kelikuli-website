@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import FaqClient from "./_client";
+import FaqSection from "@/components/FaqSection";
 
 export const metadata: Metadata = {
   title: "FAQ — Kelikuli Resin Toys Manufacturer",
@@ -9,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function FaqPage() {
-  return <FaqClient />;
+  return <FaqClient><FaqSection page="faq" title="More FAQs" /></FaqClient>;
 }

@@ -1,4 +1,7 @@
 import type { MetadataRoute } from "next";
+import { services } from "@/data/manufacturing";
+import { buyingGuides } from "@/data/buying-guides";
+import { developmentProjects } from "@/data/development-projects";
 import { prisma } from "@/lib/prisma";
 
 const BASE_URL = "https://kelikuli.com";
@@ -41,5 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...productRoutes, ...newsRoutes];
+  const contentPaths = ["/resources", "/industries", "/buying-guides", "/case-studies",
+    ...services.map(s => `/services/${s.slug}`), ...buyingGuides.map(g => `/buying-guides/${g.slug}`), ...developmentProjects.map(p => `/case-studies/${p.slug}`)];
+  const contentRoutes: MetadataRoute.Sitemap = contentPaths.map(path => ({ url: `${BASE_URL}${path}`, changeFrequency: "monthly", priority: 0.8 }));
+  return [...staticRoutes, ...contentRoutes, ...productRoutes, ...newsRoutes];
 }

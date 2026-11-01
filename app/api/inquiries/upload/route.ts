@@ -1,63 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
-
+import { writeFile, mkdir } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import path from "node:path";
+import {
+  designExtensions,
+  maxDesignSize,
+  inquiryFilesDirectory,
+} from "@/lib/inquiry-files";
 export const runtime = "nodejs";
-
-// Public upload endpoint for files attached to the customer inquiry form
-// (InquiryModal). Distinct from /api/upload (product images only, 5MB cap) —
-// the inquiry form's own copy always promised broader document types and a
-// higher size limit, so this matches that instead of loosening the other
-// endpoint's constraints for unrelated callers.
-const ALLOWED_EXT = ["jpg", "jpeg", "png", "pdf", "doc", "docx", "xls", "xlsx", "csv", "txt"];
-const MAX_SIZE = 30 * 1024 * 1024; // 30MB, matches the form's stated limit
-
-function findRoot(): string {
-  if (process.env.PROJECT_ROOT && existsSync(path.join(process.env.PROJECT_ROOT, "public"))) {
-    return process.env.PROJECT_ROOT;
-  }
-  for (const start of [__dirname, process.cwd()]) {
-    let dir = start;
-    for (let i = 0; i < 10; i++) {
-      if (existsSync(path.join(dir, "package.json")) && existsSync(path.join(dir, "public"))) {
-        return dir;
-      }
-      const parent = path.dirname(dir);
-      if (parent === dir) break;
-      dir = parent;
-    }
-  }
-  return process.cwd();
-}
-
 export async function POST(req: NextRequest) {
+  if (Number(req.headers.get("content-length")) > maxDesignSize + 65536)
+    return NextResponse.json(
+      { error: "File too large (maximum 30 MB)." },
+      { status: 413 },
+    );
   try {
-    const formData = await req.formData();
-    const file = formData.get("file") as File | null;
-    if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
-
-    const ext = (file.name.split(".").pop() ?? "").toLowerCase();
-    if (!ALLOWED_EXT.includes(ext)) {
-      return NextResponse.json({ error: `File type .${ext} isn't allowed` }, { status: 400 });
-    }
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "File too large (max 30MB)" }, { status: 400 });
-    }
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const root = findRoot();
-    const dir = path.join(root, "public", "uploads", "inquiries");
-
-    await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, filename), buffer);
-
-    return NextResponse.json({ url: `/uploads/inquiries/${filename}`, name: file.name });
-  } catch (err) {
-    console.error("[inquiries/upload] error:", err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    const file = (await req.formData()).get("file");
+    if (!(file instanceof File) || !file.size)
+      return NextResponse.json(
+        { error: "Please select a non-empty file." },
+        { status: 400 },
+      );
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    if (!designExtensions.has(ext))
+      return NextResponse.json(
+        { error: "Unsupported file type." },
+        { status: 400 },
+      );
+    if (file.size > maxDesignSize)
+      return NextResponse.json(
+        { error: "File too large (maximum 30 MB)." },
+        { status: 413 },
+      );
+    const filename = `${randomUUID()}.${ext}`;
+    const dir = inquiryFilesDirectory();
+    // Customer uploads are runtime data, never build assets to be traced/bundled.
+    await mkdir(/* turbopackIgnore: true */ dir, { recursive: true, mode: 0o700 });
+    await writeFile(
+      path.join(/* turbopackIgnore: true */ dir, filename),
+      Buffer.from(await file.arrayBuffer()),
+      { mode: 0o600, flag: "wx" },
+    );
+    return NextResponse.json(
+      {
+        url: `/api/inquiries/files/${filename}`,
+        name: file.name.slice(0, 200),
+      },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  } catch {
+    return NextResponse.json(
+      { error: "Upload failed. Please try again." },
+      { status: 500 },
+    );
   }
 }

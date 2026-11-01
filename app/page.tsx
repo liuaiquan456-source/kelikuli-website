@@ -9,6 +9,7 @@ import WhyChoose from "@/components/WhyChoose";
 import StatsSection from "@/components/StatsSection";
 import ServiceSection from "@/components/ServiceSection";
 import FaqSection from "@/components/FaqSection";
+import { ContentSectionBlock, GuideCards } from "@/components/ManufacturingContent";
 
 export const metadata: Metadata = {
   title: "Resin Figurine Manufacturer — China OEM Factory",
@@ -29,6 +30,9 @@ export default function HomePage() {
       <StatsSection />
       <ServiceSection />
       <FeaturedCollections />
+      <ContentSectionBlock title="Resources for your next resin project" eyebrow="Buying Guides">
+        <GuideCards slugs={["custom-resin-figurine-cost", "moq-custom-resin-products", "prepare-artwork-custom-resin"]} />
+      </ContentSectionBlock>
       <FaqSection page="home" />
     </>
   );

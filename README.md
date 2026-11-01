@@ -62,3 +62,69 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Manufacturing content and inquiry attribution (2026-11)
+
+Content is maintained in `data/manufacturing.ts` (7 services and industry briefs),
+`data/development-projects.ts` (3 explicitly labeled development projects), and
+`data/buying-guides.ts` (6 purchasing guides). These pages link to active catalog
+products and the shared `/get-a-quote` form. Existing `/news/[slug]` URLs remain
+available; `/resources` organizes the new material and existing article archive.
+
+The project entries are **not verified completed customer case studies**. Replace
+stage descriptions only when approved sample or order evidence is available.
+Confirm MOQ, pricing, capacity and timelines before adding numerical claims.
+
+Before deploying this version, apply the additive database update to the intended
+PostgreSQL database using its existing private environment configuration:
+
+```sh
+npx prisma db execute --file prisma/updates/20261101-inquiry-attribution.sql --schema prisma/schema.prisma
+npx prisma generate
+npm test
+npm run build
+```
+
+The SQL is repeatable and preserves existing inquiries. The `attribution` field
+stores source and landing paths, service, project, product ID, country, requested
+quantity and dimensions. It is visible only in the authenticated inquiry dashboard.
+The public submission API returns only a receipt. Custom Lab's existing integration
+can continue creating inquiries without attribution because the column has a default.
+
+New design uploads are written outside `public/`. Set `INQUIRY_UPLOAD_DIR` to a
+persistent private absolute directory when using release folders, or keep
+`PROJECT_ROOT` pointing at the stable application directory (default storage:
+`$PROJECT_ROOT/private/inquiries`). Preserve this directory across deployments and
+include it in private backups. Downloads require a valid active-admin session.
+Existing legacy public upload URLs are unchanged; this update does not relocate
+historical files. Nginx/proxy request limits must allow a 30 MB file plus multipart
+overhead (for example `client_max_body_size 32m`).
+
+Optional server environment configuration:
+
+```text
+GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+INQUIRY_UPLOAD_DIR=/absolute/persistent/private/inquiries
+```
+
+Without a valid GA4 ID no Google Analytics script is loaded. Website attribution
+still works. With an ID, `generate_lead` is emitted only after the server confirms
+a saved inquiry; attachment failures and failed submissions emit no lead event.
+See Google's [recommended generate_lead event](https://developers.google.com/analytics/devguides/collection/ga4/reference/events#generate_lead).
+Only controlled paths and content identifiers are sent, not contact details,
+messages, filenames, country, requested quantity or dimensions. The first public
+page is kept in tab session storage; the quote's immediate source is stored
+separately. Query strings are omitted.
+
+In the GA4 web stream, disable enhanced measurement's automatic history/page-view
+and form-interaction events when using this manual implementation to avoid duplicate
+page views and inferred form submissions. Mark `generate_lead` as a key event and
+register `source_page`, `landing_page`, `service`, `project` and `product_id` as
+custom dimensions if needed. Validate with DebugView / Realtime after configuring
+the actual property. No property ID or analytics account changes are assumed by
+this code.
+
+Validation: `npm test` includes content-link integrity, attribution sanitization,
+inquiry access control, private design-file downloads, initial FAQ HTML and GA4
+payload checks. Product cards and pagination are rendered on the server; FAQ
+answers use native details/summary elements and are present before interaction.

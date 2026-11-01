@@ -49,3 +49,6 @@ public/images/ChatGPT*
 
 .vercel
 .env*.local
+
+# Private customer design attachments
+/private/

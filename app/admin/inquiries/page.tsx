@@ -4,7 +4,8 @@ import {
   Inbox, Mail, MailOpen, CheckCheck, Trash2, RefreshCw, ChevronDown, ChevronUp,
   User, Building2, Phone, Tag, Calendar, MessageSquare, Paperclip, Download,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, Badge, Button } from "@/app/admin/_components/ui";
+import { Card, Badge, Button } from "@/app/admin/_components/ui";
+import { parseAttribution } from "@/lib/inquiry-data";
 import { cn } from "@/app/admin/_lib/utils";
 
 interface Inquiry {
@@ -17,6 +18,7 @@ interface Inquiry {
   message: string;
   cartItems: string;
   attachments: string;
+  attribution: string;
   status: "unread" | "read" | "replied";
   notes: string;
   createdAt: string;
@@ -44,7 +46,6 @@ export default function InquiriesPage() {
   const [deleting, setDeleting] = useState<number | null>(null);
 
   const fetchInquiries = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch("/api/inquiries");
       const data = await res.json();
@@ -112,7 +113,7 @@ export default function InquiriesPage() {
             <p className="text-xs text-slate-400">{total} total · {unreadCount} unread</p>
           </div>
         </div>
-        <Button variant="secondary" size="sm" onClick={fetchInquiries} disabled={loading}>
+        <Button variant="secondary" size="sm" onClick={() => { setLoading(true); void fetchInquiries(); }} disabled={loading}>
           <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} />
           Refresh
         </Button>
@@ -288,6 +289,13 @@ export default function InquiriesPage() {
                       );
                     })()}
 
+                    {(() => {
+                      const entries = Object.entries(parseAttribution(inq.attribution)).filter(([, value]) => value);
+                      if (!entries.length) return null;
+                      const labels: Record<string, string> = { sourcePage: "Source page", landingPage: "Landing page", service: "Service", project: "Development project", productId: "Product ID", country: "Country / destination", quantity: "Target quantity / MOQ", dimensions: "Dimensions" };
+                      return <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 p-4"><h3 className="mb-3 text-xs font-semibold uppercase text-amber-900">Project & attribution</h3><dl className="grid gap-3 sm:grid-cols-2">{entries.map(([key, value]) => <div key={key}><dt className="text-xs text-slate-500">{labels[key] || key}</dt><dd className="break-words text-sm text-slate-800">{value}</dd></div>)}</dl></div>;
+                    })()}
+
                     <div className="bg-slate-50 rounded-xl p-4 mb-4">
                       <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mb-2 flex items-center gap-1.5">
                         <MessageSquare className="w-3 h-3" /> Message
@@ -314,14 +322,14 @@ export default function InquiriesPage() {
                           Mark Unread
                         </Button>
                       )}
-                      <a
+                      {inq.email && <a
                         href={`mailto:${inq.email}?subject=Re: Your inquiry about ${encodeURIComponent(inq.product || "Kelikuli Products")}`}
                         className="inline-flex items-center gap-1.5 rounded-lg font-medium transition-colors px-3 py-1.5 text-xs bg-orange-50 text-orange-600 hover:bg-orange-100"
                         onClick={() => { if (inq.status !== "replied") patch(inq.id, { status: "replied" }); }}
                       >
                         <Mail className="w-3.5 h-3.5" />
                         Reply by Email
-                      </a>
+                      </a>}
                       <Button
                         size="sm" variant="danger"
                         disabled={deleting === inq.id}

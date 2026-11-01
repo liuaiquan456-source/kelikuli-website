@@ -1,57 +1,41 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useTranslation } from "@/components/I18nProvider";
+import { prisma } from "@/lib/prisma";
+import { getTranslator } from "@/lib/i18n";
 
-interface FAQ {
-  id: number;
-  question: string;
-  answer: string;
-}
-
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
+export default async function FaqSection({
+  page,
+  title,
+}: {
+  page: string;
+  title?: string;
+}) {
+  const t = await getTranslator();
+  const faqs = await prisma.fAQ
+    .findMany({
+      where: { page, active: true },
+      select: { id: true, question: true, answer: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    })
+    .catch(() => []);
+  if (!faqs.length) return null;
   return (
-    <div className="border-b border-stone-200 last:border-0">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full text-left flex items-start justify-between gap-4 py-5 px-1 group"
-      >
-        <span className="text-stone-800 font-medium text-sm leading-relaxed group-hover:text-orange-600 transition-colors">
-          {q}
-        </span>
-        <span className={`shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-all mt-0.5 ${open ? "rotate-45 border-orange-500 text-orange-500" : "border-stone-300 text-stone-500"}`}>
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-          </svg>
-        </span>
-      </button>
-      {open && (
-        <p className="text-stone-600 text-sm leading-relaxed pb-5 px-1 whitespace-pre-line">{a}</p>
-      )}
-    </div>
-  );
-}
-
-export default function FaqSection({ page, title }: { page: string; title?: string }) {
-  const { t } = useTranslation();
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
-
-  useEffect(() => {
-    fetch(`/api/faqs?page=${page}`)
-      .then((r) => r.json())
-      .then((data) => setFaqs(Array.isArray(data) ? data : []))
-      .catch(() => {});
-  }, [page]);
-
-  if (faqs.length === 0) return null;
-
-  return (
-    <section className="py-14 bg-stone-50 border-t border-stone-100">
-      <div className="max-w-3xl mx-auto px-6">
-        <h2 className="text-2xl font-bold text-stone-900 mb-8 text-center">{title ?? t("faqSection.defaultTitle", "Frequently Asked Questions")}</h2>
-        <div className="bg-white rounded-2xl px-5 shadow-sm border border-stone-100">
+    <section className="border-t border-stone-100 bg-stone-50 py-14">
+      <div className="mx-auto max-w-3xl px-6">
+        <h2 className="mb-8 text-center text-2xl font-bold text-stone-900">
+          {title ?? t("faqSection.defaultTitle", "Frequently Asked Questions")}
+        </h2>
+        <div className="rounded-2xl border border-stone-100 bg-white px-5">
           {faqs.map((faq) => (
-            <FaqItem key={faq.id} q={faq.question} a={faq.answer} />
+            <details
+              key={faq.id}
+              className="border-b border-stone-200 last:border-0"
+            >
+              <summary className="cursor-pointer py-5 text-sm font-medium text-stone-800">
+                {faq.question}
+              </summary>
+              <p className="whitespace-pre-line pb-5 text-sm leading-relaxed text-stone-600">
+                {faq.answer}
+              </p>
+            </details>
           ))}
         </div>
       </div>

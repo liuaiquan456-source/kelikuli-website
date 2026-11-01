@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
+import QuoteAnalytics from "@/components/QuoteAnalytics";
 import VisitTracker from "@/components/VisitTracker";
 import CartGateProvider from "@/components/CartGateProvider";
 import I18nProvider from "@/components/I18nProvider";
@@ -91,6 +92,7 @@ export default async function RootLayout({
             <Footer />
             <FloatingContact whatsapp={settings.whatsapp} />
             <VisitTracker />
+            <QuoteAnalytics measurementId={process.env.GA4_MEASUREMENT_ID || ""} />
           </CartGateProvider>
         </I18nProvider>
       </body>

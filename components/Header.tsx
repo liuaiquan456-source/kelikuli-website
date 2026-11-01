@@ -10,13 +10,13 @@ import { useCartGate } from "@/components/CartGateProvider";
 import { useTranslation } from "@/components/I18nProvider";
 
 const navLinks = [
-  { key: "header.nav.home",     label: "Home", href: "/" },
   { key: "header.nav.products", label: "Products", href: "/products" },
-  { key: "header.nav.custom",   label: "Custom Service", href: "/custom-oem-odm" },
-  { key: "header.nav.news",     label: "News", href: "/news" },
-  { key: "header.nav.faq",      label: "FAQ", href: "/faq" },
-  { key: "header.nav.about",    label: "About Us", href: "/about-us" },
-  { key: "header.nav.contact",  label: "Contact", href: "/contact" },
+  { key: "header.nav.manufacturing", label: "Custom Manufacturing", href: "/custom-oem-odm" },
+  { key: "header.nav.industries", label: "Industries", href: "/industries" },
+  { key: "header.nav.caseStudies", label: "Case Studies", href: "/case-studies" },
+  { key: "header.nav.buyingGuides", label: "Buying Guides", href: "/buying-guides" },
+  { key: "header.nav.resources", label: "Resources", href: "/resources" },
+  { key: "header.nav.aboutShort", label: "About", href: "/about-us" },
 ];
 
 const CUSTOM_LAB_URL = "https://custom.kelikuli.com";
@@ -108,7 +108,7 @@ export default function Header() {
           ? "bg-[#1E1812]/60 backdrop-blur-md border-b border-[#C9A55A]/20 shadow-lg"
           : "bg-[#1E1812] border-b border-[#C9A55A]/20"
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <Image
@@ -122,12 +122,12 @@ export default function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden xl:flex items-center gap-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors pb-0.5 ${
+                className={`whitespace-nowrap text-xs font-medium transition-colors pb-0.5 ${
                   pathname === link.href
                     ? "text-[#C9A55A] border-b-2 border-[#C9A55A]"
                     : "text-stone-300 hover:text-[#C9A55A]"
@@ -136,19 +136,13 @@ export default function Header() {
                 {t(link.key, link.label)}
               </Link>
             ))}
-            <a
-              href={CUSTOM_LAB_URL}
-              className="text-sm font-medium transition-colors pb-0.5 text-stone-300 hover:text-[#C9A55A]"
-            >
-              {t("header.nav.customLab", "Custom Lab")}
-            </a>
             <button
               onClick={() => setInquiryOpen(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-5 py-1.5 rounded-full transition-colors shadow-sm"
+              className="whitespace-nowrap rounded-full bg-[#d3b576] px-4 py-2 text-xs font-bold text-[#211c17] hover:bg-[#e2c994]"
             >
-              {t("header.inquiryNow", "Inquiry Now")}
+              {t("header.getQuote", "Get a Quote")}
             </button>
-            <Link href="/wishlist" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-orange-400 transition-colors">
+            <Link href="/wishlist" aria-label="Wishlist" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-orange-400 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
@@ -175,7 +169,7 @@ export default function Header() {
           </nav>
 
           {/* Desktop right */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3">
             {/* Search */}
             <div ref={searchRef} className="relative">
               <button
@@ -243,13 +237,13 @@ export default function Header() {
           </div>
 
           {/* Mobile: language + inquiry + hamburger */}
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="xl:hidden flex items-center gap-2">
             <LanguageSwitcher />
             <button
               onClick={() => setInquiryOpen(true)}
               className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-full transition-colors shadow-sm"
             >
-              {t("header.inquiryNow", "Inquiry Now")}
+              {t("header.getQuote", "Get a Quote")}
             </button>
             <button
               className="p-2 text-stone-300 rounded-lg hover:bg-white/10 transition-colors"
@@ -266,7 +260,7 @@ export default function Header() {
 
       {/* Mobile right-side drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
+        <div className="fixed inset-0 z-[100] xl:hidden">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -361,7 +355,7 @@ export default function Header() {
                 onClick={() => { setInquiryOpen(true); setMobileOpen(false); }}
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-4 py-3 rounded-xl transition-colors shadow-sm"
               >
-                {t("header.inquiryNow", "Inquiry Now")}
+                {t("header.getQuote", "Get a Quote")}
               </button>
             </div>
           </div>

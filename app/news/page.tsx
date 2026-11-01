@@ -14,9 +14,10 @@ const categories = ["All", "Industry Insights", "New Product", "Exhibition Revie
 
 export const dynamic = "force-dynamic";
 
-export default async function NewsPage() {
+export default async function NewsPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const { category } = await searchParams;
   const posts = await prisma.post.findMany({
-    where: { status: "published" },
+    where: { status: "published", ...(category && categories.includes(category) && category !== "All" ? { category } : {}) },
     orderBy: { publishedAt: "desc" },
     select: { id: true, slug: true, title: true, category: true, excerpt: true, image: true, publishedAt: true },
   });
@@ -45,12 +46,12 @@ export default async function NewsPage() {
             className="text-5xl md:text-6xl font-black text-white tracking-widest mb-4"
             style={{ fontFamily: "var(--font-playfair), Georgia, serif", letterSpacing: "0.15em" }}
           >
-            Industry News
+            Resources Archive
           </h1>
           <div className="flex items-center justify-center gap-2 text-sm text-stone-400">
             <Link href="/" className="hover:text-[#C9A55A] transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-stone-300">News</span>
+            <Link href="/resources" className="text-stone-300 hover:text-white">Resources</Link>
           </div>
         </div>
       </section>

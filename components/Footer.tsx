@@ -20,10 +20,11 @@ const productLinks = [
 ];
 
 const newsLinks = [
-  { key: "footer.news.company",  label: "Company News", href: "/news" },
-  { key: "footer.news.updates",  label: "Product Updates", href: "/news" },
-  { key: "footer.news.guide",    label: "Custom Resin Toy Guide", href: "/news" },
-  { key: "footer.news.industry", label: "Industry News", href: "/news" },
+  { key: "footer.resources.guides", label: "Buying Guides", href: "/buying-guides" },
+  { key: "footer.resources.projects", label: "Case Studies & Projects", href: "/case-studies" },
+  { key: "footer.resources.factory", label: "Factory Insights", href: "/resources#factory-insights" },
+  { key: "footer.resources.development", label: "New Product Development", href: "/resources#new-product-development" },
+  { key: "footer.resources.faq", label: "FAQ", href: "/faq" },
 ];
 
 export default async function Footer() {
@@ -126,7 +127,7 @@ export default async function Footer() {
 
           {/* Col 4: News */}
           <div>
-            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-5">{t("footer.news", "News")}</h4>
+            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-5">{t("footer.resources", "Resources")}</h4>
             <ul className="space-y-2.5">
               {newsLinks.map((l) => (
                 <li key={l.label}>

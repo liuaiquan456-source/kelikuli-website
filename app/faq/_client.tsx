@@ -1,8 +1,6 @@
 "use client";
-import { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
-import FaqSection from "@/components/FaqSection";
 import { useTranslation } from "@/components/I18nProvider";
 
 const faqs: { categoryKey: string; category: string; items: { key: string; q: string; a: string }[] }[] = [
@@ -10,14 +8,14 @@ const faqs: { categoryKey: string; category: string; items: { key: string; q: st
     categoryKey: "faq.cat.ordering", category: "Ordering & MOQ",
     items: [
       {
-        key: "faq.ordering.1",
+        key: "faq.ordering.1.reviewed",
         q: "What is your minimum order quantity (MOQ)?",
-        a: "Our standard MOQ is 100 pieces per design. For custom OEM/ODM orders with your own artwork or IP, MOQ starts at 200 pieces per design. We can discuss lower quantities for sample orders — please contact us for details.",
+        a: "MOQ is confirmed per design and colorway after artwork review. Size, part count, finish and packaging can affect the minimum. Share your target opening quantity so we can review a low-MOQ option and quote development costs separately.",
       },
       {
-        key: "faq.ordering.2",
+        key: "faq.ordering.2.reviewed",
         q: "Can I order samples before placing a bulk order?",
-        a: "Yes. We offer pre-production samples (paid) so you can approve quality, color, and finish before committing to a full production run. Sample lead time is typically 7–15 business days.",
+        a: "A pre-production sample can be scoped to review shape, dimensions, color and finish before bulk production. Sample charges, method, revision rounds and timing are confirmed after artwork review.",
       },
       {
         key: "faq.ordering.3",
@@ -45,9 +43,9 @@ const faqs: { categoryKey: string; category: string; items: { key: string; q: st
         a: "For 2D artwork: AI, EPS, or high-resolution PSD (300 dpi+). For 3D sculptures: STL, OBJ, or ZBrush files. If you only have reference images, our design team can create 3D models for you (design fee applies).",
       },
       {
-        key: "faq.custom.3",
+        key: "faq.custom.3.reviewed",
         q: "What is the lead time for custom products?",
-        a: "Mold development takes 15–25 business days. Mass production after mold approval is typically 25–40 business days depending on quantity and complexity. We provide a detailed timeline at order confirmation.",
+        a: "Timing depends on artwork completeness, sample revisions, tooling, quantity, painting and packaging. Ask for separate milestones for sample approval, mold making, production completion and shipment readiness. Confirm the schedule against your final specification.",
       },
       {
         key: "faq.custom.4",
@@ -60,14 +58,14 @@ const faqs: { categoryKey: string; category: string; items: { key: string; q: st
     categoryKey: "faq.cat.quality", category: "Products & Quality",
     items: [
       {
-        key: "faq.quality.1",
+        key: "faq.quality.1.reviewed",
         q: "What materials do you use?",
-        a: "Our products are made from high-quality polyresin (cold-cast resin), PVC, and ABS plastic depending on the product type. All materials comply with EN71, ASTM F963, and REACH safety standards. We can provide test reports on request.",
+        a: "Our products are made from high-quality polyresin (cold-cast resin), PVC, and ABS plastic depending on the product type. Testing requirements depend on the intended use, destination market and chosen material. Ask us to confirm the applicable test plan and available reports for your specific product.",
       },
       {
-        key: "faq.quality.2",
+        key: "faq.quality.2.reviewed",
         q: "Are your products safe for children?",
-        a: "Products intended for ages 3+ are tested to EN71 (Europe) and ASTM F963 (US) safety standards. Please specify the target age group when inquiring so we can recommend the appropriate material and testing.",
+        a: "Specify the target age group, destination market and intended use before development. A decorative collectible should not be treated as a tested children’s toy. The product-specific testing and compliance plan must be confirmed before ordering.",
       },
       {
         key: "faq.quality.3",
@@ -110,9 +108,9 @@ const faqs: { categoryKey: string; category: string; items: { key: string; q: st
     categoryKey: "faq.cat.workingWithUs", category: "Working With Us",
     items: [
       {
-        key: "faq.working.1",
+        key: "faq.working.1.reviewed",
         q: "How do I get started?",
-        a: "Simply submit an inquiry via the form on this website, WhatsApp us directly, or email us with your product requirements. We typically respond within 24 hours on business days.",
+        a: "Submit the project inquiry form with artwork, quantity, dimensions and destination, or contact us by WhatsApp or email. We will review the brief before confirming a quotation and schedule.",
       },
       {
         key: "faq.working.2",
@@ -120,39 +118,24 @@ const faqs: { categoryKey: string; category: string; items: { key: string; q: st
         a: "Yes. We work with brands at all stages — from first-time importers to large retailers. We can advise on the best approach for your budget and volume.",
       },
       {
-        key: "faq.working.3",
+        key: "faq.working.3.reviewed",
         q: "Do you have a showroom or factory I can visit?",
-        a: "Our factory is located in Guangdong, China. We welcome factory visits by appointment. Please contact us in advance so we can arrange your visit and ensure the right team members are available.",
+        a: "Our factory is located in Pujiang County, Jinhua, Zhejiang, China. We welcome factory visits by appointment. Please contact us in advance so we can arrange your visit and ensure the right team members are available.",
       },
     ],
   },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-stone-200 last:border-0">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full text-left flex items-start justify-between gap-4 py-5 px-1 group"
-      >
-        <span className="text-stone-800 font-medium text-sm leading-relaxed group-hover:text-orange-600 transition-colors">
-          {q}
-        </span>
-        <span className={`shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-all mt-0.5 ${open ? "rotate-45 border-orange-500 text-orange-500" : "border-stone-300 text-stone-500"}`}>
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-          </svg>
-        </span>
-      </button>
-      {open && (
-        <p className="text-stone-600 text-sm leading-relaxed pb-5 px-1">{a}</p>
-      )}
-    </div>
+    <details className="group border-b border-stone-200 last:border-0">
+      <summary className="cursor-pointer py-5 text-sm font-medium text-stone-800">{q}</summary>
+      <p className="pb-5 text-sm leading-relaxed text-stone-600">{a}</p>
+    </details>
   );
 }
 
-export default function FaqClient() {
+export default function FaqClient({ children }: { children?: React.ReactNode }) {
   const { t } = useTranslation();
   return (
     <div>
@@ -191,7 +174,7 @@ export default function FaqClient() {
       </section>
 
       {/* DB-driven FAQs added from admin */}
-      <FaqSection page="faq" title={t("faq.moreFaqs", "More FAQs")} />
+      {children}
 
       {/* CTA */}
       <section className="py-16 bg-[#F5EDD8]">

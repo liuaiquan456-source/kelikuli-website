@@ -1,6 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import InquiryModal from "@/components/InquiryModal";
 import ProductImage from "@/components/ProductImage";
@@ -168,33 +167,26 @@ const categories = [
 
 const ITEMS_PER_PAGE = 24;
 
-export default function ProductsClient() {
+export default function ProductsClient({ initialProducts, initialCategory, initialPage }: { initialProducts: PublicProduct[]; initialCategory: string; initialPage: number }) {
   const { t } = useTranslation();
-  const searchParams = useSearchParams();
-  const urlCategory = searchParams.get("category") ?? "All Products";
 
-  const [activeCategory, setActiveCategory] = useState(urlCategory);
+  const activeCategory = initialCategory;
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialPage);
   const { isWished, toggle: toggleWish } = useWishlist();
   const { isInCart } = useCart();
   const { addToCart } = useCartGate();
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [inquiryProduct, setInquiryProduct] = useState<PublicProduct | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [products, setProducts] = useState<PublicProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setActiveCategory(urlCategory);
-    setPage(1);
-  }, [urlCategory]);
-
-  useEffect(() => {
-    fetch("/api/products?status=active")
-      .then((r) => r.json())
-      .then((data) => setProducts(Array.isArray(data) ? data : []))
-      .finally(() => setLoading(false));
-  }, []);
+  const products = initialProducts;
+  const loading = false;
+  const catalogHref = (category: string, pageNumber = 1) => {
+    const params = new URLSearchParams();
+    if (category !== "All Products") params.set("category", category);
+    if (pageNumber > 1) params.set("page", String(pageNumber));
+    return `/products${params.size ? `?${params}` : ""}`;
+  };
 
   const filtered = products.filter((p) => {
     const matchCat = activeCategory === "All Products" || p.category === activeCategory;
@@ -228,10 +220,10 @@ export default function ProductsClient() {
         <div className="relative z-10">
           <h1 className="text-2xl md:text-3xl font-black text-white mb-4"
             style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
-            {t("products.heroTitle", "Wholesale Resin Figurines & Collectibles")}
+            {activeCategory === "All Products" ? t("products.heroTitle", "Wholesale Resin Figurines & Collectibles") : `Wholesale ${activeCategory} — Custom Resin Products`}
           </h1>
           <div className="flex items-center justify-center gap-2 text-sm text-stone-400">
-            <a href="/" className="hover:text-[#C9A55A] transition-colors">{t("breadcrumb.home", "Home")}</a>
+            <Link href="/" className="hover:text-[#C9A55A] transition-colors">{t("breadcrumb.home", "Home")}</Link>
             <span>/</span>
             <span className="text-stone-300">{t("header.nav.products", "Products")}</span>
           </div>
@@ -270,15 +262,16 @@ export default function ProductsClient() {
                 const isActive = activeCategory === cat.label;
                 return (
                   <li key={cat.label}>
-                    <button
-                      onClick={() => { setActiveCategory(cat.label); setPage(1); setDrawerOpen(false); }}
+                    <Link
+                      href={catalogHref(cat.label)}
+                      onClick={() => setDrawerOpen(false)}
                       className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
                         isActive ? "bg-[#C9A55A] text-white font-semibold" : "text-stone-600 hover:bg-orange-50 hover:text-[#C9A55A]"
                       }`}
                     >
                       <span className={isActive ? "text-white" : "text-[#C9A55A]"}>{cat.icon}</span>
                       {t(cat.key, cat.label)}
-                    </button>
+                    </Link>
                   </li>
                 );
               })}
@@ -396,7 +389,7 @@ export default function ProductsClient() {
                           </svg>
                         </button>
                         <button
-                          onClick={() => setInquiryOpen(true)}
+                          onClick={() => { setInquiryProduct(product); setInquiryOpen(true); }}
                           className="flex-1 text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-xl py-2.5 transition-colors"
                         >
                           + {t("header.inquiryNow", "Inquiry Now")}
@@ -409,41 +402,16 @@ export default function ProductsClient() {
               </div>
             )}
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-8">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:border-[#C9A55A] hover:text-[#C9A55A] disabled:opacity-30 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
+              <nav aria-label="Product pages" className="mt-8 flex flex-wrap justify-center gap-2">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    className={`w-8 h-8 rounded-full text-sm font-semibold transition-colors ${
-                      page === n
-                        ? "bg-[#C9A55A] text-white"
-                        : "border border-stone-200 text-stone-600 hover:border-[#C9A55A] hover:text-[#C9A55A]"
-                    }`}
-                  >
+                  <Link key={n} href={catalogHref(activeCategory, n)} aria-current={page === n ? "page" : undefined}
+                    onClick={(event) => { if (search) { event.preventDefault(); setPage(n); } }}
+                    className={`flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm ${page === n ? "bg-stone-900 text-white" : "border-stone-200 text-stone-700"}`}>
                     {n}
-                  </button>
+                  </Link>
                 ))}
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-500 hover:border-[#C9A55A] hover:text-[#C9A55A] disabled:opacity-30 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
+              </nav>
             )}
           </div>
 
@@ -475,8 +443,8 @@ export default function ProductsClient() {
                   const isActive = activeCategory === cat.label;
                   return (
                     <li key={cat.label}>
-                      <button
-                        onClick={() => { setActiveCategory(cat.label); setPage(1); }}
+                      <Link
+                        href={catalogHref(cat.label)}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
                           isActive
                             ? "bg-[#C9A55A] text-white font-semibold"
@@ -485,7 +453,7 @@ export default function ProductsClient() {
                       >
                         <span className={isActive ? "text-white" : "text-[#C9A55A]"}>{cat.icon}</span>
                         {t(cat.key, cat.label)}
-                      </button>
+                      </Link>
                     </li>
                   );
                 })}
@@ -513,7 +481,7 @@ export default function ProductsClient() {
         </div>
         </div>
       </section>
-      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
+      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} cartProducts={inquiryProduct ? [inquiryProduct] : undefined} />
     </div>
   );
 }
