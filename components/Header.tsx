@@ -108,7 +108,7 @@ export default function Header() {
           ? "bg-[#1E1812]/60 backdrop-blur-md border-b border-[#C9A55A]/20 shadow-lg"
           : "bg-[#1E1812] border-b border-[#C9A55A]/20"
       }`}>
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 h-16">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-3 h-16 xl:h-18">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <Image
@@ -122,12 +122,12 @@ export default function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden xl:flex items-center gap-4">
+          <nav className="hidden xl:flex shrink-0 items-center gap-3 2xl:gap-5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`whitespace-nowrap text-xs font-medium transition-colors pb-0.5 ${
+                className={`whitespace-nowrap text-base font-medium transition-colors py-2 ${
                   pathname === link.href
                     ? "text-[#C9A55A] border-b-2 border-[#C9A55A]"
                     : "text-stone-300 hover:text-[#C9A55A]"
@@ -138,12 +138,12 @@ export default function Header() {
             ))}
             <button
               onClick={() => setInquiryOpen(true)}
-              className="whitespace-nowrap rounded-full bg-[#d3b576] px-4 py-2 text-xs font-bold text-[#211c17] hover:bg-[#e2c994]"
+              className="whitespace-nowrap rounded-full bg-[#d3b576] px-5 py-2.5 text-base font-bold text-[#211c17] hover:bg-[#e2c994]"
             >
               {t("header.getQuote", "Get a Quote")}
             </button>
-            <Link href="/wishlist" aria-label="Wishlist" className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-orange-400 transition-colors">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link href="/wishlist" aria-label="Wishlist" className="relative w-10 h-10 shrink-0 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-orange-400 transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
               {wishCount > 0 && (
@@ -155,9 +155,9 @@ export default function Header() {
             <button
               onClick={openCart}
               aria-label="Cart"
-              className="relative w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-[#C9A55A] transition-colors"
+              className="relative w-10 h-10 shrink-0 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-stone-300 hover:text-[#C9A55A] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
               </svg>
               {cartCount > 0 && (
@@ -169,18 +169,18 @@ export default function Header() {
           </nav>
 
           {/* Desktop right */}
-          <div className="hidden xl:flex items-center gap-3">
+          <div className="hidden xl:flex shrink-0 items-center gap-2 2xl:gap-3">
             {/* Search */}
             <div ref={searchRef} className="relative">
               <button
                 onClick={openSearch}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors rounded-full px-3 py-1.5 text-xs"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-colors rounded-full px-3 py-2 text-sm"
                 aria-label="Search"
               >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
                 </svg>
-                {t("header.search", "Search")}
+                <span className="hidden min-[1440px]:inline">{t("header.search", "Search")}</span>
               </button>
               {searchOpen && (
                 <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-stone-100 z-50 overflow-hidden">
@@ -241,7 +241,7 @@ export default function Header() {
             <LanguageSwitcher />
             <button
               onClick={() => setInquiryOpen(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-full transition-colors shadow-sm"
+              className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-4 py-2 rounded-full transition-colors shadow-sm"
             >
               {t("header.getQuote", "Get a Quote")}
             </button>
@@ -301,7 +301,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-3.5 rounded-xl text-sm font-medium transition-colors mb-1 ${
+                  className={`flex items-center gap-3 px-3 py-3.5 rounded-xl text-base font-medium transition-colors mb-1 ${
                     pathname === link.href
                       ? "bg-[#C9A55A]/15 text-[#C9A55A]"
                       : "text-stone-300 hover:bg-white/5 hover:text-[#C9A55A]"
@@ -316,7 +316,7 @@ export default function Header() {
               <a
                 href={CUSTOM_LAB_URL}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-3 py-3.5 rounded-xl text-sm font-medium transition-colors mb-1 text-stone-300 hover:bg-white/5 hover:text-[#C9A55A]"
+                className="flex items-center gap-3 px-3 py-3.5 rounded-xl text-base font-medium transition-colors mb-1 text-stone-300 hover:bg-white/5 hover:text-[#C9A55A]"
               >
                 {t("header.nav.customLab", "Custom Lab")}
               </a>
