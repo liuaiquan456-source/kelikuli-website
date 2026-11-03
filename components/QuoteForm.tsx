@@ -3,7 +3,8 @@ import { useId, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { services } from "@/data/manufacturing";
 import { publicSourcePath, type QuoteContext } from "@/lib/content";
-import { normalizeAttribution } from "@/lib/inquiry-data";
+import { inquiryAttachmentPath, normalizeAttribution } from "@/lib/inquiry-data";
+import { readInquiryResponse } from "@/lib/inquiry-response";
 import { inquiryLandingPage, trackSavedInquiry } from "@/lib/quote-analytics";
 
 export type QuoteProduct = {
@@ -34,6 +35,7 @@ export default function QuoteForm({
   const [error, setError] = useState("");
   const [savedId, setSavedId] = useState<number | null>(null);
   const submitting = useRef(false);
+  const fileInput = useRef<HTMLInputElement>(null);
   const uploaded = useRef(new Map<File, { url: string; name: string }>());
   const source =
     publicSourcePath(context.source) ||
@@ -78,16 +80,31 @@ export default function QuoteForm({
         if (!attachment) {
           const payload = new FormData();
           payload.append("file", file);
-          const response = await fetch("/api/inquiries/upload", {
-            method: "POST",
-            body: payload,
-          });
-          const data = await response.json();
-          if (!response.ok)
-            throw new Error(
-              `${file.name}: ${data.error || "Upload failed. Please try again."}`,
+          try {
+            const response = await fetch("/api/inquiries/upload", {
+              method: "POST",
+              body: payload,
+            });
+            const data = await readInquiryResponse(
+              response,
+              "Upload failed. Please try again, or remove the attachment and send your inquiry without it.",
             );
-          attachment = { url: data.url, name: data.name };
+            if (
+              typeof data.url !== "string" ||
+              !inquiryAttachmentPath.test(data.url) ||
+              typeof data.name !== "string"
+            )
+              throw new Error("Upload could not be confirmed. Please try again.");
+            attachment = { url: data.url, name: data.name };
+          } catch (err) {
+            const reason =
+              err instanceof TypeError
+                ? "Upload connection failed. Check your connection and try again, or remove this attachment."
+                : err instanceof Error
+                  ? err.message
+                  : "Upload failed. Please try again.";
+            throw new Error(`${file.name}: ${reason}`);
+          }
           uploaded.current.set(file, attachment);
         }
         attachments.push(attachment);
@@ -117,15 +134,17 @@ export default function QuoteForm({
           attachments,
         }),
       });
-      const data = await response.json();
+      const fallback =
+        "We could not confirm receipt of your inquiry. Please try again or contact us directly.";
+      const data = await readInquiryResponse(response, fallback);
       if (
         response.status !== 201 ||
         data.success !== true ||
-        !Number.isSafeInteger(data.id)
+        typeof data.id !== "number" ||
+        !Number.isSafeInteger(data.id) ||
+        data.id < 1
       )
-        throw new Error(
-          data.error || "We could not save your inquiry. Please try again.",
-        );
+        throw new Error(fallback);
       setSavedId(data.id);
       try {
         trackSavedInquiry(attribution);
@@ -134,9 +153,11 @@ export default function QuoteForm({
       }
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to send. Please try again.",
+        err instanceof TypeError
+          ? "Connection failed. We could not confirm receipt of your inquiry. Check your connection and try again, or contact us directly."
+          : err instanceof Error
+            ? err.message
+            : "Unable to send. Please try again.",
       );
     } finally {
       submitting.current = false;
@@ -302,6 +323,7 @@ export default function QuoteForm({
             Upload your design
           </label>
           <input
+            ref={fileInput}
             id={`${id}-design-files`}
             type="file"
             multiple
@@ -318,9 +340,28 @@ export default function QuoteForm({
             inquiry.
           </p>
           {files.length > 0 && (
-            <p className="mt-2 break-words text-xs text-stone-600">
-              {files.map((f) => f.name).join(", ")}
-            </p>
+            <ul className="mt-2 space-y-2 text-xs text-stone-600">
+              {files.map((file, index) => (
+                <li
+                  key={index}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <span className="min-w-0 break-words">{file.name}</span>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${file.name}`}
+                    className="shrink-0 px-2 py-2 underline"
+                    onClick={() => {
+                      setFiles((selected) => selected.filter((f) => f !== file));
+                      uploaded.current.delete(file);
+                      if (fileInput.current) fileInput.current.value = "";
+                    }}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </fieldset>
