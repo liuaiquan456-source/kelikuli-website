@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hasAdminSession } from "@/lib/admin-auth";
+import { isAlibabaAdminOrigin } from "@/lib/alibaba-actions-auth";
 import { beginAuthorization, configureConnection, connectionStatus, mutateConnection, readConnection, verifyConnection } from "@/lib/alibaba-connection";
 export const runtime = "nodejs";
 const headers = { "Cache-Control": "private, no-store" };
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
   catch { return NextResponse.json({ error: "授权存储读取失败，请检查服务器配置。" }, { status: 503, headers }); }
 }
 export async function POST(req: NextRequest) {
-  if (req.headers.get("origin") !== req.nextUrl.origin || !(await hasAdminSession(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers });
+  if (!isAlibabaAdminOrigin(req) || !(await hasAdminSession(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers });
   try {
     if (Number(req.headers.get("content-length")) > 5000) throw new Error("配置内容过长。");
     let body;

@@ -115,6 +115,8 @@ test('connection configuration rejects cross-site writes and never accepts an Ac
  const route=createLoader({'@/lib/admin-auth':{hasAdminSession:async()=>true},'@/lib/alibaba-connection':{configureConnection:async()=>{configured++;return{ok:true};}}})('app/api/integrations/alibaba/connection/route.ts');
  const response=await route.POST(new NextRequest('https://kelikuli.com/api/integrations/alibaba/connection',{method:'POST',headers:{origin:'https://evil.test','content-type':'application/json'},body:JSON.stringify({action:'configure',appKey:'123456',appSecret:'test-secret-only'})}));
  assert.equal(response.status,401);assert.equal(configured,0);
+ const allowed=await route.POST(new NextRequest('http://localhost:3000/api/integrations/alibaba/connection',{method:'POST',headers:{origin:'https://kelikuli.com','content-type':'application/json'},body:JSON.stringify({action:'configure',appKey:'123456',appSecret:'test-secret-only'})}));
+ assert.equal(allowed.status,200);assert.equal(configured,1);
  const locked=createLoader({'@/lib/admin-auth':{hasAdminSession:async()=>false}})('app/api/integrations/alibaba/connection/route.ts');
  const read=await locked.GET(new NextRequest('https://kelikuli.com/api/integrations/alibaba/connection',{headers:{authorization:'Bearer test-key'}}));
  assert.equal(read.status,401);
