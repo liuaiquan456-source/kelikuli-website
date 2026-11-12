@@ -56,7 +56,7 @@ test('authorization is encrypted, session-bound, one-use and never returned in s
  process.env.ALIBABA_PRIVATE_DIR=dir; process.env.ADMIN_SESSION_SECRET='test-only-session-key-at-least-32-characters';
  t.after(async()=>{if(oldDir===undefined)delete process.env.ALIBABA_PRIVATE_DIR;else process.env.ALIBABA_PRIVATE_DIR=oldDir;if(oldKey===undefined)delete process.env.ADMIN_SESSION_SECRET;else process.env.ADMIN_SESSION_SECRET=oldKey;await rm(dir,{recursive:true,force:true});});
  let calls=0;
- const conn=createLoader({'./alibaba-client':{callAlibaba:async()=>{calls++;return {access_token:'access-test',refresh_token:'refresh-test',expires_in:3600,refresh_expires_in:7200,account:'test-shop'};}}})('lib/alibaba-connection.ts');
+ const conn=createLoader({'./alibaba-client':{callAlibaba:async()=>{calls++;return {access_token:'access-test',refresh_token:'refresh-test',expires_in:3600,refresh_expires_in:7200,account:'test-shop',...(calls===1?{havana_id:'987',expires_in:1}:{})};}}})('lib/alibaba-connection.ts');
  await conn.configureConnection('123456','test-only-secret-12345');
  const encrypted=await readFile(path.join(dir,'connection.enc'),'utf8');
  assert.ok(!encrypted.includes('test-only-secret'));
@@ -67,6 +67,8 @@ test('authorization is encrypted, session-bound, one-use and never returned in s
  await conn.finishAuthorization('code',url.searchParams.get('state'),'session-one');
  await assert.rejects(conn.finishAuthorization('code',url.searchParams.get('state'),'session-one'));
  assert.equal(calls,1);
+ const refreshed=await Promise.all([conn.authorizedConnection(),conn.authorizedConnection()]);
+ assert.equal(calls,2);assert.equal(refreshed[0].shopId,'987');assert.equal(refreshed[1].shopId,'987');
  const status=JSON.stringify(conn.connectionStatus(await conn.readConnection()));
  assert.ok(!status.includes('access-test') && !status.includes('refresh-test') && !status.includes('test-only-secret'));
  const damaged=JSON.parse(await readFile(path.join(dir,'connection.enc'),'utf8'));damaged.tag=Buffer.alloc(16).toString('base64');
@@ -106,4 +108,14 @@ test('lost publication response is uncertain and never retried',async t=>{
 test('SSRF destinations and redirected/unsupported image sources are rejected',async t=>{
  const h=harness(t);for(const src of ['http://kelikuli.com/x','https://127.0.0.1/x','https://kelikuli.com@evil.test/x','//evil.test/x','https://kelikuli.com:8443/x'])assert.throws(()=>h.allowedImageUrl(src));
  assert.equal(h.allowedImageUrl('/images/x.jpg').href,'https://kelikuli.com/images/x.jpg');
+});
+test('connection configuration rejects cross-site writes and never accepts an Actions key', async()=>{
+ const {NextRequest}=await import('next/server.js');
+ let configured=0;
+ const route=createLoader({'@/lib/admin-auth':{hasAdminSession:async()=>true},'@/lib/alibaba-connection':{configureConnection:async()=>{configured++;return{ok:true};}}})('app/api/integrations/alibaba/connection/route.ts');
+ const response=await route.POST(new NextRequest('https://kelikuli.com/api/integrations/alibaba/connection',{method:'POST',headers:{origin:'https://evil.test','content-type':'application/json'},body:JSON.stringify({action:'configure',appKey:'123456',appSecret:'test-secret-only'})}));
+ assert.equal(response.status,401);assert.equal(configured,0);
+ const locked=createLoader({'@/lib/admin-auth':{hasAdminSession:async()=>false}})('app/api/integrations/alibaba/connection/route.ts');
+ const read=await locked.GET(new NextRequest('https://kelikuli.com/api/integrations/alibaba/connection',{headers:{authorization:'Bearer test-key'}}));
+ assert.equal(read.status,401);
 });

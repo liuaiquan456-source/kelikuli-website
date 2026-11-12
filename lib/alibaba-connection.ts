@@ -74,7 +74,7 @@ export async function beginAuthorization(session: string) {
 function tokenConnection(c: AlibabaConnection, result: Record<string, unknown>): AlibabaConnection {
   if (typeof result.access_token !== "string" || !result.access_token || !Number.isFinite(Number(result.expires_in)) || Number(result.expires_in) <= 0) throw new Error("国际站没有返回有效授权令牌。");
   const account = String(result.account ?? c.account ?? "");
-  const shopId = String(result.havana_id ?? result.user_id ?? account);
+  const shopId = String(result.havana_id ?? result.user_id ?? c.shopId ?? account);
   if (!shopId || (c.shopId && c.shopId !== shopId)) throw new Error("授权店铺与已连接店铺不同，请先核对账号。");
   return { ...c, oauth: undefined, accessToken: result.access_token, refreshToken: typeof result.refresh_token === "string" ? result.refresh_token : c.refreshToken,
     account, shopId, expiresAt: Date.now() + Number(result.expires_in) * 1000,
