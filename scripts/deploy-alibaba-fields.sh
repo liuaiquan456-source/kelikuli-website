@@ -16,7 +16,18 @@ git diff --cached --quiet
 test -f .env
 test -d .next
 test -d node_modules/.prisma
-test -z "$(git diff --name-only "$old" "$target" -- package.json package-lock.json)"
+# This release promotes an already-installed transitive XML parser to a direct dependency.
+# Refuse any other runtime dependency change; no unreviewed npm install on production.
+node - "$target" <<'NODE'
+const cp = require('node:child_process');
+const fs = require('node:fs');
+const previous = JSON.parse(fs.readFileSync('package.json', 'utf8')).dependencies;
+const next = JSON.parse(cp.execFileSync('git', ['show', process.argv[2] + ':package.json'], {encoding:'utf8'})).dependencies;
+for (const name of new Set([...Object.keys(previous), ...Object.keys(next)])) {
+  if (name !== 'xml2js' && previous[name] !== next[name]) throw new Error('Unexpected dependency change: ' + name);
+}
+if (next.xml2js && require('xml2js/package.json').version !== '0.6.2') throw new Error('Expected XML parser not installed');
+NODE
 
 release="$(dirname "$app")/kelikuli-release-$short"
 if [[ ! -d "$release" ]]; then
@@ -34,6 +45,7 @@ preview_pid=
 source_changed=0
 cutover_started=0
 success=0
+temporary_swap=
 cleanup() {
   local result=$?
   trap - EXIT
@@ -57,6 +69,9 @@ cleanup() {
     if [[ "$cutover_started" = 1 ]]; then pm2 restart kelikuli --update-env >/dev/null; fi
     printf 'DEPLOYMENT_FAILED: production files retained or restored; backup=%s\n' "$backup"
   fi
+  if [[ -n "$temporary_swap" ]]; then
+    if swapoff "$temporary_swap"; then rm "$temporary_swap"; else printf 'Temporary build swap retained: %s\n' "$temporary_swap"; fi
+  fi
   exit "$result"
 }
 trap cleanup EXIT
@@ -78,6 +93,15 @@ NODE
 cd "$release"
 node_modules/.bin/prisma db execute --file prisma/updates/20261112-alibaba-drafts.sql --schema prisma/schema.prisma
 node_modules/.bin/prisma db execute --file prisma/updates/20261112-alibaba-listing.sql --schema prisma/schema.prisma
+# Keep the live 2GB server responsive during the isolated Next.js build.
+if [[ $(awk '/SwapTotal:/ {print $2}' /proc/meminfo) -eq 0 ]]; then
+  temporary_swap="$(dirname "$app")/kelikuli-build-$short.swap"
+  test ! -e "$temporary_swap"
+  fallocate -l 2G "$temporary_swap"
+  chmod 600 "$temporary_swap"
+  mkswap "$temporary_swap" >/dev/null
+  swapon "$temporary_swap"
+fi
 # Raise only the build process's OOM score so it is preferred over the live site.
 (
   printf 500 > /proc/self/oom_score_adj
@@ -100,6 +124,9 @@ for (let attempt = 0; attempt < 15; attempt++) {
     if (!response.ok) throw new Error('intake HTTP ' + response.status);
     const info = await response.json();
     if (info.intakeVersion !== 2 || info.supportsAlibabaListing !== true) throw new Error('intake capability mismatch');
+    const connection = await fetch(base + '/api/integrations/alibaba/connection');
+    const publishing = await fetch(base + '/api/integrations/alibaba/publications?sku=healthcheck');
+    if (connection.status !== 401 || publishing.status !== 401) throw new Error('Private Alibaba endpoints not protected');
     console.log('HEALTHCHECK_OK', JSON.stringify(info));
     process.exit(0);
   } catch (error) { last = error.message; }

@@ -1,0 +1,13 @@
+{
+  "openapi": "3.1.0",
+  "info": {"title": "KELIKULI Alibaba Publication", "version": "1.0.0", "description": "Submit an existing, reviewed KELIKULI product to the connected Alibaba International shop for review. Never invent package measurements or prices. Storefront approval is required and cannot be granted by this API."},
+  "servers": [{"url": "https://kelikuli.com"}],
+  "security": [{"actionsKey": []}],
+  "paths": {
+    "/api/integrations/alibaba/publications": {
+      "get": {"operationId": "getAlibabaPublicationStatus", "summary": "Read readiness, missing fields and recorded Alibaba product ID", "parameters": [{"name": "sku", "in": "query", "required": true, "schema": {"type": "string", "maxLength": 64}}], "responses": {"200": {"description": "Readiness and recorded submission status. Only submitted with productId is a confirmed submission, not approval."}, "401": {"description": "Unauthorized"}, "404": {"description": "Product not found"}}},
+      "post": {"operationId": "submitAlibabaProductForReview", "summary": "Submit an approved product to Alibaba International for publication review", "description": "This creates a real Alibaba product for review. Use only with explicit user intent to publish this SKU. Existing receipts are reused. Missing fields block submission. An uncertain result must be checked in My Alibaba; never submit a duplicate SKU to bypass it.", "x-openai-isConsequential": true, "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["sku"], "additionalProperties": false, "properties": {"sku": {"type": "string", "maxLength": 64}}}}}}, "responses": {"200": {"description": "Submitted, with productId. Does not mean platform approval."}, "202": {"description": "Preparing images/schema. Check status later."}, "401": {"description": "Unauthorized"}, "409": {"description": "Uncertain prior submission; check My Alibaba, do not duplicate."}, "422": {"description": "Required facts, review or connection missing. Nothing submitted."}, "503": {"description": "Request failed; inspect saved status before retry."}}}
+    }
+  },
+  "components": {"securitySchemes": {"actionsKey": {"type": "http", "scheme": "bearer", "description": "KELIKULI Actions key, never an Alibaba App Secret or access token."}}}
+}

@@ -14,6 +14,7 @@ export interface AlibabaListing {
   leadTimeMaxDays: number | null;
   packaging: { lengthCm: number | null; widthCm: number | null; heightCm: number | null; grossWeightKg: number | null; confirmed: boolean };
   attributes: Record<AttributeKey, string>;
+  schemaValues?: Record<string, string | string[]>;
 }
 export interface ListingIssue { field: string; message: string }
 
@@ -41,7 +42,18 @@ function positive(value: unknown, label: string, integer = false): number | null
 export function parseAlibabaListing(raw: unknown): AlibabaListing {
   const result = emptyAlibabaListing();
   const body = object(typeof raw === "string" ? JSON.parse(raw) : raw, "国际站资料");
-  knownKeys(body, Object.keys(result), "国际站资料");
+  knownKeys(body, [...Object.keys(result), "schemaValues"], "国际站资料");
+  if (body.schemaValues !== undefined) {
+    const fields = object(body.schemaValues, "类目补充资料");
+    if (Object.keys(fields).length > 100) throw new Error("类目补充资料过多。");
+    result.schemaValues = {};
+    for (const [key, value] of Object.entries(fields)) {
+      if (!/^[A-Za-z0-9_.:-]{1,300}$/.test(key) || ["__proto__", "constructor", "prototype"].includes(key)) throw new Error("类目补充字段不正确。");
+      const values = Array.isArray(value) ? value : [value];
+      if (values.length > 30 || values.some(v => typeof v !== "string" || v.length > 2000)) throw new Error("类目补充值不正确。");
+      result.schemaValues[key] = value as string | string[];
+    }
+  }
   if (body.salesUnit !== undefined) {
     if (!["", "piece", "set"].includes(body.salesUnit as string)) throw new Error("销售单位请选择个或套。");
     result.salesUnit = body.salesUnit as AlibabaListing["salesUnit"];

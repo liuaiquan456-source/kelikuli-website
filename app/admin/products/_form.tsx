@@ -205,15 +205,15 @@ export default function AddProductForm({ product }: { product?: Product }) {
       setSavedStatus(data.status === "active");
       setSavedSku(data.sku ?? "");
       if (syncDraft || form.alibabaSyncEnabled) {
-        setSaveNotice("产品已保存，正在检查国际站草稿状态。");
+        setSaveNotice("产品已保存，正在检查国际站提交状态。");
         let result = data.alibabaSync;
         if (syncDraft) {
-          const response = await fetch("/api/integrations/alibaba/drafts", {
+          const response = await fetch("/api/integrations/alibaba/publications", {
             method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sku: data.sku }),
           });
           result = await response.json();
         }
-        setSaveNotice(`产品已保存。${result?.message ?? result?.error ?? "请检查同步状态。"}${result?.draftId ? ` 草稿编号：${result.draftId}` : ""}`);
+        setSaveNotice(`产品已保存。${result?.message ?? result?.error ?? "请检查同步状态。"}${result?.productId ? ` 国际站商品编号：${result.productId}` : ""}`);
         if (result?.missingFields?.length) setSaveError(result.missingFields.map((item: { message: string }) => item.message).join(" "));
         setSyncRevision(value => value + 1);
         return;

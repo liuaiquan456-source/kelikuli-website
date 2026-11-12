@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { hasAdminSession } from "@/lib/admin-auth";
 import { alibabaProductInput } from "@/lib/alibaba-draft-data";
 import { saveAlibabaReview, productSaveError } from "@/lib/alibaba-product-review";
-import { autoSyncAlibabaDraft } from "@/lib/alibaba-drafts";
+import { autoPublishAlibabaProduct } from "@/lib/alibaba-publishing";
 
 export const maxDuration = 90;
 
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       });
       return saveAlibabaReview(tx, saved, body.alibabaApprove);
     });
-    const alibabaSync = product.alibabaSyncEnabled ? await autoSyncAlibabaDraft(product.id) : undefined;
+    const alibabaSync = product.alibabaSyncEnabled ? await autoPublishAlibabaProduct(product.id) : undefined;
     return NextResponse.json({ ...product, tags: JSON.parse(product.tags), alibabaSync }, { status: 201, headers: privateHeaders });
   } catch (error) {
     const failure = productSaveError(error);

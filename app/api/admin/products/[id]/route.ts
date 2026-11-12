@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { hasAdminSession } from "@/lib/admin-auth";
 import { alibabaProductInput, isAlibabaApproved } from "@/lib/alibaba-draft-data";
 import { saveAlibabaReview, productSaveError } from "@/lib/alibaba-product-review";
-import { autoSyncAlibabaDraft } from "@/lib/alibaba-drafts";
+import { autoPublishAlibabaProduct } from "@/lib/alibaba-publishing";
 import { parseProductId } from "@/lib/public-products";
 
 export const maxDuration = 90;
@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       });
       return saveAlibabaReview(tx, saved, body.alibabaApprove);
     });
-    const alibabaSync = product.alibabaSyncEnabled ? await autoSyncAlibabaDraft(product.id) : undefined;
+    const alibabaSync = product.alibabaSyncEnabled ? await autoPublishAlibabaProduct(product.id) : undefined;
     return NextResponse.json({
       ...product,
       alibabaApproved: isAlibabaApproved(product),

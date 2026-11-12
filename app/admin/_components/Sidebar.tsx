@@ -48,6 +48,7 @@ export default function Sidebar() {
       children: [
         { label: "Product List", href: "/admin/products",     icon: <List className="w-3.5 h-3.5" /> },
         { label: "Add Product",  href: "/admin/products/new", icon: <PlusCircle className="w-3.5 h-3.5" /> },
+        { label: "国际站自动发布", href: "/admin/alibaba", icon: <Globe className="w-3.5 h-3.5" /> },
       ],
     },
     {
