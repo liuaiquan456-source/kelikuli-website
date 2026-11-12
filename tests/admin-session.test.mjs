@@ -37,8 +37,9 @@ test("private product reads and writes reject unsigned cookies; signed admin can
   let active = true;
   let reads = 0;
   let writes = 0;
-  const product = { id: 1, specs: "PRIVATE ORIGINAL NOTE", tags: "[]", images: "[]", variants: "[]" };
+  const product = { id: 1, specs: "PRIVATE ORIGINAL NOTE", tags: "[]", images: "[]", variants: "[]", alibabaApprovalHash: "", alibabaSyncEnabled: false };
   const prisma = {
+    $transaction: async (fn) => fn(prisma),
     adminUser: { findUnique: async () => ({ status: active ? "active" : "inactive" }) },
     product: {
       findMany: async () => { reads++; return [product]; },

@@ -9,6 +9,14 @@ datasource db {
 
 model Product {
   id          Int      @id @default(autoincrement())
+  sku         String?  @unique
+  alibabaCategoryId String @default("")
+  alibabaDimensions String @default("")
+  alibabaPriceTiers String @default("[]")
+  alibabaListing String @default("{}")
+  alibabaSyncEnabled Boolean @default(false)
+  alibabaApprovalHash String @default("")
+  alibabaDraft AlibabaDraft?
   name        String
   category    String
   price       Float
@@ -28,6 +36,22 @@ model Product {
   seoKeywords String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Keep a durable receipt/lock for each SKU, including uncertain network outcomes.
+// Restrict deletion so recreating a product cannot silently create another draft.
+model AlibabaDraft {
+  productId      Int      @id
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  sku            String   @unique
+  shopId         String
+  idempotencyKey String   @unique
+  contentHash    String
+  status         String   @default("syncing")
+  draftId        String?
+  message        String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Order {

@@ -23,7 +23,7 @@ export function createLoader(stubs = {}) {
         const target = specifier.startsWith("@/")
           ? path.join(root, specifier.slice(2))
           : path.resolve(path.dirname(resolved), specifier);
-        for (const candidate of [target, `${target}.ts`, `${target}.tsx`]) {
+        for (const candidate of [target, `${target}.ts`, `${target}.tsx`, path.join(target, "index.ts"), path.join(target, "index.tsx")]) {
           if (existsSync(candidate) && /\.tsx?$/.test(candidate)) return load(candidate);
         }
       }

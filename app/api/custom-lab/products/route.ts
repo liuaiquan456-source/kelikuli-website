@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CUSTOM_LAB_TAG } from "@/lib/custom-lab";
 import { CATEGORIES } from "@/app/admin/_data/mock";
+import { alibabaProductInput, missingProductFields } from "@/lib/alibaba-draft-data";
+import { productSaveError } from "@/lib/alibaba-product-review";
 
 // Server-to-server intake for the KELIKULI Custom Lab (custom.kelikuli.com).
 // Every submission is created as an inactive (= draft) product — nothing
@@ -17,16 +19,29 @@ function isAuthorized(req: NextRequest): boolean {
   return token.length > 0 && token === expected;
 }
 
+// Lets the sending page verify structured fields will be persisted before
+// creating a product on an older deployment that silently ignores them.
+export async function GET(req: NextRequest) {
+  if (!isAuthorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  return NextResponse.json({ intakeVersion: 2, supportsAlibabaListing: true }, { headers: { "Cache-Control": "private, no-store" } });
+}
+
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: Record<string, unknown>;
+  let alibabaData;
   try {
     body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("Invalid JSON body");
+    if (body.alibabaApprove !== undefined || body.alibabaSyncEnabled !== undefined || body.alibabaApprovalHash !== undefined) {
+      throw new Error("Intake can save product facts, but cannot approve or enable Alibaba submission.");
+    }
+    alibabaData = alibabaProductInput(body);
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid product data" }, { status: 400 });
   }
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
@@ -58,8 +73,10 @@ export async function POST(req: NextRequest) {
     : `Submitted category "${submittedCategory}" isn't one of the site's categories — stored as Uncategorized. Pick the closest match before publishing.\n\n---\n`;
   const specs = `${categoryNote}${customerNote ? `Customer request note (via Custom Lab):\n${customerNote}\n\n---\n` : ""}${specsInput}`;
 
+  try {
   const product = await prisma.product.create({
     data: {
+      ...alibabaData,
       name,
       category,
       price: typeof body.price === "number" ? body.price : parseFloat(String(body.price ?? "")) || 0,
@@ -80,13 +97,20 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  const missingFields = missingProductFields(product).filter(item => item.field !== "review");
+
   return NextResponse.json(
     {
       id: product.id,
       status: product.status,
       message: "Draft created. It will not appear on the site until a KELIKULI admin approves it.",
       reviewUrl: `https://kelikuli.com/admin/products/${product.id}/edit`,
+      alibabaReadiness: { dataComplete: missingFields.length === 0, missingFields, reviewRequired: true },
     },
     { status: 201 }
   );
+  } catch (error) {
+    const failure = productSaveError(error);
+    return NextResponse.json({ error: failure.error }, { status: failure.status });
+  }
 }

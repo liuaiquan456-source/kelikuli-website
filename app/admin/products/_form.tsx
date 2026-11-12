@@ -1,12 +1,12 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Upload, X, Plus, Tag, ArrowLeft, Save, Eye, AlertCircle, Loader2 } from "lucide-react";
 import { Button, Input, Textarea, Select, Switch, Card, CardHeader, CardTitle, CardBody } from "@/app/admin/_components/ui";
 import { CATEGORIES } from "@/app/admin/_data/mock";
 import { cn } from "@/app/admin/_lib/utils";
+import AlibabaDraftPanel, { initialAlibabaForm, type AlibabaForm } from "./_alibaba-draft";
 
 interface Product {
   id: number; name: string; category: string; price: number;
@@ -16,11 +16,14 @@ interface Product {
   description?: string; specs?: string;
   seoTitle?: string; seoDesc?: string; seoKeywords?: string;
   images?: string[]; video?: string;
+  sku?: string | null; alibabaCategoryId?: string; alibabaDimensions?: string;
+  alibabaPriceTiers?: string; alibabaSyncEnabled?: boolean; alibabaApproved?: boolean;
+  alibabaListing?: string;
 }
 
 interface Variant { name: string; image: string; }
 
-interface FormState {
+interface FormState extends AlibabaForm {
   name: string; category: string; price: string;
   moq: string; leadTime: string;
   status: boolean; tags: string[]; tagInput: string;
@@ -33,12 +36,13 @@ interface FormErrors { name?: string; description?: string; }
 
 function productToForm(p: Product): FormState {
   return {
+    ...initialAlibabaForm(p),
     name: p.name, category: p.category, price: String(p.price),
     moq: String(p.moq ?? 50), leadTime: p.leadTime ?? "30-45 days",
     status: p.status === "active",
     tags: p.tags, tagInput: "",
     description: p.description ?? "", specs: p.specs ?? "",
-    seoTitle: p.seoTitle ?? "", seoDesc: p.seoDesc ?? "", seoKeywords: p.seoKeywords ?? "",
+    seoTitle: p.seoTitle || `${p.name} - Kelikuli Manufacturer`, seoDesc: p.seoDesc ?? "", seoKeywords: p.seoKeywords ?? "",
     images: p.images?.length ? p.images : (p.image ? [p.image] : []),
     video: p.video ?? "",
     variants: [],
@@ -46,6 +50,7 @@ function productToForm(p: Product): FormState {
 }
 
 const defaultForm: FormState = {
+  ...initialAlibabaForm(),
   name: "", category: CATEGORIES[0], price: "",
   moq: "50", leadTime: "30-45 days",
   status: true, tags: [], tagInput: "",
@@ -56,6 +61,11 @@ const defaultForm: FormState = {
 
 const META_DESC_MAX = 155;
 
+function reviewSnapshot(form: FormState) {
+  return JSON.stringify([form.sku, form.name, form.images, form.description, form.moq,
+    form.leadTime, form.alibabaCategoryId, form.alibabaDimensions, form.alibabaPriceTiers, form.alibabaListing]);
+}
+
 export default function AddProductForm({ product }: { product?: Product }) {
   const isEdit = !!product;
   const router = useRouter();
@@ -63,19 +73,22 @@ export default function AddProductForm({ product }: { product?: Product }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [saveNotice, setSaveNotice] = useState("");
+  const [savedId, setSavedId] = useState(product?.id);
+  const [savedStatus, setSavedStatus] = useState(product?.status === "active");
+  const [savedSku, setSavedSku] = useState(product?.sku ?? "");
+  const [syncRevision, setSyncRevision] = useState(0);
+  const [approvedSnapshot, setApprovedSnapshot] = useState(product?.alibabaApproved ? reviewSnapshot(productToForm(product)) : "");
+  const alibabaApproved = approvedSnapshot === reviewSnapshot(form);
   const mainImgRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const variantImgRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const set = (key: keyof FormState, value: unknown) => setForm((f) => ({ ...f, [key]: value }));
-
-  // Auto-fill SEO title from product name
-  useEffect(() => {
-    if (!form.seoTitle && form.name) {
-      set("seoTitle", `${form.name} - Kelikuli Manufacturer`);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.name]);
+  const set = (key: keyof FormState, value: unknown) => setForm((f) => ({
+    ...f, [key]: value,
+    ...(key === "alibabaListing" && (value as AlibabaForm["alibabaListing"]).salesUnit !== f.alibabaListing.salesUnit ? { alibabaPriceTiers: [] } : {}),
+    ...(key === "name" && !f.seoTitle && value ? { seoTitle: `${value} - Kelikuli Manufacturer` } : {}),
+  }));
 
   const handleAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -161,15 +174,20 @@ export default function AddProductForm({ product }: { product?: Product }) {
     return Object.keys(e).length === 0;
   };
 
-  const handleSave = async (statusOverride?: boolean) => {
+  const handleSave = async (statusOverride?: boolean, syncDraft = false) => {
     if (!validate()) return;
     setSaving(true);
     setSaveError("");
+    setSaveNotice("");
     try {
       const payload = {
+        sku: form.sku, alibabaCategoryId: form.alibabaCategoryId, alibabaDimensions: form.alibabaDimensions,
+        alibabaPriceTiers: form.alibabaPriceTiers.map(tier => ({ minQuantity: Number(tier.minQuantity), unitPrice: Number(tier.unitPrice) })),
+        alibabaSyncEnabled: form.alibabaSyncEnabled, alibabaApprove: alibabaApproved,
+        alibabaListing: form.alibabaListing,
         name: form.name, category: form.category, price: form.price,
         moq: form.moq, leadTime: form.leadTime,
-        status: statusOverride !== undefined ? statusOverride : form.status,
+        status: syncDraft ? savedStatus : statusOverride !== undefined ? statusOverride : form.status,
         image: form.images[0] ?? "",
         images: form.images,
         video: form.video,
@@ -178,15 +196,32 @@ export default function AddProductForm({ product }: { product?: Product }) {
         description: form.description, specs: form.specs,
         seoTitle: form.seoTitle, seoDesc: form.seoDesc, seoKeywords: form.seoKeywords,
       };
-      const res = isEdit
-        ? await fetch(`/api/admin/products/${product!.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      const res = savedId
+        ? await fetch(`/api/admin/products/${savedId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
         : await fetch("/api/admin/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error("Save failed");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Save failed");
+      setSavedId(data.id);
+      setSavedStatus(data.status === "active");
+      setSavedSku(data.sku ?? "");
+      if (syncDraft || form.alibabaSyncEnabled) {
+        setSaveNotice("产品已保存，正在检查国际站草稿状态。");
+        let result = data.alibabaSync;
+        if (syncDraft) {
+          const response = await fetch("/api/integrations/alibaba/drafts", {
+            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sku: data.sku }),
+          });
+          result = await response.json();
+        }
+        setSaveNotice(`产品已保存。${result?.message ?? result?.error ?? "请检查同步状态。"}${result?.draftId ? ` 草稿编号：${result.draftId}` : ""}`);
+        if (result?.missingFields?.length) setSaveError(result.missingFields.map((item: { message: string }) => item.message).join(" "));
+        setSyncRevision(value => value + 1);
+        return;
+      }
       router.push("/admin/products");
-    } catch {
-      setSaveError("Save failed. Please try again.");
-      setSaving(false);
-    }
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Save failed. Please try again.");
+    } finally { setSaving(false); }
   };
 
   const catOptions = CATEGORIES.map((c) => ({ value: c, label: c }));
@@ -434,6 +469,10 @@ export default function AddProductForm({ product }: { product?: Product }) {
           </CardBody>
         </Card>
 
+        <AlibabaDraftPanel value={form} onChange={set} approved={alibabaApproved}
+          onApprove={value => setApprovedSnapshot(value ? reviewSnapshot(form) : "")}
+          savedSku={savedSku} revision={syncRevision} busy={saving} onSync={() => handleSave(undefined, true)} />
+
         {/* SEO */}
         <Card>
           <CardHeader><CardTitle>SEO Settings</CardTitle></CardHeader>
@@ -472,6 +511,7 @@ export default function AddProductForm({ product }: { product?: Product }) {
           </CardBody>
         </Card>
 
+        {saveNotice && <p role="status" className="text-sm text-slate-700">{saveNotice}</p>}
         {saveError && (
           <p className="text-sm text-red-500 flex items-center gap-1.5 pb-2">
             <AlertCircle className="w-4 h-4" />{saveError}

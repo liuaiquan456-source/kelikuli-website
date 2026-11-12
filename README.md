@@ -28,7 +28,21 @@ may still contain the previous public data.
 Run the privacy, authentication and sitemap regression tests with `npm test`
 (Node.js 24 or later). The tests use synthetic data and do not modify a database.
 
-## Getting Started
+## Alibaba International draft preparation (2026-11-12)
+
+The product editor now includes SKU, Alibaba category/dimensions/price tiers,
+an independent review step, and the “同步到国际站草稿” option. Manual requests and
+automatic saves share a draft-only service with duplicate prevention and recovery
+of uncertain results. Both external submission and automatic sync default to off.
+
+**This does not establish an Alibaba connection.** Shop authorization and a real
+authorized gateway adapter still need to be selected, implemented and verified.
+Before deploying, apply `prisma/updates/20261112-alibaba-drafts.sql`; see
+[the integration and PS01 acceptance guide](docs/alibaba-drafts.md) for the gateway
+contract, server configuration, limitations and deployment steps. Importable GPT
+Actions schema: [alibaba-drafts.json](public/openapi/alibaba-drafts.json).
+
+## Local development
 
 First, run the development server:
 
@@ -128,3 +142,26 @@ Validation: `npm test` includes content-link integrity, attribution sanitization
 inquiry access control, private design-file downloads, initial FAQ HTML and GA4
 payload checks. Product cards and pagination are rendered on the server; FAQ
 answers use native details/summary elements and are present before interaction.
+
+## International listing fields (2026-11-12)
+
+The admin editor and Custom Lab intake now preserve structured sales units,
+pieces per set, a separate international MOQ, confirmed USD tiers (up to four),
+lead-time days, packed dimensions in cm, gross weight in kg and category
+attributes. Unknown packaging stays null. Saving a website draft is allowed;
+Alibaba review/submission is blocked until required information is complete.
+Changing the sales unit clears the editor's prices and international MOQ;
+changing packaging or set size clears packaging confirmation and invalidates
+review. Resin Crafts category 1720 uses the attributes observed from its live
+schema; other categories still require gateway-side live validation.
+
+Apply `prisma/updates/20261112-alibaba-drafts.sql` then
+`prisma/updates/20261112-alibaba-listing.sql` to the production PostgreSQL database
+before deploying these routes. No measurements are backfilled or estimated.
+Importable intake schema: [custom-lab-products.json](public/openapi/custom-lab-products.json).
+The intake's authenticated GET returns `intakeVersion: 2` and
+`supportsAlibabaListing: true`; Custom Lab checks this before sending products,
+so an old main-site deployment cannot silently drop the new fields.
+
+These changes collect and validate listing data. They do not activate the
+unfinished Alibaba gateway or change draft-only integration into direct publishing.

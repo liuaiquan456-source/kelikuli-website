@@ -1,0 +1,325 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "KELIKULI Custom Lab Product Intake",
+    "version": "1.1.0",
+    "description": "Save product drafts and confirmed Alibaba preparation data. Ask the user for missing packaging and commercial facts. Never invent dimensions, weights, prices or category attributes. This API cannot approve or publish to Alibaba."
+  },
+  "servers": [
+    {
+      "url": "https://kelikuli.com"
+    }
+  ],
+  "security": [
+    {
+      "customLabKey": []
+    }
+  ],
+  "paths": {
+    "/api/custom-lab/products": {
+      "post": {
+        "operationId": "createKelikuliProductDraft",
+        "summary": "Create a website product draft with Alibaba preparation fields",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "category"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "specs": {
+                    "type": "string"
+                  },
+                  "customerNote": {
+                    "type": "string"
+                  },
+                  "leadTime": {
+                    "type": "string"
+                  },
+                  "sku": {
+                    "type": "string"
+                  },
+                  "alibabaCategoryId": {
+                    "type": "string"
+                  },
+                  "alibabaDimensions": {
+                    "type": "string"
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Public HTTPS product pictures. First 6 are Alibaba main images; all are available for detail pictures."
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "moq": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Website MOQ; not the Alibaba set MOQ."
+                  },
+                  "alibabaPriceTiers": {
+                    "type": "array",
+                    "maxItems": 4,
+                    "description": "Confirmed USD prices per sales unit, first quantity must equal Alibaba minimumOrderQuantity. Never infer set price from piece price without confirmation.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "minQuantity",
+                        "unitPrice"
+                      ],
+                      "properties": {
+                        "minQuantity": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "unitPrice": {
+                          "type": "number",
+                          "minimum": 0.01,
+                          "maximum": 9999999.99,
+                          "multipleOf": 0.01
+                        }
+                      }
+                    }
+                  },
+                  "alibabaListing": {
+                    "$ref": "#/components/schemas/AlibabaListing"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Draft saved; inspect alibabaReadiness.missingFields before reporting readiness.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "reviewUrl": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "alibabaReadiness": {
+                      "type": "object",
+                      "properties": {
+                        "dataComplete": {
+                          "type": "boolean"
+                        },
+                        "reviewRequired": {
+                          "type": "boolean"
+                        },
+                        "missingFields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid product data; nothing saved"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "SKU already exists; do not retry with a guessed new SKU"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "customLabKey": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "AlibabaListing": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Required for Alibaba readiness. Incomplete data may be stored as a website draft; no Alibaba publication is performed. One sales unit means one piece or one complete set, not the whole MOQ shipment.",
+        "properties": {
+          "salesUnit": {
+            "type": "string",
+            "enum": [
+              "",
+              "piece",
+              "set"
+            ],
+            "description": "USD price and Alibaba MOQ use this same unit. Empty means unconfirmed."
+          },
+          "piecesPerUnit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "description": "Pieces per sales unit: 1 for piece, at least 2 for set; use null if unknown, never estimate."
+          },
+          "minimumOrderQuantity": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "description": "Alibaba MOQ in sales units, separate from website MOQ; use null if unknown, never estimate."
+          },
+          "leadTimeMinDays": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "description": "Confirmed minimum lead time in days; use null if unknown, never estimate."
+          },
+          "leadTimeMaxDays": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "description": "Confirmed maximum lead time in days; use null if unknown, never estimate."
+          },
+          "packaging": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "lengthCm": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "description": "Packed length per sales unit, cm; use null if unknown, never estimate."
+              },
+              "widthCm": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "description": "Packed width per sales unit, cm; use null if unknown, never estimate."
+              },
+              "heightCm": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "description": "Packed height per sales unit, cm; use null if unknown, never estimate."
+              },
+              "grossWeightKg": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "description": "Gross weight per sales unit including transport packaging, kg; use null if unknown, never estimate."
+              },
+              "confirmed": {
+                "type": "boolean",
+                "description": "True only after the user confirms the packaging plan and all four measurements; unknown is false."
+              }
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "material": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Material in English. Required for verified Resin Crafts category 1720."
+              },
+              "feature": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Feature in English. Required for verified Resin Crafts category 1720."
+              },
+              "technique": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Technique in English. Required for verified Resin Crafts category 1720."
+              },
+              "pattern": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Pattern in English. Required for verified Resin Crafts category 1720."
+              },
+              "productType": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Product type in English. Required for verified Resin Crafts category 1720."
+              },
+              "style": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Style in English. Required for verified Resin Crafts category 1720."
+              },
+              "application": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Application in English. Required for verified Resin Crafts category 1720."
+              },
+              "countryOfOrigin": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Country of origin in English. Required for verified Resin Crafts category 1720."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "KELIKULI Alibaba Drafts",
+    "version": "1.0.0",
+    "description": "Check product readiness and save approved KELIKULI products to Alibaba International drafts only. No publishing or product editing operations."
+  },
+  "servers": [{ "url": "https://kelikuli.com" }],
+  "security": [{ "actionsKey": [] }],
+  "paths": {
+    "/api/integrations/alibaba/drafts": {
+      "get": {
+        "operationId": "getAlibabaDraftStatus",
+        "summary": "Check saved product requirements, approval and existing draft by SKU",
+        "parameters": [{ "name": "sku", "in": "query", "required": true, "schema": { "type": "string", "maxLength": 64 }, "description": "Exact KELIKULI SKU, e.g. PS01. Never guess a product match." }],
+        "responses": {
+          "200": { "description": "Local readiness and recorded draft status; configuration alone does not prove Alibaba authorization.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Readiness" } } } },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "SKU not found" },
+          "503": { "description": "Status unavailable" }
+        }
+      },
+      "post": {
+        "operationId": "saveAlibabaDraft",
+        "summary": "Save an approved SKU to an Alibaba draft, reuse its receipt or reconcile an uncertain submission",
+        "description": "Only saves drafts. Missing data is returned without creating a draft. Never claim success without status=draft and draftId. A repeat request reuses the existing draft, and does not update changed product data. An uncertain request performs lookup only; never tries another create.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["sku"], "additionalProperties": false, "properties": { "sku": { "type": "string", "maxLength": 64, "description": "Product SKU, for example PS01" } } } } }
+        },
+        "responses": {
+          "200": { "description": "Verified draft receipt", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SyncResult" } } } },
+          "202": { "description": "Sync in progress; no success receipt yet", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SyncResult" } } } },
+          "400": { "description": "Only the sku field is accepted" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "SKU not found" },
+          "409": { "description": "Uncertain result; check My Alibaba and reconcile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SyncResult" } } } },
+          "422": { "description": "Missing product data, approval or connection configuration", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SyncResult" } } } },
+          "503": { "description": "Sync or state persistence failed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SyncResult" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": { "actionsKey": { "type": "http", "scheme": "bearer" } },
+    "schemas": {
+      "MissingField": { "type": "object", "required": ["field", "message"], "properties": { "field": { "type": "string" }, "message": { "type": "string" } } },
+      "SyncResult": {
+        "type": "object", "required": ["status", "message"],
+        "properties": {
+          "status": { "type": "string", "enum": ["draft", "blocked", "syncing", "uncertain", "failed", "not_found", "disabled"] },
+          "message": { "type": "string" }, "draftId": { "type": "string" }, "existing": { "type": "boolean" },
+          "changedSinceSync": { "type": "boolean" }, "missingFields": { "type": "array", "items": { "$ref": "#/components/schemas/MissingField" } }
+        }
+      },
+      "Readiness": {
+        "type": "object",
+        "properties": {
+          "sku": { "type": ["string", "null"] }, "approved": { "type": "boolean" }, "autoEnabled": { "type": "boolean" },
+          "optedIn": { "type": "boolean" }, "connectionConfigured": { "type": "boolean" },
+          "missingFields": { "type": "array", "items": { "$ref": "#/components/schemas/MissingField" } },
+          "record": { "type": ["object", "null"], "properties": {
+            "status": { "type": "string" }, "draftId": { "type": ["string", "null"] }, "message": { "type": "string" },
+            "updatedAt": { "type": "string", "format": "date-time" }, "changedSinceSync": { "type": "boolean" }
+          } }
+        }
+      }
+    }
+  }
+}

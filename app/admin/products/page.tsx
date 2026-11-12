@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Search, Pencil, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown, Download, Package, CheckSquare, RefreshCw, Sparkles } from "lucide-react";
 import { Button, Badge, Card, Modal, Table, Th, Td, Tr } from "@/app/admin/_components/ui";
@@ -9,6 +9,7 @@ import { CUSTOM_LAB_TAG } from "@/lib/custom-lab";
 
 interface Product {
   id: number; name: string; category: string; price: number;
+  sku?: string | null;
   moq: number; leadTime: string; status: string; image: string;
   tags: string[]; createdAt: string;
 }
@@ -26,6 +27,7 @@ function SortIcon({ col, sortKey, dir }: { col: SortKey; sortKey: SortKey; dir: 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionError, setActionError] = useState("");
   const [search, setSearch] = useState("");
   const [catFilter, setCatFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -35,20 +37,30 @@ export default function ProductList() {
   const [sortKey, setSortKey] = useState<SortKey>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = async () => {
     setLoading(true);
-    const res = await fetch("/api/admin/products");
-    const data = await res.json();
-    setProducts(data);
-    setLoading(false);
-  }, []);
+    try {
+      const res = await fetch("/api/admin/products");
+      if (!res.ok) throw new Error();
+      setProducts(await res.json());
+    } catch { setActionError("Unable to load products."); }
+    finally { setLoading(false); }
+  };
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/admin/products")
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+      .then(data => { if (!cancelled) setProducts(data); })
+      .catch(() => { if (!cancelled) setActionError("Unable to load products."); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   const filtered = useMemo(() => {
     const list = products.filter((p) => {
       const q = search.toLowerCase();
-      const matchSearch = p.name.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q));
+      const matchSearch = p.name.toLowerCase().includes(q) || p.sku?.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q));
       const matchCat    = catFilter    === "All" || p.category === catFilter;
       const matchStatus = statusFilter === "All" || p.status   === statusFilter;
       return matchSearch && matchCat && matchStatus;
@@ -69,19 +81,29 @@ export default function ProductList() {
 
   const allChecked = filtered.length > 0 && filtered.every((p) => selected.has(p.id));
   const toggleAll  = () => { if (allChecked) setSelected(new Set()); else setSelected(new Set(filtered.map((p) => p.id))); };
-  const toggleOne  = (id: number) => { const next = new Set(selected); next.has(id) ? next.delete(id) : next.add(id); setSelected(next); };
+  const toggleOne  = (id: number) => { const next = new Set(selected); if (next.has(id)) next.delete(id); else next.add(id); setSelected(next); };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-    await fetch(`/api/admin/products/${deleteTarget.id}`, { method: "DELETE" });
+    setActionError("");
+    const response = await fetch(`/api/admin/products/${deleteTarget.id}`, { method: "DELETE" });
+    if (!response.ok) {
+      const data = await response.json();
+      setActionError(data.error ?? "Delete failed.");
+      setDeleteTarget(null);
+      return;
+    }
     setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
     setSelected((prev) => { const next = new Set(prev); next.delete(deleteTarget.id); return next; });
     setDeleteTarget(null);
   };
 
   const handleBulkDelete = async () => {
-    await Promise.all([...selected].map((id) => fetch(`/api/admin/products/${id}`, { method: "DELETE" })));
-    setProducts((prev) => prev.filter((p) => !selected.has(p.id)));
+    setActionError("");
+    const responses = await Promise.all([...selected].map(async (id) => ({ id, response: await fetch(`/api/admin/products/${id}`, { method: "DELETE" }) })));
+    const deleted = new Set(responses.filter(item => item.response.ok).map(item => item.id));
+    setProducts((prev) => prev.filter((p) => !deleted.has(p.id)));
+    if (deleted.size < selected.size) setActionError("部分产品未删除。已有国际站同步记录的产品需保留，可设为 Draft。");
     setSelected(new Set());
     setBulkDeleteOpen(false);
   };
@@ -103,6 +125,7 @@ export default function ProductList() {
 
   return (
     <div className="space-y-4">
+      {actionError && <p role="alert" className="text-sm text-red-600">{actionError}</p>}
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
@@ -202,6 +225,7 @@ export default function ProductList() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-slate-800 line-clamp-1">{p.name}</p>
+                        {p.sku && <p className="text-xs text-slate-500">SKU: {p.sku}</p>}
                         <div className="flex gap-1 mt-0.5 flex-wrap">
                           {p.tags.slice(0, 2).map((t) => <span key={t} className="text-[10px] text-slate-400 bg-slate-100 px-1.5 rounded">#{t}</span>)}
                         </div>
